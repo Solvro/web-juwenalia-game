@@ -3,7 +3,7 @@ import requests
 from PIL import ImageDraw, Image
 from PIL import ImageFont
 
-data = requests.get("https://raw.githubusercontent.com/Antoni-Czaplicki/jedynka_open_days/main/data/data.json").json()
+data = requests.get("https://raw.githubusercontent.com/Antoni-Czaplicki/web-juwenalia-game/main/data/data.json").json()
 
 checkpoints = data["checkpoints"]
 

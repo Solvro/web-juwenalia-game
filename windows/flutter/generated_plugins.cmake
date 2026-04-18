@@ -3,7 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  dynamic_color
+  connectivity_plus
+  geolocator_windows
   url_launcher_windows
 )
 

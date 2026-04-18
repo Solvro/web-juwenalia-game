@@ -1,37 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Juwenalia PWr 2026">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="jedynka_open_days">
+  <meta name="apple-mobile-web-app-title" content="Juwenalia PWr">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>Dzień otwarty ILO</title>
+  <title>Juwenalia PWr</title>
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <!-- Google Maps JS SDK — required for google_maps_flutter on web.
+       Replace YOUR_WEB_MAPS_API_KEY with a Maps JavaScript API key. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsf5hnTY2mk82eR6b3-hB7YqAIX-KkBVg"></script>
 </head>
 <style>
   body, html {
@@ -40,8 +30,8 @@
 
   .loader {
     margin-top: 4%;
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #3498db; /* Blue */
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
     border-radius: 50%;
     width: 48px;
     height: 48px;
@@ -52,9 +42,9 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  </style>
+</style>
 <body style="background: #222831">
- <div style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
+ <div id="loading" style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
   <svg viewBox="0 0 170 170" width="25%" height="25%" xmlns="http://www.w3.org/2000/svg">
     <g transform="matrix(1.1110988,0,0,1.1110988,29.444506,-13.08353)">
       <path style="fill:#FFFFFF;" d="m 50.799,53.134 c -0.142743,-1.439162 0.295091,-3.028673 -0.234125,-4.370625 -2.094054,-0.775742 -1.164448,2.437185 -1.362875,3.636926 -0.570871,1.945899 0.967078,2.732395 2.687416,2.330699 1.36589,0.545648 4.721845,-0.670741 2.103407,-1.597 -1.064608,0 -2.129215,0 -3.193823,0 z"/>
@@ -68,72 +58,6 @@
   </svg>
  <div class="loader"></div>
  </div>
-  <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
-  <script>
-    var serviceWorkerVersion = null;
-    var scriptLoaded = false;
-    function loadMainDartJs() {
-      if (scriptLoaded) {
-        return;
-      }
-      scriptLoaded = true;
-      var scriptTag = document.createElement('script');
-      scriptTag.src = 'main.dart.js';
-      scriptTag.type = 'application/javascript';
-      document.body.append(scriptTag);
-    }
-
-    if ('serviceWorker' in navigator) {
-      // Service workers are supported. Use them.
-      window.addEventListener('load', function () {
-        // Wait for registration to finish before dropping the <script> tag.
-        // Otherwise, the browser will load the script multiple times,
-        // potentially different versions.
-        var serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
-        navigator.serviceWorker.register(serviceWorkerUrl)
-          .then((reg) => {
-            function waitForActivation(serviceWorker) {
-              serviceWorker.addEventListener('statechange', () => {
-                if (serviceWorker.state == 'activated') {
-                  console.log('Installed new service worker.');
-                  loadMainDartJs();
-                }
-              });
-            }
-            if (!reg.active && (reg.installing || reg.waiting)) {
-              // No active web worker and we have installed or are installing
-              // one for the first time. Simply wait for it to activate.
-              waitForActivation(reg.installing || reg.waiting);
-            } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
-              // When the app updates the serviceWorkerVersion changes, so we
-              // need to ask the service worker to update.
-              console.log('New service worker available.');
-              reg.update();
-              waitForActivation(reg.installing);
-            } else {
-              // Existing service worker is still good.
-              console.log('Loading app from service worker.');
-              loadMainDartJs();
-            }
-          });
-
-        // If service worker doesn't succeed in a reasonable amount of time,
-        // fallback to plaint <script> tag.
-        setTimeout(() => {
-          if (!scriptLoaded) {
-            console.warn(
-              'Failed to load app from service worker. Falling back to plain <script> tag.',
-            );
-            loadMainDartJs();
-          }
-        }, 4000);
-      });
-    } else {
-      // Service workers not supported. Just drop the <script> tag.
-      loadMainDartJs();
-    }
-  </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

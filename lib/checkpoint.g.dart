@@ -7,14 +7,15 @@ part of 'checkpoint.dart';
 // **************************************************************************
 
 Checkpoint _$CheckpointFromJson(Map<String, dynamic> json) => Checkpoint(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      subtitle: json['subtitle'] as String,
-      time: json['time'] as String,
-      location: json['location'] as String,
-      description: json['description'] as String,
-      image: json['image'] as String,
-    );
+  id: (json['id'] as num).toInt(),
+  title: json['title'] as String,
+  subtitle: json['subtitle'] as String,
+  time: json['time'] as String,
+  location: json['location'] as String,
+  description: json['description'] as String,
+  image: json['image'] as String,
+  category: json['category'] as String? ?? 'other',
+);
 
 Map<String, dynamic> _$CheckpointToJson(Checkpoint instance) =>
     <String, dynamic>{
@@ -25,4 +26,5 @@ Map<String, dynamic> _$CheckpointToJson(Checkpoint instance) =>
       'location': instance.location,
       'description': instance.description,
       'image': instance.image,
+      'category': instance.category,
     };

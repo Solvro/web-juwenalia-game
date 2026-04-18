@@ -6,15 +6,19 @@ part 'checkpoint.g.dart';
 class Checkpoint {
   final int id;
   final String title, subtitle, time, location, description, image;
+  @JsonKey(defaultValue: 'other')
+  final String category;
 
-  Checkpoint(
-      {required this.id,
-      required this.title,
-      required this.subtitle,
-      required this.time,
-      required this.location,
-      required this.description,
-      required this.image});
+  Checkpoint({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.time,
+    required this.location,
+    required this.description,
+    required this.image,
+    this.category = 'other',
+  });
 
   factory Checkpoint.fromJson(Map<String, dynamic> json) =>
       _$CheckpointFromJson(json);
