@@ -310,9 +310,7 @@ class _MapScreenState extends State<MapScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          ...widget.data.mapPoints.asMap().entries.map(
-            (e) => _buildLegendItem(context, e.value, e.key, cs),
-          ),
+          ...widget.data.mapPoints.map((p) => _buildLegendItem(context, p, cs)),
         ],
       ),
     );
@@ -321,7 +319,6 @@ class _MapScreenState extends State<MapScreen> {
   Widget _buildLegendItem(
     BuildContext context,
     MapPoint point,
-    int index,
     ColorScheme cs,
   ) {
     final color = point.type.mapPointColor(context);
@@ -330,77 +327,67 @@ class _MapScreenState extends State<MapScreen> {
     final selected = _selectedId == point.id;
 
     return GestureDetector(
-          onTap: () => _focus(point),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: selected ? color.withValues(alpha: 0.12) : surfHigh,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: selected
-                    ? color
-                    : cs.outlineVariant.withValues(alpha: 0.3),
-                width: selected ? 1.5 : 1,
+      onTap: () => _focus(point),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: selected ? color.withValues(alpha: 0.12) : surfHigh,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? color : cs.outlineVariant.withValues(alpha: 0.3),
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Icon(icon, size: 18, color: color),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    point.name,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  if (point.description != null) ...[
+                    const SizedBox(height: 1),
+                    Text(
+                      point.description!,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: cs.onSurfaceVariant,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: Icon(icon, size: 18, color: color),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        point.name,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                      if (point.description != null) ...[
-                        const SizedBox(height: 1),
-                        Text(
-                          point.description!,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            color: cs.onSurfaceVariant,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: cs.onSurfaceVariant,
-                  size: 20,
-                ),
-              ],
+            Icon(
+              Icons.chevron_right_rounded,
+              color: cs.onSurfaceVariant,
+              size: 20,
             ),
-          ),
-        )
-        .animate(delay: (30 * index).ms)
-        .fadeIn(duration: 300.ms)
-        .slideX(
-          begin: -0.04,
-          end: 0,
-          duration: 300.ms,
-          curve: Curves.easeOutCubic,
-        );
+          ],
+        ),
+      ),
+    );
   }
 
   // ── Partners ──────────────────────────────────────────────────────────────

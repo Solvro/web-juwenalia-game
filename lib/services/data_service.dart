@@ -1,8 +1,12 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../checkpoint.dart';
 import '../models/models.dart';
 
@@ -10,6 +14,7 @@ import '../models/models.dart';
 const _remoteUrl =
     'https://raw.githubusercontent.com/Antoni-Czaplicki/web-juwenalia-game/main/data/data.json';
 const _cacheKey = 'cached_data_json';
+const _cacheTimestampKey = 'cached_data_timestamp';
 const _localAssetPath = 'assets/data/data.json';
 
 class AppData {
@@ -77,12 +82,31 @@ class AppData {
       isFromCache: isFromCache,
     );
   }
+
+  /// Every image URL referenced anywhere in this payload — used for
+  /// pre-caching so the app stays usable offline.
+  Iterable<String> get allImageUrls sync* {
+    for (final c in checkpoints) {
+      if (c.image.trim().isNotEmpty) yield c.image.trim();
+    }
+    for (final day in schedule) {
+      for (final ev in day.events) {
+        if (ev.imageUrl.trim().isNotEmpty) yield ev.imageUrl.trim();
+      }
+    }
+    for (final p in partners) {
+      final url = p.logoUrl?.trim();
+      if (url != null && url.isNotEmpty) yield url;
+    }
+  }
 }
 
-/// Fetches data with a three-tier strategy:
-///  1. Try network (and cache on success)
-///  2. Fall back to SharedPreferences cache
-///  3. Fall back to bundled local asset
+/// Fetches data with an "always-online-when-possible" strategy:
+///   1. Try network. On success, cache the JSON to SharedPreferences and
+///      return the fresh payload (`isFromCache = false`).
+///   2. Fall back to SharedPreferences cache.
+///   3. Fall back to the bundled asset (`assets/data/data.json` is kept
+///      fresh by the build-time `tool/sync_data.dart` script).
 Future<AppData> fetchData(http.Client client) async {
   // 1. Try network
   try {
@@ -93,6 +117,10 @@ Future<AppData> fetchData(http.Client client) async {
       final body = response.body;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cacheKey, body);
+      await prefs.setInt(
+        _cacheTimestampKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
       return AppData.fromJson(jsonDecode(body) as Map<String, dynamic>);
     }
   } catch (_) {
@@ -115,4 +143,70 @@ Future<AppData> fetchData(http.Client client) async {
     jsonDecode(assetBody) as Map<String, dynamic>,
     isFromCache: true,
   );
+}
+
+/// Pre-caches every image referenced in [data] into the
+/// [CachedNetworkImage] disk cache so they're available offline. Runs in
+/// the background and returns when the warm-up has been kicked off — does
+/// not block the UI.
+///
+/// Pass a [BuildContext] to also warm Flutter's in-memory image cache via
+/// [precacheImage]; otherwise we just rely on the disk cache.
+Future<void> precacheAppImages(AppData data, {BuildContext? context}) async {
+  final urls = data.allImageUrls.toSet();
+  if (urls.isEmpty) return;
+
+  // Cap concurrency so we don't slam the network on a 30+ image payload.
+  const concurrency = 4;
+  final iterator = urls.iterator;
+
+  Future<void> worker() async {
+    while (true) {
+      String url;
+      if (!iterator.moveNext()) return;
+      url = iterator.current;
+      try {
+        final provider = CachedNetworkImageProvider(url);
+        if (context != null && context.mounted) {
+          // Warms the in-memory cache and (transitively) the disk cache.
+          await precacheImage(provider, context);
+        } else {
+          // No context: still trigger a fetch via the underlying cache
+          // manager so the disk cache populates. We resolve the stream and
+          // wait for the first frame to settle.
+          final completer = Completer<void>();
+          final stream = provider.resolve(ImageConfiguration.empty);
+          late final ImageStreamListener listener;
+          listener = ImageStreamListener(
+            (info, _) {
+              if (!completer.isCompleted) completer.complete();
+              stream.removeListener(listener);
+            },
+            onError: (e, _) {
+              if (!completer.isCompleted) completer.complete();
+              stream.removeListener(listener);
+            },
+          );
+          stream.addListener(listener);
+          await completer.future.timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {},
+          );
+        }
+      } catch (_) {
+        // Best-effort — skip failures silently.
+      }
+    }
+  }
+
+  await Future.wait(List.generate(concurrency, (_) => worker()));
+}
+
+/// Returns the timestamp of the last successful network sync, or null if
+/// the app has never reached the network.
+Future<DateTime?> lastSyncTime() async {
+  final prefs = await SharedPreferences.getInstance();
+  final ms = prefs.getInt(_cacheTimestampKey);
+  if (ms == null) return null;
+  return DateTime.fromMillisecondsSinceEpoch(ms);
 }

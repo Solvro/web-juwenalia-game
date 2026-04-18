@@ -286,36 +286,206 @@
     }
   ],
   "map_points": [
-    {"id": "m1", "name": "Scena Główna", "type": "stage", "lat": 51.1078, "lng": 17.0575, "description": "Główna scena festiwalu — tutaj występują headlinerzy"},
-    {"id": "m2", "name": "Scena Klubowa", "type": "stage", "lat": 51.1071, "lng": 17.0612, "description": "Mniejsza scena z setami DJ-skimi i muzyką elektroniczną"},
-    {"id": "m3", "name": "Scena Akustyczna", "type": "stage", "lat": 51.1086, "lng": 17.0570, "description": "Kameralna scena pod chmurką — sety akustyczne i jazz"},
-    {"id": "m4", "name": "Strefa Gastro – Food Trucki", "type": "food", "lat": 51.1088, "lng": 17.0608, "description": "14 food trucków, kawa, lody, kuchnia świata"},
-    {"id": "m5", "name": "Strefa Gastro – Bary", "type": "food", "lat": 51.1083, "lng": 17.0598, "description": "Bary z piwem rzemieślniczym i koktajlami"},
-    {"id": "m6", "name": "Punkt Medyczny – Sektor A", "type": "medical", "lat": 51.1081, "lng": 17.0583, "description": "Pierwsza pomoc 24/7"},
-    {"id": "m7", "name": "Punkt Medyczny – Sektor B", "type": "medical", "lat": 51.1075, "lng": 17.0620, "description": "Drugi punkt pomocy medycznej (przy Scenie Klubowej)"},
-    {"id": "m8", "name": "Toalety – Sektor A", "type": "wc", "lat": 51.1076, "lng": 17.0601, "description": "Toalety przenośne (32 kabiny + 4 dla osób z niepełnosprawnościami)"},
-    {"id": "m9", "name": "Toalety – Sektor C", "type": "wc", "lat": 51.1090, "lng": 17.0615, "description": "Dodatkowe toalety przy strefie gastro"},
-    {"id": "m10", "name": "Strefa Chilloutu", "type": "chill", "lat": 51.1085, "lng": 17.0592, "description": "Hamaki, pufy i relaks z widokiem na scenę"},
-    {"id": "m11", "name": "Strefa Chilloutu 2 – pod drzewami", "type": "chill", "lat": 51.1092, "lng": 17.0588, "description": "Cisza, leżaki, ładowarki USB-C"},
-    {"id": "m12", "name": "Wejście VIP", "type": "vip", "lat": 51.1073, "lng": 17.0578, "description": "Wejście dla posiadaczy biletów VIP i artystów"},
-    {"id": "m13", "name": "Strefa VIP", "type": "vip", "lat": 51.1077, "lng": 17.0568, "description": "Bar, leżaki, lepszy widok na scenę główną"},
-    {"id": "m14", "name": "Punkt Informacyjny", "type": "info", "lat": 51.1080, "lng": 17.0585, "description": "Info, zgubione rzeczy, odbiór nagród z Gry Terenowej, stopery do uszu"},
-    {"id": "m15", "name": "Wejście Główne", "type": "info", "lat": 51.1068, "lng": 17.0590, "description": "Brama A — kontrola biletów i opasek"}
+    {
+      "id": "m1",
+      "name": "Scena Główna",
+      "type": "stage",
+      "lat": 51.1078,
+      "lng": 17.0575,
+      "description": "Główna scena festiwalu — tutaj występują headlinerzy"
+    },
+    {
+      "id": "m2",
+      "name": "Scena Klubowa",
+      "type": "stage",
+      "lat": 51.1071,
+      "lng": 17.0612,
+      "description": "Mniejsza scena z setami DJ-skimi i muzyką elektroniczną"
+    },
+    {
+      "id": "m3",
+      "name": "Scena Akustyczna",
+      "type": "stage",
+      "lat": 51.1086,
+      "lng": 17.057,
+      "description": "Kameralna scena pod chmurką — sety akustyczne i jazz"
+    },
+    {
+      "id": "m4",
+      "name": "Strefa Gastro – Food Trucki",
+      "type": "food",
+      "lat": 51.1088,
+      "lng": 17.0608,
+      "description": "14 food trucków, kawa, lody, kuchnia świata"
+    },
+    {
+      "id": "m5",
+      "name": "Strefa Gastro – Bary",
+      "type": "food",
+      "lat": 51.1083,
+      "lng": 17.0598,
+      "description": "Bary z piwem rzemieślniczym i koktajlami"
+    },
+    {
+      "id": "m6",
+      "name": "Punkt Medyczny – Sektor A",
+      "type": "medical",
+      "lat": 51.1081,
+      "lng": 17.0583,
+      "description": "Pierwsza pomoc 24/7"
+    },
+    {
+      "id": "m7",
+      "name": "Punkt Medyczny – Sektor B",
+      "type": "medical",
+      "lat": 51.1075,
+      "lng": 17.062,
+      "description": "Drugi punkt pomocy medycznej (przy Scenie Klubowej)"
+    },
+    {
+      "id": "m8",
+      "name": "Toalety – Sektor A",
+      "type": "wc",
+      "lat": 51.1076,
+      "lng": 17.0601,
+      "description": "Toalety przenośne (32 kabiny + 4 dla osób z niepełnosprawnościami)"
+    },
+    {
+      "id": "m9",
+      "name": "Toalety – Sektor C",
+      "type": "wc",
+      "lat": 51.109,
+      "lng": 17.0615,
+      "description": "Dodatkowe toalety przy strefie gastro"
+    },
+    {
+      "id": "m10",
+      "name": "Strefa Chilloutu",
+      "type": "chill",
+      "lat": 51.1085,
+      "lng": 17.0592,
+      "description": "Hamaki, pufy i relaks z widokiem na scenę"
+    },
+    {
+      "id": "m11",
+      "name": "Strefa Chilloutu 2 – pod drzewami",
+      "type": "chill",
+      "lat": 51.1092,
+      "lng": 17.0588,
+      "description": "Cisza, leżaki, ładowarki USB-C"
+    },
+    {
+      "id": "m12",
+      "name": "Wejście VIP",
+      "type": "vip",
+      "lat": 51.1073,
+      "lng": 17.0578,
+      "description": "Wejście dla posiadaczy biletów VIP i artystów"
+    },
+    {
+      "id": "m13",
+      "name": "Strefa VIP",
+      "type": "vip",
+      "lat": 51.1077,
+      "lng": 17.0568,
+      "description": "Bar, leżaki, lepszy widok na scenę główną"
+    },
+    {
+      "id": "m14",
+      "name": "Punkt Informacyjny",
+      "type": "info",
+      "lat": 51.108,
+      "lng": 17.0585,
+      "description": "Info, zgubione rzeczy, odbiór nagród z Gry Terenowej, stopery do uszu"
+    },
+    {
+      "id": "m15",
+      "name": "Wejście Główne",
+      "type": "info",
+      "lat": 51.1068,
+      "lng": 17.059,
+      "description": "Brama A — kontrola biletów i opasek"
+    }
   ],
   "partners": [
-    {"id": "p1", "name": "Politechnika Wrocławska", "tier": "main", "logo_url": ""},
-    {"id": "p2", "name": "Samorząd Studencki PWr", "tier": "main", "logo_url": ""},
-    {"id": "p3", "name": "Tyskie Browary Książęce", "tier": "main", "logo_url": ""},
-    {"id": "p4", "name": "Żywiec Zdrój", "tier": "main", "logo_url": ""},
-    {"id": "p5", "name": "Allegro Pay", "tier": "main", "logo_url": ""},
-    {"id": "p6", "name": "Spotify Polska", "tier": "main", "logo_url": ""},
-    {"id": "p7", "name": "Miasto Wrocław", "tier": "main", "logo_url": ""},
-    {"id": "p8", "name": "Radio Luz", "tier": "media", "logo_url": ""},
-    {"id": "p9", "name": "Gazeta Wrocławska", "tier": "media", "logo_url": ""},
-    {"id": "p10", "name": "TVP3 Wrocław", "tier": "media", "logo_url": ""},
-    {"id": "p11", "name": "Wrocław.pl", "tier": "media", "logo_url": ""},
-    {"id": "p12", "name": "Studenckie.pl", "tier": "media", "logo_url": ""},
-    {"id": "p13", "name": "Eska Wrocław", "tier": "media", "logo_url": ""}
+    {
+      "id": "p1",
+      "name": "Politechnika Wrocławska",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p2",
+      "name": "Samorząd Studencki PWr",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p3",
+      "name": "Tyskie Browary Książęce",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p4",
+      "name": "Żywiec Zdrój",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p5",
+      "name": "Allegro Pay",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p6",
+      "name": "Spotify Polska",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p7",
+      "name": "Miasto Wrocław",
+      "tier": "main",
+      "logo_url": ""
+    },
+    {
+      "id": "p8",
+      "name": "Radio Luz",
+      "tier": "media",
+      "logo_url": ""
+    },
+    {
+      "id": "p9",
+      "name": "Gazeta Wrocławska",
+      "tier": "media",
+      "logo_url": ""
+    },
+    {
+      "id": "p10",
+      "name": "TVP3 Wrocław",
+      "tier": "media",
+      "logo_url": ""
+    },
+    {
+      "id": "p11",
+      "name": "Wrocław.pl",
+      "tier": "media",
+      "logo_url": ""
+    },
+    {
+      "id": "p12",
+      "name": "Studenckie.pl",
+      "tier": "media",
+      "logo_url": ""
+    },
+    {
+      "id": "p13",
+      "name": "Eska Wrocław",
+      "tier": "media",
+      "logo_url": ""
+    }
   ],
   "checkpoints": [
     {

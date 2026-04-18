@@ -312,7 +312,7 @@ class FieldGameScreen extends StatelessWidget {
         itemCount: checkpoints.length,
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (context, i) =>
-            _buildCheckpointCard(context, checkpoints[i], i, cs),
+            _buildCheckpointCard(context, checkpoints[i], cs),
       ),
     );
   }
@@ -320,7 +320,6 @@ class FieldGameScreen extends StatelessWidget {
   Widget _buildCheckpointCard(
     BuildContext context,
     Checkpoint cp,
-    int index,
     ColorScheme cs,
   ) {
     final isCompleted = completed.contains(cp.id.toString());
@@ -336,229 +335,216 @@ class FieldGameScreen extends StatelessWidget {
               CheckpointDetailsScreen(checkpoint: cp, isCompleted: isCompleted),
         ),
       ),
-      child:
-          AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                  color: surfHigh,
-                  borderRadius: BorderRadius.circular(16),
-                  border: isCompleted
-                      ? Border.all(
-                          color: cs.primaryContainer.withValues(alpha: 0.5),
-                          width: 1.5,
-                        )
-                      : null,
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Image
-                    Stack(
-                      children: [
-                        SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: Hero(
-                            tag: 'cp_image_${cp.id}',
-                            child: CachedNetworkImage(
-                              imageUrl: cp.image,
-                              fit: BoxFit.cover,
-                              placeholder: (_, _) => Container(
-                                color: surfHighest,
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (_, _, _) => Container(
-                                color: surfHighest,
-                                child: Icon(
-                                  Icons.image_not_supported_outlined,
-                                  size: 32,
-                                  color: cs.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          color: surfHigh,
+          borderRadius: BorderRadius.circular(16),
+          border: isCompleted
+              ? Border.all(
+                  color: cs.primaryContainer.withValues(alpha: 0.5),
+                  width: 1.5,
+                )
+              : null,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Image
+            Stack(
+              children: [
+                SizedBox(
+                  height: 150,
+                  width: double.infinity,
+                  child: Hero(
+                    tag: 'cp_image_${cp.id}',
+                    child: CachedNetworkImage(
+                      imageUrl: cp.image,
+                      fit: BoxFit.cover,
+                      placeholder: (_, _) => Container(
+                        color: surfHighest,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         ),
-                        // Bottom gradient
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: 60,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  surfHigh.withValues(alpha: 0.85),
-                                ],
-                              ),
-                            ),
-                          ),
+                      ),
+                      errorWidget: (_, _, _) => Container(
+                        color: surfHighest,
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 32,
+                          color: cs.onSurfaceVariant,
                         ),
-                        // Category chip
-                        Positioned(
-                          top: 10,
-                          left: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: surfLowest.withValues(alpha: 0.88),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              cp.category.categoryLabel,
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: cp.category.categoryColor(context),
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                        // Completion badge
-                        Positioned(
-                          top: 10,
-                          right: 12,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: isCompleted
-                                ? Container(
-                                    key: const ValueKey('done'),
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: cs.primaryContainer,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.check_rounded,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  )
-                                : Container(
-                                    key: const ValueKey('todo'),
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: surfLowest.withValues(alpha: 0.75),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: cs.outlineVariant,
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                    // Content
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 10, 14, 13),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Hero(
-                            tag: 'cp_title_${cp.id}',
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Text(
-                                cp.title,
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: isCompleted
-                                      ? cs.primary
-                                      : cs.onSurface,
-                                  letterSpacing: -0.2,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          if (cp.subtitle.isNotEmpty) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              cp.subtitle,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: cs.onSurfaceVariant,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on_outlined,
-                                size: 13,
-                                color: cs.onSurfaceVariant,
-                              ),
-                              const SizedBox(width: 3),
-                              Flexible(
-                                child: Text(
-                                  cp.location,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    color: cs.onSurfaceVariant,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if (cp.time.trim().isNotEmpty) ...[
-                                const SizedBox(width: 10),
-                                Icon(
-                                  Icons.schedule_outlined,
-                                  size: 13,
-                                  color: cs.onSurfaceVariant,
-                                ),
-                                const SizedBox(width: 3),
-                                Flexible(
-                                  child: Text(
-                                    cp.time.trim(),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      color: cs.onSurfaceVariant,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                  ),
+                ),
+                // Bottom gradient
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 60,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          surfHigh.withValues(alpha: 0.85),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              )
-              .animate(delay: (40 * index).ms)
-              .fadeIn(duration: 350.ms)
-              .slideY(
-                begin: 0.12,
-                end: 0,
-                duration: 350.ms,
-                curve: Curves.easeOutCubic,
+                // Category chip
+                Positioned(
+                  top: 10,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: surfLowest.withValues(alpha: 0.88),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      cp.category.categoryLabel,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: cp.category.categoryColor(context),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+                // Completion badge
+                Positioned(
+                  top: 10,
+                  right: 12,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: isCompleted
+                        ? Container(
+                            key: const ValueKey('done'),
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: cs.primaryContainer,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check_rounded,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          )
+                        : Container(
+                            key: const ValueKey('todo'),
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: surfLowest.withValues(alpha: 0.75),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: cs.outlineVariant,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 13),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Hero(
+                    tag: 'cp_title_${cp.id}',
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Text(
+                        cp.title,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: isCompleted ? cs.primary : cs.onSurface,
+                          letterSpacing: -0.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  if (cp.subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      cp.subtitle,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: cs.onSurfaceVariant,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 13,
+                        color: cs.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          cp.location,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (cp.time.trim().isNotEmpty) ...[
+                        const SizedBox(width: 10),
+                        Icon(
+                          Icons.schedule_outlined,
+                          size: 13,
+                          color: cs.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            cp.time.trim(),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              color: cs.onSurfaceVariant,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
               ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
