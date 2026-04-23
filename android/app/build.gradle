@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.czaplicki.juwenalia_app"
+    namespace = "com.solvro.juwenalia_app"
     compileSdk = 36
 
     compileOptions {
@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.czaplicki.juwenalia_app"
+        applicationId = "com.solvro.juwenalia_app"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutterVersionCode.toInteger()

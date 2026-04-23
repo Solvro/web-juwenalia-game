@@ -12,7 +12,7 @@ import '../models/models.dart';
 
 /// The remote URL for data. Change this to point at a CMS endpoint later.
 const _remoteUrl =
-    'https://raw.githubusercontent.com/Antoni-Czaplicki/web-juwenalia-game/main/data/data.json';
+    'https://raw.githubusercontent.com/Solvro/web-juwenalia-game/main/assets/data/data.json';
 const _cacheKey = 'cached_data_json';
 const _cacheTimestampKey = 'cached_data_timestamp';
 const _localAssetPath = 'assets/data/data.json';
