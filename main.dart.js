@@ -29740,7 +29740,7 @@ bcY(a){var s=0,r=A.x(t.cG),q,p=2,o=[],n,m,l,k,j,i,h,g,f,e
 var $async$qo=A.r(function(b,c){if(b===1){o.push(c)
 s=p}for(;;)switch(s){case 0:p=4
 s=7
-return A.q(a.wA("GET",A.fp("https://raw.githubusercontent.com/Antoni-Czaplicki/web-juwenalia-game/main/data/data.json",0,null),null).zf(B.th),$async$qo)
+return A.q(a.wA("GET",A.fp("https://raw.githubusercontent.com/Solvro/web-juwenalia-game/main/assets/data/data.json",0,null),null).zf(B.th),$async$qo)
 case 7:n=c
 s=n.b===200?8:9
 break
