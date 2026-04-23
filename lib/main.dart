@@ -19,7 +19,7 @@ class JuwenaliaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Juwenalia PWr',
+      title: 'Juwenalia #WrocławRazem',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

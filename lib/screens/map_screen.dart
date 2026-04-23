@@ -1,21 +1,21 @@
-import 'dart:async';
-import 'dart:io' show Platform;
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/brand_gradient.dart';
+import '../widgets/platform_utils.dart';
 
-/// Map & Partners tab — real Google Maps view of the Juwenalia campus,
-/// with a graceful gradient hero fallback on platforms where the maps
-/// plugin isn't supported (web, macOS, Linux, Windows).
+enum _EmbeddedMapMode { live, plan }
+
+/// Map & Partners tab — uses a hybrid approach:
+/// - bundled zoomable festival plan as the dependable default on iOS/offline
+/// - native Google Map where live tiles are useful and available
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key, required this.data});
 
@@ -27,11 +27,9 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   static const _campus = LatLng(51.10795, 17.05887);
+  static const _planAspectRatio = 16 / 11;
+  static const _planAsset = 'assets/maps/festival_plan.png';
 
-  final Completer<GoogleMapController> _controller = Completer();
-  String? _selectedId;
-
-  // Light, branded map style — hides POI clutter, tints water/landscape.
   static const _mapStyle = '''
   [
     {"featureType":"poi","stylers":[{"visibility":"off"}]},
@@ -42,15 +40,77 @@ class _MapScreenState extends State<MapScreen> {
   ]
   ''';
 
-  /// google_maps_flutter supports Android, iOS, and web.
-  /// Desktop platforms (macOS, Windows, Linux) fall back to a gradient hero.
-  bool get _supportsNativeMaps {
-    if (kIsWeb) return true;
-    try {
-      return Platform.isAndroid || Platform.isIOS;
-    } catch (_) {
-      return false;
+  final TransformationController _planController = TransformationController();
+
+  GoogleMapController? _mapController;
+  String? _selectedId;
+  bool _locating = false;
+  Size _planViewport = Size.zero;
+  late _EmbeddedMapMode _preferredMode;
+
+  bool get _supportsNativeMaps =>
+      kIsWeb || PlatformUtils.isAndroid || PlatformUtils.isIOS;
+
+  bool get _canUseLiveMap => _supportsNativeMaps && !widget.data.isFromCache;
+
+  _EmbeddedMapMode get _effectiveMode =>
+      _canUseLiveMap ? _preferredMode : _EmbeddedMapMode.plan;
+
+  MapPoint? get _selectedPoint {
+    final id = _selectedId;
+    if (id == null) return null;
+    for (final point in widget.data.mapPoints) {
+      if (point.id == id) return point;
     }
+    return null;
+  }
+
+  _GeoBounds get _bounds {
+    final withCoords = widget.data.mapPoints
+        .where((p) => p.lat != null && p.lng != null)
+        .toList();
+    if (withCoords.isEmpty) {
+      return const _GeoBounds(
+        minLat: 51.1062,
+        maxLat: 51.1098,
+        minLng: 17.0562,
+        maxLng: 17.0624,
+      );
+    }
+
+    var minLat = withCoords.first.lat!;
+    var maxLat = withCoords.first.lat!;
+    var minLng = withCoords.first.lng!;
+    var maxLng = withCoords.first.lng!;
+
+    for (final point in withCoords.skip(1)) {
+      minLat = point.lat! < minLat ? point.lat! : minLat;
+      maxLat = point.lat! > maxLat ? point.lat! : maxLat;
+      minLng = point.lng! < minLng ? point.lng! : minLng;
+      maxLng = point.lng! > maxLng ? point.lng! : maxLng;
+    }
+
+    const latPadding = 0.0008;
+    const lngPadding = 0.0009;
+    return _GeoBounds(
+      minLat: minLat - latPadding,
+      maxLat: maxLat + latPadding,
+      minLng: minLng - lngPadding,
+      maxLng: maxLng + lngPadding,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _preferredMode = _EmbeddedMapMode.plan;
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    _planController.dispose();
+    super.dispose();
   }
 
   Set<Marker> _markers() => widget.data.mapPoints
@@ -85,18 +145,137 @@ class _MapScreenState extends State<MapScreen> {
     if (p.lat == null || p.lng == null) return;
     setState(() => _selectedId = p.id);
 
-    if (_supportsNativeMaps && _controller.isCompleted) {
-      final c = await _controller.future;
-      await c.animateCamera(
+    if (_effectiveMode == _EmbeddedMapMode.live && _mapController != null) {
+      await _mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(LatLng(p.lat!, p.lng!), 18),
       );
-    } else {
-      // Fallback: open Google Maps in the browser/native maps app.
-      final uri = Uri.parse(
-        'https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}',
-      );
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      return;
     }
+
+    _focusPlanPosition(p.lat!, p.lng!, scale: 2.2);
+  }
+
+  Future<void> _handleLocateMe() async {
+    if (_locating) return;
+    setState(() => _locating = true);
+
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showMessage('Włącz usługi lokalizacji, aby odnaleźć swoją pozycję.');
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        _showMessage('Brak zgody na lokalizację.');
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+          timeLimit: Duration(seconds: 8),
+        ),
+      );
+
+      if (!mounted) return;
+
+      final userLocation = LatLng(position.latitude, position.longitude);
+
+      if (_effectiveMode == _EmbeddedMapMode.live && _mapController != null) {
+        await _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(userLocation, 17.5),
+        );
+      }
+    } catch (_) {
+      _showMessage('Nie udało się pobrać Twojej lokalizacji.');
+    } finally {
+      if (mounted) {
+        setState(() => _locating = false);
+      }
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _zoomIn() {
+    if (_effectiveMode == _EmbeddedMapMode.live) {
+      _mapController?.animateCamera(CameraUpdate.zoomIn());
+      return;
+    }
+    _zoomPlan(1.2);
+  }
+
+  void _zoomOut() {
+    if (_effectiveMode == _EmbeddedMapMode.live) {
+      _mapController?.animateCamera(CameraUpdate.zoomOut());
+      return;
+    }
+    _zoomPlan(1 / 1.2);
+  }
+
+  void _zoomPlan(double factor) {
+    if (_planViewport == Size.zero) return;
+
+    final currentScale = _planController.value.getMaxScaleOnAxis();
+    final targetScale = (currentScale * factor).clamp(1.0, 4.0);
+    final currentCenterScene = _scenePointForViewportCenter();
+    final dx = _planViewport.width / 2 - currentCenterScene.dx * targetScale;
+    final dy = _planViewport.height / 2 - currentCenterScene.dy * targetScale;
+
+    _planController.value = Matrix4.diagonal3Values(targetScale, targetScale, 1)
+      ..setTranslationRaw(dx, dy, 0);
+  }
+
+  Offset _scenePointForViewportCenter() {
+    final center = Offset(_planViewport.width / 2, _planViewport.height / 2);
+    final inverse = Matrix4.inverted(_planController.value);
+    return MatrixUtils.transformPoint(inverse, center);
+  }
+
+  void _focusPlanPosition(double lat, double lng, {double scale = 2.2}) {
+    if (_planViewport == Size.zero) return;
+    final target = _projectToPlan(lat, lng, _planViewport);
+    final dx = _planViewport.width / 2 - target.dx * scale;
+    final dy = _planViewport.height / 2 - target.dy * scale;
+    _planController.value = Matrix4.diagonal3Values(scale, scale, 1)
+      ..setTranslationRaw(dx, dy, 0);
+  }
+
+  void _resetPlanView() {
+    _planController.value = Matrix4.identity();
+  }
+
+  Offset _projectToPlan(double lat, double lng, Size size) {
+    final bounds = _bounds;
+    final lngRange = (bounds.maxLng - bounds.minLng).abs();
+    final latRange = (bounds.maxLat - bounds.minLat).abs();
+    final safeLngRange = lngRange == 0 ? 1 : lngRange;
+    final safeLatRange = latRange == 0 ? 1 : latRange;
+
+    const horizontalPadding = 78.0;
+    const verticalPadding = 62.0;
+    final usableWidth = size.width - horizontalPadding * 2;
+    final usableHeight = size.height - verticalPadding * 2;
+
+    final x = ((lng - bounds.minLng) / safeLngRange).clamp(0.0, 1.0);
+    final y = ((bounds.maxLat - lat) / safeLatRange).clamp(0.0, 1.0);
+
+    return Offset(
+      horizontalPadding + usableWidth * x,
+      verticalPadding + usableHeight * y,
+    );
   }
 
   @override
@@ -106,11 +285,7 @@ class _MapScreenState extends State<MapScreen> {
     return CustomScrollView(
       slivers: [
         _buildHeader(context, cs),
-        SliverToBoxAdapter(
-          child: _supportsNativeMaps
-              ? _buildMap(context)
-              : _buildMapFallback(context, cs),
-        ),
+        SliverToBoxAdapter(child: _buildMapPanel(context, cs)),
         SliverToBoxAdapter(child: _buildLegend(context, cs)),
         if (widget.data.partners.isNotEmpty) ...[
           SliverToBoxAdapter(child: _buildPartnersHeader(cs)),
@@ -159,132 +334,282 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  // ── Native map (Android / iOS) ────────────────────────────────────────────
+  Widget _buildMapPanel(BuildContext context, ColorScheme cs) {
+    final isPlanMode = _effectiveMode == _EmbeddedMapMode.plan;
 
-  Widget _buildMap(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: SizedBox(
-          height: 320,
-          child: GoogleMap(
-            initialCameraPosition: const CameraPosition(
-              target: _campus,
-              zoom: 16,
-            ),
-            style: _mapStyle,
-            markers: _markers(),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            compassEnabled: false,
-            mapToolbarEnabled: false,
-            onMapCreated: _controller.complete,
-          ),
-        ),
-      ).animate().fadeIn(duration: 400.ms),
-    );
-  }
-
-  // ── Fallback hero (web/macOS/Linux/Windows) ───────────────────────────────
-
-  Widget _buildMapFallback(BuildContext context, ColorScheme cs) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: AspectRatio(
-        aspectRatio: 16 / 11,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Brand gradient backdrop — Figma cyan→teal→green vibe.
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: AppTheme.brandRadialGradient,
-                ),
-              ),
-              // Subtle dotted overlay to imply a "map".
-              CustomPaint(
-                painter: _DotGridPainter(
-                  color: Colors.white.withValues(alpha: 0.12),
-                ),
-              ),
-              // Centered call-to-action.
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.map_rounded,
-                          size: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        'Mapa Juwenaliów',
-                        style: GoogleFonts.spaceGrotesk(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 20,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Kampus Politechniki Wrocławskiej',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          fontSize: 13,
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: () => launchUrl(
-                          Uri.parse(
-                            'https://www.google.com/maps/search/?api=1&query=${_campus.latitude},${_campus.longitude}',
-                          ),
-                          mode: LaunchMode.externalApplication,
-                        ),
-                        icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                        label: const Text('Otwórz w Mapach Google'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 0.95),
-                          foregroundColor: AppTheme.brandTeal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 12,
-                          ),
-                          textStyle: GoogleFonts.spaceGrotesk(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: _planAspectRatio,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceContainerOf(context),
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 240),
+                      child: isPlanMode
+                          ? _buildPlanMap(context)
+                          : _buildLiveMap(context),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    right: 12,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_canUseLiveMap) _buildModeToggle(context),
+                        const Spacer(),
+                        _buildMapControls(context),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ).animate().fadeIn(duration: 400.ms),
           ),
-        ).animate().fadeIn(duration: 400.ms),
+          const SizedBox(height: 12),
+          Text(
+            isPlanMode
+                ? _canUseLiveMap
+                      ? 'Plan festiwalu otwiera się jako widok domyślny. Jeśli masz internet, możesz przełączyć się na mapę na żywo.'
+                      : 'Plan festiwalu działa offline i zawsze będzie dostępny nawet bez internetu.'
+                : 'Mapa na żywo pokazuje punkty na kampusie. Gdyby Google Maps znowu nie chciało się załadować, wrócisz jednym tapnięciem do planu.',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              color: cs.onSurfaceVariant,
+              height: 1.45,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // ── Legend ────────────────────────────────────────────────────────────────
+  Widget _buildLiveMap(BuildContext context) {
+    return GoogleMap(
+      key: const ValueKey('live-map'),
+      initialCameraPosition: const CameraPosition(target: _campus, zoom: 16),
+      style: _mapStyle,
+      markers: _markers(),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      compassEnabled: false,
+      mapToolbarEnabled: false,
+      onMapCreated: (controller) => _mapController = controller,
+      onTap: (_) => setState(() => _selectedId = null),
+    );
+  }
+
+  Widget _buildPlanMap(BuildContext context) {
+    return LayoutBuilder(
+      key: const ValueKey('plan-map'),
+      builder: (context, constraints) {
+        _planViewport = Size(constraints.maxWidth, constraints.maxHeight);
+        final selectedPoint = _selectedPoint;
+
+        return InteractiveViewer(
+          transformationController: _planController,
+          minScale: 1,
+          maxScale: 4,
+          boundaryMargin: const EdgeInsets.all(120),
+          child: SizedBox(
+            width: constraints.maxWidth,
+            height: constraints.maxHeight,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(_planAsset, fit: BoxFit.cover),
+                ),
+                ...widget.data.mapPoints
+                    .where((p) => p.lat != null && p.lng != null)
+                    .map((point) {
+                      final offset = _projectToPlan(
+                        point.lat!,
+                        point.lng!,
+                        _planViewport,
+                      );
+                      final selected = point.id == _selectedId;
+                      final color = point.type.mapPointColor(context);
+                      final icon = point.type.mapPointIcon;
+
+                      return Positioned(
+                        left: offset.dx - 17,
+                        top: offset.dy - 17,
+                        child: GestureDetector(
+                          onTap: () => _focus(point),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            width: selected ? 36 : 34,
+                            height: selected ? 36 : 34,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.95),
+                                width: selected ? 2.5 : 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.35),
+                                  blurRadius: selected ? 16 : 10,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Icon(icon, size: 16, color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }),
+                if (selectedPoint != null)
+                  Positioned(
+                    left: 18,
+                    top: 18,
+                    child: IgnorePointer(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 220),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.88),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              selectedPoint.name,
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black.withValues(alpha: 0.84),
+                              ),
+                            ),
+                            if (selectedPoint.description != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                selectedPoint.description!,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  color: Colors.black.withValues(alpha: 0.65),
+                                  height: 1.35,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModeToggle(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerHighOf(context).withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ModeChip(
+            label: 'Plan',
+            selected: _effectiveMode == _EmbeddedMapMode.plan,
+            onTap: () => setState(() => _preferredMode = _EmbeddedMapMode.plan),
+          ),
+          const SizedBox(width: 4),
+          _ModeChip(
+            label: 'Na żywo',
+            selected: _effectiveMode == _EmbeddedMapMode.live,
+            onTap: _canUseLiveMap
+                ? () => setState(() => _preferredMode = _EmbeddedMapMode.live)
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapControls(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerHighOf(context).withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _MapControlButton(
+            icon: Icons.add_rounded,
+            tooltip: 'Przybliż',
+            onTap: _zoomIn,
+          ),
+          const SizedBox(height: 4),
+          _MapControlButton(
+            icon: Icons.remove_rounded,
+            tooltip: 'Oddal',
+            onTap: _zoomOut,
+          ),
+          if (_effectiveMode == _EmbeddedMapMode.live) ...[
+            const SizedBox(height: 4),
+            _MapControlButton(
+              icon: _locating
+                  ? Icons.more_horiz_rounded
+                  : Icons.my_location_rounded,
+              tooltip: 'Moja lokalizacja',
+              onTap: _handleLocateMe,
+            ),
+          ] else ...[
+            const SizedBox(height: 4),
+            _MapControlButton(
+              icon: Icons.center_focus_strong_rounded,
+              tooltip: 'Resetuj plan',
+              onTap: _resetPlanView,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 
   Widget _buildLegend(BuildContext context, ColorScheme cs) {
     if (widget.data.mapPoints.isEmpty) return const SizedBox.shrink();
@@ -389,8 +714,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
-
-  // ── Partners ──────────────────────────────────────────────────────────────
 
   Widget _buildPartnersHeader(ColorScheme cs) {
     return Padding(
@@ -499,24 +822,92 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-/// Subtle dotted backdrop — cheap "map texture" for the gradient fallback.
-class _DotGridPainter extends CustomPainter {
-  _DotGridPainter({required this.color});
+class _GeoBounds {
+  const _GeoBounds({
+    required this.minLat,
+    required this.maxLat,
+    required this.minLng,
+    required this.maxLng,
+  });
 
-  final Color color;
+  final double minLat;
+  final double maxLat;
+  final double minLng;
+  final double maxLng;
+}
+
+class _ModeChip extends StatelessWidget {
+  const _ModeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    const step = 22.0;
-    const radius = 1.2;
-    for (var x = step / 2; x < size.width; x += step) {
-      for (var y = step / 2; y < size.height; y += step) {
-        canvas.drawCircle(Offset(x, y), radius, paint);
-      }
-    }
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: BoxDecoration(
+          color: selected
+              ? cs.primary.withValues(alpha: 0.16)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: selected ? cs.primary : cs.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
   }
+}
+
+class _MapControlButton extends StatelessWidget {
+  const _MapControlButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: cs.surface.withValues(alpha: 0.24),
+            ),
+            child: Icon(icon, size: 20, color: cs.onSurface),
+          ),
+        ),
+      ),
+    );
+  }
 }

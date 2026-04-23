@@ -22,6 +22,7 @@ class AppData {
   final int goal;
   final String surveyUrl;
   final String rewardDescription;
+  final String? rewardPin;
   final List<Checkpoint> checkpoints;
   final List<NewsItem> news;
   final List<ScheduleDay> schedule;
@@ -34,6 +35,7 @@ class AppData {
     required this.goal,
     required this.surveyUrl,
     required this.rewardDescription,
+    this.rewardPin,
     required this.checkpoints,
     this.news = const [],
     this.schedule = const [],
@@ -51,6 +53,7 @@ class AppData {
       goal: json['goal'] as int,
       surveyUrl: json['survey_url'] as String,
       rewardDescription: json['reward_description'] as String,
+      rewardPin: (json['reward_pin'] as String?)?.trim(),
       checkpoints: (json['checkpoints'] as List)
           .cast<Map<String, dynamic>>()
           .map((j) => Checkpoint.fromJson(j))

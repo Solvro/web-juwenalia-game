@@ -53,7 +53,7 @@ class DesktopSidebar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BrandGradientText(
-                      'JUWENALIA WROCŁAW',
+                      'JUWENALIA #WrocławRazem',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -117,7 +117,7 @@ class _SidebarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = isDark ? cs.primary : cs.primaryContainer;
+    final activeColor = cs.primary;
     final color = selected ? activeColor : cs.onSurfaceVariant;
 
     return Padding(
@@ -146,7 +146,7 @@ class _SidebarItem extends StatelessWidget {
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                      color: selected ? cs.onSurface : cs.onSurfaceVariant,
+                      color: color,
                     ),
                   ),
                 ),

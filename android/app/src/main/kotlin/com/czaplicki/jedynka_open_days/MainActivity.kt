@@ -1,4 +1,4 @@
-package com.czaplicki.jedynka_open_days
+package com.czaplicki.juwenalia_app
 
 import io.flutter.embedding.android.FlutterActivity
 

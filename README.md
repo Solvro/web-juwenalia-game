@@ -1,6 +1,6 @@
-# web_juwenalia_game
+# juwenalia_app
 
-Flutter app for Juwenalia PWr.
+Flutter app for Juwenalia #WrocławRazem.
 
 ## Build-time data sync
 

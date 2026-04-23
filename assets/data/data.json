@@ -2,6 +2,7 @@
   "version": 2,
   "survey_url": "https://juwenalia.pwr.edu.pl",
   "reward_description": "Odwiedź minimum 6 stref festiwalowych, zeskanuj kody QR przy każdej z nich i odbierz limitowany gadżet Juwenaliowy 2026 (koszulka + tote bag + naszywka) w Punkcie Informacyjnym przy wejściu głównym.",
+  "reward_pin": "2026",
   "goal": 6,
   "news": [
     {
@@ -91,7 +92,7 @@
   ],
   "schedule": [
     {
-      "label": "PIĄTEK, 22 MAJA",
+      "label": "ŚRODA, 20 MAJA",
       "venue": "Kampus Politechniki Wrocławskiej",
       "events": [
         {
@@ -153,7 +154,7 @@
       ]
     },
     {
-      "label": "SOBOTA, 23 MAJA",
+      "label": "CZWARTEK, 21 MAJA",
       "venue": "Kampus Politechniki Wrocławskiej",
       "events": [
         {
@@ -219,68 +220,6 @@
           "stage": "Scena Klubowa",
           "time": "01:30",
           "image_url": "https://picsum.photos/seed/modeselektor/800/600"
-        }
-      ]
-    },
-    {
-      "label": "NIEDZIELA, 24 MAJA",
-      "venue": "Kampus Politechniki Wrocławskiej (dzień studencki, wstęp wolny)",
-      "events": [
-        {
-          "id": "e16",
-          "artist": "Akademickie Koło Naukowe – pokazy",
-          "genre": "Showcase / Edukacja",
-          "stage": "Scena Akustyczna",
-          "time": "14:00",
-          "image_url": "https://picsum.photos/seed/akn/800/600"
-        },
-        {
-          "id": "e17",
-          "artist": "Chór Politechniki Wrocławskiej",
-          "genre": "Chór / Klasyka",
-          "stage": "Scena Akustyczna",
-          "time": "15:30",
-          "image_url": "https://picsum.photos/seed/chor/800/600"
-        },
-        {
-          "id": "e18",
-          "artist": "Big Band PWr",
-          "genre": "Jazz / Big Band",
-          "stage": "Scena Główna",
-          "time": "17:00",
-          "image_url": "https://picsum.photos/seed/bigband/800/600"
-        },
-        {
-          "id": "e19",
-          "artist": "Brodka",
-          "genre": "Indie / Alt-Pop",
-          "stage": "Scena Główna",
-          "time": "19:00",
-          "image_url": "https://picsum.photos/seed/brodka/800/600"
-        },
-        {
-          "id": "e20",
-          "artist": "Kortez",
-          "genre": "Singer-Songwriter",
-          "stage": "Scena Akustyczna",
-          "time": "20:00",
-          "image_url": "https://picsum.photos/seed/kortez/800/600"
-        },
-        {
-          "id": "e21",
-          "artist": "Quebonafide",
-          "genre": "Rap / Hip-Hop",
-          "stage": "Scena Główna",
-          "time": "21:00",
-          "image_url": "https://picsum.photos/seed/quebonafide/800/600"
-        },
-        {
-          "id": "e22",
-          "artist": "Closing Set: Włodi b2b The Dumplings",
-          "genre": "Elektronika",
-          "stage": "Scena Klubowa",
-          "time": "23:00",
-          "image_url": "https://picsum.photos/seed/closingset/800/600"
         }
       ]
     }

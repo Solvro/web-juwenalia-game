@@ -1,4 +1,4 @@
-// Additional data models for the Juwenalia PWR app.
+// Additional data models for the Juwenalia #WrocławRazem app.
 // Checkpoint model remains in checkpoint.dart (uses json_annotation).
 
 class NewsItem {

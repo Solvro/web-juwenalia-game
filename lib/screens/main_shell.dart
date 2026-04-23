@@ -132,10 +132,8 @@ class _MainShellState extends State<MainShell> {
 
   Widget _buildMobileShell(AsyncSnapshot<AppData> snapshot) {
     final data = snapshot.data;
-
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
-      // We render the nav over the body for the iOS liquid-glass look.
       extendBody: true,
       body: _buildBody(snapshot),
       bottomNavigationBar: GlassBottomNav(

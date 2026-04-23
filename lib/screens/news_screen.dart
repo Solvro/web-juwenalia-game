@@ -112,7 +112,7 @@ class NewsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BrandGradientText(
-                    'JUWENALIA WROCŁAW',
+                    'JUWENALIA #WrocławRazem',
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,

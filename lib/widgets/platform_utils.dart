@@ -24,6 +24,15 @@ class PlatformUtils {
     }
   }
 
+  static bool get isAndroid {
+    if (kIsWeb) return false;
+    try {
+      return Platform.isAndroid;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// "Apple" platforms — iOS or macOS — where translucent / liquid-glass
   /// chrome looks native.
   static bool get isApple => isIOS || isMacOS;

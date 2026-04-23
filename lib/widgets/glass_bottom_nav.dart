@@ -1,17 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
-import 'platform_utils.dart';
 
-/// A bottom navigation bar with a centered floating QR scan button.
-///
-/// On iOS / macOS we render a translucent "liquid-glass" surface with a
-/// strong backdrop blur (matching iOS 26's UIKit material). On other
-/// platforms we fall back to a near-opaque Material surface so that
-/// readability stays consistent.
+/// Bottom navigation bar with a centered floating QR scan button, used on
+/// non-iOS platforms. iOS goes through a native UIKit view so it can use
+/// the real iOS 26 liquid-glass material.
 class GlassBottomNav extends StatelessWidget {
   const GlassBottomNav({
     super.key,
@@ -35,66 +29,56 @@ class GlassBottomNav extends StatelessWidget {
     );
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final useGlass = PlatformUtils.isApple;
-
     final surface = AppTheme.surfaceContainerOf(context);
-    final glassTint = surface.withValues(alpha: useGlass ? 0.55 : 0.96);
 
     return SafeArea(
       top: false,
       child: Padding(
         // Floats above the screen edge — gives the QR FAB room to overhang.
         padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: useGlass
-                ? ImageFilter.blur(sigmaX: 28, sigmaY: 28)
-                : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-            child: Container(
-              height: 64,
-              decoration: BoxDecoration(
-                color: glassTint,
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.06)
-                      : Colors.black.withValues(alpha: 0.06),
-                  width: 1,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: surface.withValues(alpha: 0.96),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.06,
+              ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.10),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: SizedBox(
+            height: 64,
+            child: Row(
+              children: [
+                _NavItem(
+                  destination: destinations[0],
+                  selected: selectedIndex == 0,
+                  onTap: () => onSelect(0),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.10),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  _NavItem(
-                    destination: destinations[0],
-                    selected: selectedIndex == 0,
-                    onTap: () => onSelect(0),
-                  ),
-                  _NavItem(
-                    destination: destinations[1],
-                    selected: selectedIndex == 1,
-                    onTap: () => onSelect(1),
-                  ),
-                  _ScanButton(onTap: onScanQr),
-                  _NavItem(
-                    destination: destinations[2],
-                    selected: selectedIndex == 2,
-                    onTap: () => onSelect(2),
-                  ),
-                  _NavItem(
-                    destination: destinations[3],
-                    selected: selectedIndex == 3,
-                    onTap: () => onSelect(3),
-                  ),
-                ],
-              ),
+                _NavItem(
+                  destination: destinations[1],
+                  selected: selectedIndex == 1,
+                  onTap: () => onSelect(1),
+                ),
+                _ScanButton(onTap: onScanQr),
+                _NavItem(
+                  destination: destinations[2],
+                  selected: selectedIndex == 2,
+                  onTap: () => onSelect(2),
+                ),
+                _NavItem(
+                  destination: destinations[3],
+                  selected: selectedIndex == 3,
+                  onTap: () => onSelect(3),
+                ),
+              ],
             ),
           ),
         ),
@@ -128,32 +112,54 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = isDark ? cs.primary : cs.primaryContainer;
+    final activeColor = cs.primary;
     final color = selected ? activeColor : cs.onSurfaceVariant;
+    final highlight = activeColor.withValues(
+      alpha: Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.12,
+    );
 
     return Expanded(
-      child: InkResponse(
-        onTap: onTap,
-        radius: 28,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              selected ? destination.selectedIcon : destination.icon,
-              size: 22,
-              color: color,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: InkResponse(
+          onTap: onTap,
+          radius: 28,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: selected ? highlight : Colors.transparent,
+              borderRadius: BorderRadius.circular(18),
             ),
-            const SizedBox(height: 2),
-            Text(
-              destination.label,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 10,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                color: color,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  selected ? destination.selectedIcon : destination.icon,
+                  size: 22,
+                  color: color,
+                ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      destination.label,
+                      maxLines: 1,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 10,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
