@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../checkpoint.dart';
 import '../models/models.dart';
+import 'connectivity_service.dart';
 import 'directus.dart';
 
 // ── Persistence keys ─────────────────────────────────────────────────────────
@@ -370,6 +371,7 @@ Future<AppData> fetchData(
 }) async {
   try {
     final data = await _fetchFromDirectus();
+    ConnectivityService.instance.reportFetchSuccess();
     final prefs = await SharedPreferences.getInstance();
 
     // Edition-reset: if the new payload is for a different edition than
@@ -389,6 +391,7 @@ Future<AppData> fetchData(
 
     return data;
   } catch (e) {
+    ConnectivityService.instance.reportFetchFailure();
     if (forceNetwork) rethrow;
     // else fall through to cache/asset
   }
