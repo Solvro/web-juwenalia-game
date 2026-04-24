@@ -1,551 +1,500 @@
 {
-  "version": 2,
-  "survey_url": "https://juwenalia.pwr.edu.pl",
-  "reward_description": "Odwiedź minimum 6 stref festiwalowych, zeskanuj kody QR przy każdej z nich i odbierz limitowany gadżet Juwenaliowy 2026 (koszulka + tote bag + naszywka) w Punkcie Informacyjnym przy wejściu głównym.",
-  "reward_pin": "2026",
-  "goal": 6,
+  "config": {
+    "edition": "2026",
+    "event_starts_at": "2026-05-20T13:00:00.000Z",
+    "event_ends_at": "2026-05-22T00:00:00.000Z",
+    "game_enabled_override": false,
+    "game_goal": 14,
+    "reward_description": "<p>Gratulacje! Zebrałeś wszystkie pieczątki. Pokaż ten ekran na punkcie info, aby odebrać gadżet.</p>",
+    "reward_pin": "2026",
+    "game_terms": "<h3>Regulamin Gry Terenowej</h3><p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p><p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
+    "festival_plan_url": "https://cms.juwenalia.solvro.pl/assets/1f213fbf-23b4-4327-9d62-a3685a0d205e",
+    "data_version": "2"
+  },
+  "checkpoints": [
+    {
+      "id": 1,
+      "qr_code": "JUWE-CP-01-MAIN-STAGE",
+      "title": "Scena Główna",
+      "description": "<p>Serce festiwalu. Tu odbywają się największe koncerty — zobacz się z headlinerami i złap pieczątkę.</p>",
+      "category": "other",
+      "image": "",
+      "location": ""
+    },
+    {
+      "id": 2,
+      "qr_code": "JUWE-CP-02-SOLVRO",
+      "title": "Stoisko Solvro",
+      "description": "<p>KN Solvro — twórcy tej aplikacji. Zagaduj, sprawdź projekty i zdobądź pieczątkę.</p>",
+      "category": "other",
+      "image": "",
+      "location": ""
+    },
+    {
+      "id": 3,
+      "qr_code": "JUWE-CP-03-FOOD",
+      "title": "Strefa Foodtrucków",
+      "description": "<p>Zrób sobie przerwę na jedzenie. Przy kasach foodtrucków znajdziesz kod QR do zeskanowania.</p>",
+      "category": "other",
+      "image": "",
+      "location": ""
+    },
+    {
+      "id": 4,
+      "qr_code": "JUWE-CP-04-CHILL",
+      "title": "Strefa Chillout",
+      "description": "<p>Hamaki, leżaki i cisza — idealne miejsce na przerwę między koncertami. Pieczątka czeka przy wejściu.</p>",
+      "category": "other",
+      "image": "",
+      "location": ""
+    },
+    {
+      "id": 5,
+      "qr_code": "JUWE-CP-05-INFO",
+      "title": "Punkt Informacyjny",
+      "description": "<p>Wszystkie pytania? Idealne miejsce, żeby zacząć. Tu też odbierzesz nagrodę za ukończenie gry.</p>",
+      "category": "other",
+      "image": "",
+      "location": ""
+    }
+  ],
   "news": [
     {
-      "id": "n1",
-      "title": "Dawid Podsiadło zagra na zamknięciu Juwenaliów!",
-      "body": "Mamy to! Dawid Podsiadło dołącza do line-up'u i zagra na Scenie Głównej w sobotę o 21:00. Spodziewajcie się największych hitów oraz nowych utworów z najnowszej płyty. To będzie magiczny wieczór!",
-      "category": "lineup",
-      "date": "2026-04-15"
+      "id": "6",
+      "title": "Formularz Wolontariuszy",
+      "body": "<div class=\"xdj266r x14z9mp xat24cr x1lziwak x1vvkbs x126k92a\">\n<div dir=\"auto\">Stać w tłumie, czy nim zarządzać? Wyb&oacute;r jest prosty. Otwieramy rekrutację Wolontariuszy na Juwenalia 2026&nbsp;<span class=\"html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 x1ypdohk xt0psk2 x3ct3a4 xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/watch/hashtag/wroc%C5%82awrazem?__eep__=6%2F&amp;__cft__[0]=AZatdgfh82yu2W6BmGpn31WV0HIdRzizZdZ57BqY_oNtbMgEcyCaEu7-fHrOoZ_w7QA8qIlygP-hYXrG9e9jzUnkAftO-qb-5H-HlipBnlCkvYt51mRcmBcb2MrhMwwXfVwOY_lxvzC0YXC1kEbpJBbmONuGJCeVg7PITwNWiaaOVUFJXtYxq36s-J-Za3uiUPdmb1S5YKxZ2qGTr7yJ3RMF&amp;__tn__=*NK-R\">#Wrocławrazem</a></span>!</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Jeśli chcesz sprawdzić się w akcji i dołożyć swoją cegiełkę do tego, co wydarzy się 20 i 21 maja przy Tarczyński Arena Wrocław - to ten moment. Zajmij swoje miejsce, nim ktoś Cię uprzedzi:</div>\n<div dir=\"auto\"><span class=\"html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 x1ypdohk xt0psk2 x3ct3a4 xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://l.facebook.com/l.php?u=https%3A%2F%2Fforms.gle%2FucuvY7yCuCbrGe4G8%3Ffbclid%3DIwZXh0bgNhZW0CMTAAYnJpZBExNG4wdnhRY2E1dzlBVjVHN3NydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR5kf78UgjBTqskQ5wLsYmGTyevuck--BVvooylK6uKR6rl4lC80ufUqrHYYIg_aem_ku0SkCIdqG7OFc8GpCMSiQ&amp;h=AT4m-KCHrh7ZldJmY3QEIN9k4DCHyAWPFdVXMvjn2uh9276vpuZLmQIyxJBLfDai5F_C59PURVDaOcmFjmCSxRoDsW6Sit-gbaz1byapzFKL7UoLq8RG-eapTALJFmTlynNEVv3dtLCVVywLBQ-aDwNcsgnAuqgHxYiDfMo&amp;__tn__=-UK-R&amp;c[0]=AT7x8ZtMKL0hUPkadFIxdWjozlJBBFZtDMpRXN9jJJTtbA4Nb-Udru9hTa_oUnoPDst5cbl5JqroQtCOnpSXXOEZ4Q0oJmuvC-lWb2ng3yvBDE3qxiukzMdhK_WbNrVJ9SmC_BuBsVXZepyVxebyZFfZgSDlroTGsbGRaVqI3i4FJC7EsETm69OXVccoCLucMQrr8fbFVv_ywr85KRgvtNZBnMhHPTbZOqr0t-rMCA\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">https://forms.gle/ucuvY7yCuCbrGe4G8</a></span></div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Zgłoszenia zbieramy do 05.04 lub do wyczerpania miejsc</div>\n</div>",
+      "category": "general",
+      "date": "2026-04-08T17:51:47.165Z",
+      "image_url": ""
     },
     {
-      "id": "n2",
-      "title": "Bilety Early Bird wyprzedane w 4 godziny!",
-      "body": "Pula 1500 biletów Early Bird została wyprzedana w rekordowym czasie. Druga pula (regularna, 89 zł) rusza dziś o 18:00 w aplikacji eBilet. Trzeci dzień (niedziela) pozostaje darmowy dla studentów PWr za okazaniem legitymacji.",
-      "category": "tickets",
-      "date": "2026-04-12"
+      "id": "5",
+      "title": "Strona Internetowa",
+      "body": "<div class=\"xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a\">\n<div dir=\"auto\">🔥 Oficjalna strona Juwenali&oacute;w 2025 <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#WrocławRazem</a></span> 🔥</div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Wiemy, że już nie możecie się doczekać, co dla Was przygotowaliśmy!&nbsp;<span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\">🤩</span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Żebyście nie pogubili się w gąszczu ogłoszeń o planowanych artystach i atrakcjach, przygotowaliśmy dla Was oficjalną stronę Juwenali&oacute;w 2025 <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#WrocławRazem</a></span>, gdzie zawsze znajdziecie najbardziej aktualne informacje o wydarzeniu&nbsp;<span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\">📰</span><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\">🌐</span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Strona została stworzona z pomocą <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/knsolvro?__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=-]K-R\"><span class=\"xjp7ctv\">KN Solvro</span></a></span>! Bardzo dziękujemy za pomoc!</div>\n<div dir=\"auto\">Na co czekacie? Wpadajcie na naszą stronę internetową i dodajcie ją jako zakładkę, żeby żadne informacje Was nie ominęły!&nbsp;<span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\">👇</span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#WrocławRazem</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenaliawroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#JuwenaliaWrocław</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia2025?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#Juwenalia2025</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#Juwenalia</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZWj103lUc0SfuDbZGbFgm4KqhcO11BkH4yCvVeKFJWXc9JrmGwM_GaLJBNJftXdiH8eDoABbvU5_DY7Z4EXKkAYvFeqcpbtTvR2Tie5gQLk6Ofut7SjQ2OpxEMaktd_tYKtIrPoP-S6GFj3lzGOvn4sQ0bqQRn3ZKW57V60DFOu3Fnv4AfnrKfTYagHMVAXLJc&amp;__tn__=*NK-R\">#Wrocław</a></span></div>\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><br><a href=\"https://www.facebook.com/photo/?fbid=122213469104189136&amp;set=gm.1029136722660029&amp;idorvanity=1006140808292954\" target=\"_blank\" rel=\"noopener\">ZOBACZ POST NA FACEBOOKU</a></span></div>\n</div>",
+      "category": "general",
+      "date": "2025-05-11T13:24:55.679Z",
+      "image_url": ""
     },
     {
-      "id": "n3",
-      "title": "Pełen harmonogram już dostępny",
-      "body": "Opublikowaliśmy pełny harmonogram trzech dni festiwalu. 3 sceny, 24 artystów, ponad 30 godzin muzyki. Sprawdźcie zakładkę Harmonogram, żeby zaplanować swój festiwalowy weekend!",
-      "category": "schedule",
-      "date": "2026-04-08"
+      "id": "4",
+      "title": "Konkurs Survival Race",
+      "body": "<div class=\"xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a\">\n<div dir=\"auto\">Cześć sportowe świry! <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tad/2/16/26f9_1f3fe_200d_2640.png\" alt=\"⛹🏾&zwj;♀️\" width=\"16\" height=\"16\"></span><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tb8/2/16/1f3cc_1f3fe_200d_2642.png\" alt=\"🏌🏾&zwj;♂️\" width=\"16\" height=\"16\"></span><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tba/2/16/1f6b4_1f3fb.png\" alt=\"🚴🏻\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Przybiegamy do Was z konkursem od naszego partnera <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/SurvivalRace?__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=-]K-R\"><span class=\"xjp7ctv\">Survival Race</span></a></span>. Możecie wygrać jedną z 6 wejści&oacute;wek na dowolny wybrany przez Was dystans na najbliższym Survival Race 2025 we Wrocławiu <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tb/2/16/1f4aa.png\" alt=\"💪\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Wystarczy że:</div>\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t77/2/16/1f3cb_200d_2640.png\" alt=\"🏋️&zwj;♀️\" width=\"16\" height=\"16\"></span> zaobserwujesz nasze konto @juwewroclawrazem i konto @SurvivalRace\\</div>\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t5/2/16/1f938_200d_2642.png\" alt=\"🤸&zwj;♂️\" width=\"16\" height=\"16\"></span> polubisz ten post <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/ted/2/16/2764.png\" alt=\"❤️\" width=\"16\" height=\"16\"></span></div>\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t6d/2/16/1f9d8_1f3fb_200d_2640.png\" alt=\"🧘🏻&zwj;♀️\" width=\"16\" height=\"16\"></span> udostępnisz go na swoim story (nie zapomnij nas oznaczyć!)</div>\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tc2/2/16/1f93e.png\" alt=\"🤾\" width=\"16\" height=\"16\"></span> w komentarzu pod tym postem za pomocą rymu opiszesz sw&oacute;j ulubiony sport</div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Puśćcie wodze fantazji i pokażcie czemu Wasz sport jest najlepszy! <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tdc/2/16/1f3c5.png\" alt=\"🏅\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Macie 24 godziny (09.05.2025 20:00), więc nie ma co zwlekać! <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t38/2/16/23f3.png\" alt=\"⏳\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Regulamin konkursu znajdziecie tutaj: LINK</div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=*NK-R\">#WrocławRazem</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenaliawroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=*NK-R\">#JuwenaliaWrocław</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia2025?__eep__=6&amp;__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=*NK-R\">#Juwenalia2025</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia?__eep__=6&amp;__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=*NK-R\">#Juwenalia</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZVJ_Uj0Fqrwy7hA99uwIQ6UUjLqo5PlJUfhiiEJqrRMzoA2EBWvkPYLxjbljl9TcZe1G9TXIY1UCrws3luDOc_mCSnb8r7TTSvLSm4JO1aU8WJpDvrgc76sfEFUteNgas-45ho_kBnc8V1ljDj7763O6Jx9BC1wt6ZzLzX39NRJEQ&amp;__tn__=*NK-R\">#Wrocław</a></span></div>\n</div>",
+      "category": "general",
+      "date": "2025-05-08T18:47:33.281Z",
+      "image_url": ""
     },
     {
-      "id": "n4",
-      "title": "Gra Terenowa z nagrodami startuje!",
-      "body": "Od piątku rusza nasza coroczna Gra Terenowa. Zbierz 6 pieczątek z różnych stref i odbierz limitowany pakiet Juwenaliowy 2026: koszulkę, tote bag i naszywkę. Tylko 500 sztuk dostępnych!",
-      "category": "game",
-      "date": "2026-04-05"
+      "id": "3",
+      "title": "Akredytacja Medialna",
+      "body": "<div class=\"xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tfc/2/16/1f4f7.png\" alt=\"📷\" width=\"16\" height=\"16\"></span> OGŁOSZENIE DLA MEDI&Oacute;W <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tfc/2/16/1f4f7.png\" alt=\"📷\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Chcecie relacjonować Juwenalia 2025 <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#WrocławRazem</a></span> na korzystnych warunkach, mieć możliwość zbudowania atrakcyjnego portfolio oraz czerpać informacje z pierwszej ręki? Udostępniamy właśnie formularz akredytacyjny dla dziennikarzy, fotograf&oacute;w i przedstawicieli medi&oacute;w:</div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://docs.google.com/forms/d/15zWyaFeg2xScOc-u2SBDns3Dpc4-u0CR_aPFSDzGSU0/viewform?edit_requested=true&amp;fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExRVozTzVLdzMyb1M5MkRGRAEe4IbmgefTdFx3nAfplE-_RMQ8x6PguPmdVp6bvaHE0foN0l6RNenedLZD8LI_aem_zfOBHAKjY582h5RM4Nn9TQ\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">https://docs.google.com/.../15zWyaFeg2xScOc.../viewform...</a></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Zgłoście się już teraz i wykorzystajcie korzyści płynące z akredytacji medialnej <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t7f/2/16/1f31f.png\" alt=\"🌟\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/te4/2/16/1f6a8.png\" alt=\"🚨\" width=\"16\" height=\"16\"></span> WAŻNE - przesłanie formularza nie jest r&oacute;wnoznacznie z przyznaniem akredytacji <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/te4/2/16/1f6a8.png\" alt=\"🚨\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Formularze można przesyłać do 16.05 23:59 <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tb5/2/16/23f0.png\" alt=\"⏰\" width=\"16\" height=\"16\"></span></div>\n</div>\n<div class=\"x11i5rnm xat24cr x1mh8g0r x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#WrocławRazem</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenaliawroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#JuwenaliaWrocław</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia2025?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#Juwenalia2025</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#Juwenalia</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZVIfuqEnTi8Bqnw1m0PuVjtMwz12ImM-xiMGhmknZapgtY3qDXqLSpKRmorrCxeksVPQe_ZPSELqVU1LDPDL5zKmuPfYkuc7MXjyZFg4yxaUz1DKz9oamw9yCvGS6RUfeW9Zfr1VWxgDV8D0gqQYa-18mdJvsRDOIsGmuzS4XmYJKm9itO62Fr1-q_aQHHPAzlj-WE1yz_FNriH0w5GiVZIQX-HNnhojV3-cBeWx8DvXT3Pbrj7AP1-k6RXwSC1gGha-7ltJkBuP_uYJt5osSDg&amp;__tn__=*NK-y-R\">#Wrocław</a></span></div>\n</div>",
+      "category": "general",
+      "date": "2025-05-08T14:38:53.053Z",
+      "image_url": ""
     },
     {
-      "id": "n5",
-      "title": "Aktualizacja mapy festiwalu",
-      "body": "Na prośby uczestników z poprzednich lat przesunęliśmy strefę gastro bliżej Sceny Głównej i dodaliśmy drugą strefę chilloutu z hamakami. Sprawdźcie nową mapę w aplikacji.",
-      "category": "info",
-      "date": "2026-04-02"
-    },
-    {
-      "id": "n6",
-      "title": "Otsochodzi otwiera Juwenalia",
-      "body": "Otsochodzi otworzy festiwal w piątek o 18:00 na Scenie Głównej. Wystąpi z pełnym składem na żywo plus DJ set po koncercie w strefie afterparty.",
-      "category": "lineup",
-      "date": "2026-03-28"
-    },
-    {
-      "id": "n7",
-      "title": "Strefa Food Trucków – co będzie do jedzenia?",
-      "body": "Potwierdzonych już 14 food trucków: burgery, ramen, pierogi, naleśniki, kuchnia gruzińska, vegan bowl, lody rzemieślnicze i kawa speciality. Płatność bezgotówkowa.",
-      "category": "info",
-      "date": "2026-03-25"
-    },
-    {
-      "id": "n8",
-      "title": "Catz 'n Dogz na scenie klubowej",
-      "body": "Wrocławski duet Catz 'n Dogz po raz pierwszy na Juwenaliach! Zagrają deep house set w piątek o 22:30 na Scenie Klubowej. Nie przegapcie!",
-      "category": "lineup",
-      "date": "2026-03-20"
-    },
-    {
-      "id": "n9",
-      "title": "Partnerzy festiwalu 2026",
-      "body": "Witamy wśród partnerów Juwenaliów 2026 nowe marki: Tyskie Browary, Żywiec Zdrój, Allegro Pay i Spotify. Dziękujemy za wsparcie tej edycji!",
-      "category": "info",
-      "date": "2026-03-15"
-    },
-    {
-      "id": "n10",
-      "title": "Bezpieczne Juwenalia – co warto wiedzieć",
-      "body": "Na terenie festiwalu działać będzie 6 punktów medycznych, ochrona 24/7 oraz strefa pomocy psychologicznej. Pamiętajcie o ochronie słuchu – stopery dostępne za darmo w Punkcie Info.",
-      "category": "info",
-      "date": "2026-03-10"
-    },
-    {
-      "id": "n11",
-      "title": "Vito Bambino – kameralny set akustyczny",
-      "body": "Vito Bambino zagra ekskluzywny zestaw akustyczny w piątek o 20:00 na Scenie Głównej. Zapowiedział wykonanie nowych, jeszcze niewydanych utworów!",
-      "category": "lineup",
-      "date": "2026-03-05"
-    },
-    {
-      "id": "n12",
-      "title": "Zmiana godzin – Guzior przesunięty",
-      "body": "W związku z dłuższym soundcheckiem koncert Guziora przesuwamy z 22:30 na 23:30 w piątek. Pozostałe godziny bez zmian.",
-      "category": "schedule",
-      "date": "2026-03-01"
+      "id": "2",
+      "title": "Patronat honorowy prezydenta Wrocławia",
+      "body": "<div dir=\"auto\">Jest nam niezmiernie miło ogłosić, że po raz kolejny Juwenalia <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#WrocławRazem</a></span> zostały objęte Patronatem Honorowym <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/sutrykjacek?__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=-]K-R\"><span class=\"xjp7ctv\">Prezydent Wrocławia Jacek Sutryk</span></a></span>! <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t7f/2/16/1f31f.png\" alt=\"🌟\" width=\"16\" height=\"16\"></span></div>\n<div dir=\"auto\">Dziękujemy za wyr&oacute;żnienie i motywację do dalszego działania! <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/tb/2/16/1f4aa.png\" alt=\"💪\" width=\"16\" height=\"16\"></span></div>\n<div dir=\"auto\">Obiecujemy, że damy z siebie wszystko i nie zawiedziemy oczekiwań! Widzimy się na Juwenaliach 2025 <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#WrocławRazem</a></span> już 21 i 22 maja na Długiej <span class=\"html-span xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs x3nfvp2 x1j61x8r x1fcty0u xdj266r xat24cr xgzva0m xhhsvwb xxymvpz xlup9mm x1kky2od\"><img class=\"xz74otr x168nmei x13lgxp2 x5pf9jr xo71vjh\" src=\"https://static.xx.fbcdn.net/images/emoji.php/v9/t37/2/16/2708.png\" alt=\"✈️\" width=\"16\" height=\"16\"></span></div>\n<div dir=\"auto\"><span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#WrocławRazem</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenaliawroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#JuwenaliaWrocław</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia2025?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#Juwenalia2025</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/juwenalia?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#Juwenalia</a></span> <span class=\"html-span xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82aw?__eep__=6&amp;__cft__[0]=AZViOvqb4HaKlaFkzt49N2wKjp_AE61VHcegAUUK7737PShBe_82vJLhrrlpg29FrM27wx2ghODYsDeztSnZUr_YWEs9YwMPArlSS9od0scNgMUEVUFxGTgeHXuIr2QmTHi8mnEByj4ii1MVrVG3zNMXoOQUdZLpJR0I7LbxvFnhfA&amp;__tn__=*NK-R\">#Wrocław</a></span></div>",
+      "category": "general",
+      "date": "2025-05-06T09:11:02.644Z",
+      "image_url": ""
     }
   ],
   "schedule": [
     {
-      "label": "ŚRODA, 20 MAJA",
-      "venue": "Kampus Politechniki Wrocławskiej",
+      "label": "2025-05-21",
+      "venue": "Bramy",
       "events": [
         {
-          "id": "e1",
-          "artist": "Otsochodzi",
-          "genre": "Rap / Hip-Hop",
+          "id": "15",
+          "artist": "Otwarcie Bram",
+          "genre": "",
+          "stage": "Bramy",
+          "time": "",
+          "image_url": "",
+          "start_time": "16:30:00",
+          "end_time": "17:00:00"
+        },
+        {
+          "id": "12",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "18:00",
-          "image_url": "https://picsum.photos/seed/otsochodzi/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "17:00:00",
+          "end_time": "18:00:00"
         },
         {
-          "id": "e2",
-          "artist": "Kaśka Sochacka",
-          "genre": "Indie / Folk",
-          "stage": "Scena Akustyczna",
-          "time": "19:00",
-          "image_url": "https://picsum.photos/seed/kaskasochacka/800/600"
-        },
-        {
-          "id": "e3",
-          "artist": "Vito Bambino",
-          "genre": "Alternatywa / Pop",
+          "id": "7",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "20:00",
-          "image_url": "https://picsum.photos/seed/vitobambino/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "18:20:00",
+          "end_time": "20:00:00"
         },
         {
-          "id": "e4",
-          "artist": "Mrozu",
-          "genre": "Pop",
-          "stage": "Scena Akustyczna",
-          "time": "21:30",
-          "image_url": "https://picsum.photos/seed/mrozu/800/600"
-        },
-        {
-          "id": "e5",
-          "artist": "Catz 'n Dogz",
-          "genre": "Elektronika / House",
-          "stage": "Scena Klubowa",
-          "time": "22:30",
-          "image_url": "https://picsum.photos/seed/catzdogz/800/600"
-        },
-        {
-          "id": "e6",
-          "artist": "Guzior",
-          "genre": "Rap",
+          "id": "8",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "23:30",
-          "image_url": "https://picsum.photos/seed/guzior/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "20:00:00",
+          "end_time": "21:30:00"
         },
         {
-          "id": "e7",
-          "artist": "DJ Gromee",
-          "genre": "EDM",
-          "stage": "Scena Klubowa",
-          "time": "01:00",
-          "image_url": "https://picsum.photos/seed/gromee/800/600"
+          "id": "9",
+          "artist": "",
+          "genre": "",
+          "stage": "Scena Główna",
+          "time": "",
+          "image_url": "",
+          "start_time": "21:30:00",
+          "end_time": "22:30:00"
         }
       ]
     },
     {
-      "label": "CZWARTEK, 21 MAJA",
-      "venue": "Kampus Politechniki Wrocławskiej",
+      "label": "2025-05-22",
+      "venue": "Bramy",
       "events": [
         {
-          "id": "e8",
-          "artist": "Bambi",
-          "genre": "Indie / Pop",
-          "stage": "Scena Akustyczna",
-          "time": "17:00",
-          "image_url": "https://picsum.photos/seed/bambi/800/600"
+          "id": "16",
+          "artist": "Otwarcie Bram",
+          "genre": "",
+          "stage": "Bramy",
+          "time": "",
+          "image_url": "",
+          "start_time": "16:30:00",
+          "end_time": "17:00:00"
         },
         {
-          "id": "e9",
-          "artist": "Daria Zawiałow",
-          "genre": "Alternatywa / Rock",
+          "id": "13",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "18:30",
-          "image_url": "https://picsum.photos/seed/dariazawialow/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "17:10:00",
+          "end_time": "18:10:00"
         },
         {
-          "id": "e10",
-          "artist": "Sanah",
-          "genre": "Pop",
+          "id": "14",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "19:30",
-          "image_url": "https://picsum.photos/seed/sanah/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "18:10:00",
+          "end_time": "19:10:00"
         },
         {
-          "id": "e11",
-          "artist": "Mata",
-          "genre": "Rap / Hip-Hop",
+          "id": "10",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "20:30",
-          "image_url": "https://picsum.photos/seed/mata/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "20:00:00",
+          "end_time": "21:30:00"
         },
         {
-          "id": "e12",
-          "artist": "Dawid Podsiadło",
-          "genre": "Pop / Indie",
+          "id": "11",
+          "artist": "",
+          "genre": "",
           "stage": "Scena Główna",
-          "time": "21:00",
-          "image_url": "https://picsum.photos/seed/podsiadlo/800/600"
-        },
-        {
-          "id": "e13",
-          "artist": "Taco Hemingway",
-          "genre": "Rap / Alternatywa",
-          "stage": "Scena Główna",
-          "time": "22:30",
-          "image_url": "https://picsum.photos/seed/tacohemingway/800/600"
-        },
-        {
-          "id": "e14",
-          "artist": "Broke Boys",
-          "genre": "Elektronika / Techno",
-          "stage": "Scena Klubowa",
-          "time": "23:30",
-          "image_url": "https://picsum.photos/seed/brokeboys/800/600"
-        },
-        {
-          "id": "e15",
-          "artist": "Modeselektor (DE)",
-          "genre": "Techno / IDM",
-          "stage": "Scena Klubowa",
-          "time": "01:30",
-          "image_url": "https://picsum.photos/seed/modeselektor/800/600"
+          "time": "",
+          "image_url": "",
+          "start_time": "21:30:00",
+          "end_time": "22:30:00"
         }
       ]
     }
   ],
   "map_points": [
     {
-      "id": "m1",
+      "id": "5",
+      "name": "Śniadanie z rektorem",
+      "type": "info",
+      "description": "Śniadanie z rektorem",
+      "lat": 51.108609127142984,
+      "lng": 17.056824822261603,
+      "color": "#00D19D"
+    },
+    {
+      "id": "6",
+      "name": "Dni kultury",
+      "type": "info",
+      "description": "Dni kultury",
+      "lat": 51.10353243944036,
+      "lng": 17.085686672774784,
+      "color": "#B89F00"
+    },
+    {
+      "id": "8",
       "name": "Scena Główna",
-      "type": "stage",
-      "lat": 51.1078,
-      "lng": 17.0575,
-      "description": "Główna scena festiwalu — tutaj występują headlinerzy"
-    },
-    {
-      "id": "m2",
-      "name": "Scena Klubowa",
-      "type": "stage",
-      "lat": 51.1071,
-      "lng": 17.0612,
-      "description": "Mniejsza scena z setami DJ-skimi i muzyką elektroniczną"
-    },
-    {
-      "id": "m3",
-      "name": "Scena Akustyczna",
-      "type": "stage",
-      "lat": 51.1086,
-      "lng": 17.057,
-      "description": "Kameralna scena pod chmurką — sety akustyczne i jazz"
-    },
-    {
-      "id": "m4",
-      "name": "Strefa Gastro – Food Trucki",
-      "type": "food",
-      "lat": 51.1088,
-      "lng": 17.0608,
-      "description": "14 food trucków, kawa, lody, kuchnia świata"
-    },
-    {
-      "id": "m5",
-      "name": "Strefa Gastro – Bary",
-      "type": "food",
-      "lat": 51.1083,
-      "lng": 17.0598,
-      "description": "Bary z piwem rzemieślniczym i koktajlami"
-    },
-    {
-      "id": "m6",
-      "name": "Punkt Medyczny – Sektor A",
-      "type": "medical",
-      "lat": 51.1081,
-      "lng": 17.0583,
-      "description": "Pierwsza pomoc 24/7"
-    },
-    {
-      "id": "m7",
-      "name": "Punkt Medyczny – Sektor B",
-      "type": "medical",
-      "lat": 51.1075,
-      "lng": 17.062,
-      "description": "Drugi punkt pomocy medycznej (przy Scenie Klubowej)"
-    },
-    {
-      "id": "m8",
-      "name": "Toalety – Sektor A",
-      "type": "wc",
-      "lat": 51.1076,
-      "lng": 17.0601,
-      "description": "Toalety przenośne (32 kabiny + 4 dla osób z niepełnosprawnościami)"
-    },
-    {
-      "id": "m9",
-      "name": "Toalety – Sektor C",
-      "type": "wc",
-      "lat": 51.109,
-      "lng": 17.0615,
-      "description": "Dodatkowe toalety przy strefie gastro"
-    },
-    {
-      "id": "m10",
-      "name": "Strefa Chilloutu",
-      "type": "chill",
-      "lat": 51.1085,
-      "lng": 17.0592,
-      "description": "Hamaki, pufy i relaks z widokiem na scenę"
-    },
-    {
-      "id": "m11",
-      "name": "Strefa Chilloutu 2 – pod drzewami",
-      "type": "chill",
-      "lat": 51.1092,
-      "lng": 17.0588,
-      "description": "Cisza, leżaki, ładowarki USB-C"
-    },
-    {
-      "id": "m12",
-      "name": "Wejście VIP",
-      "type": "vip",
-      "lat": 51.1073,
-      "lng": 17.0578,
-      "description": "Wejście dla posiadaczy biletów VIP i artystów"
-    },
-    {
-      "id": "m13",
-      "name": "Strefa VIP",
-      "type": "vip",
-      "lat": 51.1077,
-      "lng": 17.0568,
-      "description": "Bar, leżaki, lepszy widok na scenę główną"
-    },
-    {
-      "id": "m14",
-      "name": "Punkt Informacyjny",
       "type": "info",
-      "lat": 51.108,
-      "lng": 17.0585,
-      "description": "Info, zgubione rzeczy, odbiór nagród z Gry Terenowej, stopery do uszu"
+      "description": "Scena główna wydarzenia",
+      "lat": 51.14007042712316,
+      "lng": 16.946014527819727,
+      "color": "#E100FF"
     },
     {
-      "id": "m15",
-      "name": "Wejście Główne",
+      "id": "9",
+      "name": "Bramy",
       "type": "info",
-      "lat": 51.1068,
-      "lng": 17.059,
-      "description": "Brama A — kontrola biletów i opasek"
+      "description": "Wejście na wydarzenie",
+      "lat": 51.1251935848216,
+      "lng": 17.012812807469913,
+      "color": "#0F57FF"
     }
   ],
   "partners": [
     {
-      "id": "p1",
+      "id": "1",
       "name": "Politechnika Wrocławska",
-      "tier": "main",
-      "logo_url": ""
+      "tier": "0",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/7003f37c-c7e4-4ccf-8fe1-22d92effaeda",
+      "url": "https://pwr.edu.pl",
+      "logo_scale": 0.4
     },
     {
-      "id": "p2",
-      "name": "Samorząd Studencki PWr",
-      "tier": "main",
-      "logo_url": ""
+      "id": "9",
+      "name": "Papieski Wydział Teologiczny we Wrocławiu",
+      "tier": "0",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/b9fafdd4-00a2-47e2-afb9-9269a94cfeb1",
+      "url": "https://pwt.wroc.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p3",
-      "name": "Tyskie Browary Książęce",
-      "tier": "main",
-      "logo_url": ""
+      "id": "10",
+      "name": "Uniwersytet SWPS Wrocław",
+      "tier": "0",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/bfb17e04-4cf6-44ba-ac34-0794d73980b3",
+      "url": "https://www.swps.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p4",
-      "name": "Żywiec Zdrój",
-      "tier": "main",
-      "logo_url": ""
+      "id": "11",
+      "name": "Samorząd Studencki Politechniki Wrocławskiej",
+      "tier": "1",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/eb935906-fee9-4c70-9157-f2c64451f227",
+      "url": "https://samorzad.pwr.edu.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p5",
-      "name": "Allegro Pay",
-      "tier": "main",
-      "logo_url": ""
+      "id": "14",
+      "name": "Samorząd Studencki Papieskiego Wydziału Teologicznego we Wrocławiu",
+      "tier": "1",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/b9fafdd4-00a2-47e2-afb9-9269a94cfeb1",
+      "url": "https://pwt.wroc.pl/o-uczelni/zarzad-i-gremia/samorzad-studencki",
+      "logo_scale": null
     },
     {
-      "id": "p6",
-      "name": "Spotify Polska",
-      "tier": "main",
-      "logo_url": ""
+      "id": "15",
+      "name": "Samorząd Studentów SWPS we Wrocławiu",
+      "tier": "1",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/3c6e925b-4eae-4c27-96ab-d4ac3f1fdf47",
+      "url": "https://swps.pl/studia-i-szkolenia/studiuj-komfortowo/organizacje-studenckie/35353-samorzad-studentow-uniwersytetu-swps-we-wroclawiu",
+      "logo_scale": null
     },
     {
-      "id": "p7",
-      "name": "Miasto Wrocław",
-      "tier": "main",
-      "logo_url": ""
+      "id": "16",
+      "name": "Perła",
+      "tier": "4",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/91578abe-1b10-4a88-99e2-d8f281115430",
+      "url": "https://perla.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p8",
-      "name": "Radio Luz",
-      "tier": "media",
-      "logo_url": ""
+      "id": "17",
+      "name": "Patronat Honorowy Marszałka Województwa Dolnośląskiego",
+      "tier": "2",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/7f14301a-023a-4eca-8e6a-c5b69243c620",
+      "url": "https://umwd.dolnyslask.pl/urzad-marszalkowski/zarzad-wojewodztwa/marszalek-wojewodztwa-dolnoslaskiego/",
+      "logo_scale": null
     },
     {
-      "id": "p9",
-      "name": "Gazeta Wrocławska",
-      "tier": "media",
-      "logo_url": ""
+      "id": "18",
+      "name": "Instytucja Kultury Samorządu Województwa Dolnośląskiego",
+      "tier": "2",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/91ff198d-fa68-4f4f-9f25-2f1034fa90f1",
+      "url": "https://bip.dolnyslask.pl/m,1663,instytucje-kultury.html",
+      "logo_scale": null
     },
     {
-      "id": "p10",
-      "name": "TVP3 Wrocław",
-      "tier": "media",
-      "logo_url": ""
+      "id": "19",
+      "name": "Patronat Honorowy Prezydenta Wrocławia",
+      "tier": "2",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/f01815c8-5f0b-4d12-b4a2-15f6e44cdcf9",
+      "url": "https://bip.um.wroc.pl/artykul/3/36327/prezydent",
+      "logo_scale": null
     },
     {
-      "id": "p11",
-      "name": "Wrocław.pl",
-      "tier": "media",
-      "logo_url": ""
+      "id": "20",
+      "name": "Ośrodek Kultury i Sztuki we Wrocławiu",
+      "tier": "2",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/f9fe4350-3dab-4f77-bd94-e0a8d52d6b9c",
+      "url": "https://okis.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p12",
-      "name": "Studenckie.pl",
-      "tier": "media",
-      "logo_url": ""
+      "id": "21",
+      "name": "Eska",
+      "tier": "3",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/b2522a50-8a61-4d79-903a-b7a826a939e8",
+      "url": "https://www.eska.pl/",
+      "logo_scale": null
     },
     {
-      "id": "p13",
-      "name": "Eska Wrocław",
-      "tier": "media",
-      "logo_url": ""
+      "id": "22",
+      "name": "H&J PROMOTIONS",
+      "tier": "4",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/7f95070b-6b18-4c9a-b7b0-af970673a6cb",
+      "url": "#",
+      "logo_scale": null
+    },
+    {
+      "id": "25",
+      "name": "Wrocławskie Centrum Akademickie",
+      "tier": "2",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/b22e8415-2ca8-4969-a917-30827c7f2147",
+      "url": "https://www.wroclaw.pl/akademicki-wroclaw/wroclawskie-centrum-akademickie",
+      "logo_scale": null
+    },
+    {
+      "id": "23",
+      "name": "Collegium Witelona",
+      "tier": "0",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/647e9dcd-e233-40d0-8ecf-fe85b17d41e9",
+      "url": "https://www.collegiumwitelona.pl/",
+      "logo_scale": null
+    },
+    {
+      "id": "27",
+      "name": "Rada Uczelniana Samorządu Studenckiego Collegium Witelona ",
+      "tier": "1",
+      "logo_url": "https://cms.juwenalia.solvro.pl/assets/caa3fc17-4286-4603-9534-ef50091a64ed",
+      "url": "https://www.facebook.com/RUSSCollegiumWitelona/?locale=pl_PL",
+      "logo_scale": null
     }
   ],
-  "checkpoints": [
+  "important_info": [
     {
-      "id": 1001,
-      "title": "Strefa Chilloutu",
-      "subtitle": "Relaks i odpoczynek",
-      "time": "12:00–24:00",
-      "location": "Sektor A, przy scenie głównej",
-      "category": "chill",
-      "description": "Hamaki, pufy i ambientowa muzyka. Idealne miejsce, żeby naładować baterie między koncertami. Zeskanuj kod QR przy wejściu do strefy!",
-      "image": "https://picsum.photos/seed/chillout/800/600"
+      "id": "1",
+      "icon": "water_drop",
+      "title": "Weź butelkę na wodę",
+      "body": "<p>Na terenie festiwalu znajdziesz punkty uzupełniania wody. Zabierz własną butelkę, żeby uniknąć odwodnienia i dbać o środowisko.</p>",
+      "color": "#4DA1FF"
     },
     {
-      "id": 1002,
-      "title": "Scena Główna",
-      "subtitle": "Serce festiwalu",
-      "time": "16:00–02:00",
-      "location": "Centralny plac kampusu",
-      "category": "stage",
-      "description": "Największa scena Juwenaliów — tu grają headlinerzy. Znajdź punkt QR przy bramce wejściowej do strefy koncertowej (po lewej stronie sceny).",
-      "image": "https://picsum.photos/seed/mainstage/800/600"
+      "id": "2",
+      "icon": "dangerous",
+      "title": "Nie bierz ostrych przedmiotów",
+      "body": "<p>Na bramce obowiązują standardowe zasady bezpieczeństwa — noże, szklło i inne niebezpieczne przedmioty zostaną zabrane przez ochronę.</p>",
+      "color": "#FF6B6B"
     },
     {
-      "id": 1003,
-      "title": "Miasteczko Studenckie",
-      "subtitle": "Strefa organizacji i kół naukowych",
-      "time": "14:00–22:00",
-      "location": "Aleja główna kampusu",
-      "category": "campus",
-      "description": "Koła naukowe, organizacje studenckie, warsztaty robotyki i druk 3D. Odwiedź minimum 3 stoiska i zeskanuj kod, żeby zdobyć pieczątkę!",
-      "image": "https://picsum.photos/seed/studentcampus/800/600"
+      "id": "3",
+      "icon": "badge",
+      "title": "Pamiętaj o legitymacji",
+      "body": "<p>Legitymacja studencka przyspiesza wejście na teren festiwalu i daje zniżki u partnerów gastronomicznych.</p>",
+      "color": "#F5A524"
+    }
+  ],
+  "faqs": [
+    {
+      "id": "23",
+      "question": "Kiedy i gdzie odbywają się Juwenalia?",
+      "answer": "Zapraszamy na Tereny Zielone przy Stadionie Tarczyński Arena we Wrocławiu - dni 20-21 maja 2026."
     },
     {
-      "id": 1004,
-      "title": "Strefa Gamingu",
-      "subtitle": "E-sport i retro gry",
-      "time": "14:00–23:00",
-      "location": "Namiot B, sektor wschodni",
-      "category": "gaming",
-      "description": "Konsole nowej generacji, turnieje CS2 i FIFA, retro automaty (Pac-Man, Street Fighter). Zagraj w turnieju i zeskanuj QR, żeby zaliczyć strefę.",
-      "image": "https://picsum.photos/seed/gamingzone/800/600"
+      "id": "24",
+      "question": "Czy muszę być studentem, aby wejść na teren wydarzenia?",
+      "answer": "Nie, na teren imprezy ma wstęp każda osoba pełnoletnia lub za okazaniem legitymacji studenckiej."
     },
     {
-      "id": 1005,
-      "title": "Food Trucki",
-      "subtitle": "Festiwalowe smaki",
-      "time": "12:00–02:00",
-      "location": "Sektor B, strefa gastro",
-      "category": "food",
-      "description": "Burgery, ramen, kuchnia gruzińska, vegan bowle, lody rzemieślnicze i kawa speciality. Zeskanuj QR przy wejściu do strefy gastro (przy bannerze Tyskie)!",
-      "image": "https://picsum.photos/seed/foodtrucks/800/600"
+      "id": "25",
+      "question": "Czy muszę mieć legitymację studencką?",
+      "answer": "Tak, po osiągnięciu danego limitu osób będą wpuszczane tylko osoby z ważną legitymacją\nstudencką."
     },
     {
-      "id": 1006,
-      "title": "Scena Klubowa",
-      "subtitle": "DJ sety i elektronika",
-      "time": "20:00–04:00",
-      "location": "Namiot C, sektor zachodni",
-      "category": "stage",
-      "description": "Scena klubowa z najlepszymi DJ-ami: Catz 'n Dogz, Modeselektor, DJ Gromee. Basy do rana! Kod QR znajdziesz przy stanowisku mikserskim.",
-      "image": "https://picsum.photos/seed/clubstage/800/600"
+      "id": "26",
+      "question": "Czy mogę wziąć ze sobą butelkę wody?",
+      "answer": "Nie, ale możesz wziąć ze sobą bidon lub pustą, plastikową butelkę (do 500 ml) i napełnić ją darmową wodą z punktu #PijKranówkę!"
     },
     {
-      "id": 1007,
-      "title": "Strefa Artystyczna",
-      "subtitle": "Warsztaty i instalacje",
-      "time": "14:00–21:00",
-      "location": "Sektor A, wschód (przy Akademii Sztuk Pięknych)",
-      "category": "culture",
-      "description": "Malowanie, graffiti, instalacje świetlne i warsztaty kreatywne (drukowanie sitodrukiem własnych T-shirtów). Stwórz coś i zeskanuj kod!",
-      "image": "https://picsum.photos/seed/artzone/800/600"
+      "id": "27",
+      "question": "Czy osoby niepełnoletnie mają wstęp na teren imprezy?",
+      "answer": "Tylko, jeżeli posiadasz ważną legitymację studencką."
     },
     {
-      "id": 1008,
-      "title": "Punkt Informacyjny",
-      "subtitle": "Info i odbiór nagród",
-      "time": "12:00–24:00",
-      "location": "Wejście główne (Brama A)",
-      "category": "info",
-      "description": "Informacja festiwalowa, pierwsza pomoc, zgubione rzeczy, odbiór nagród z Gry Terenowej i darmowe stopery do uszu.",
-      "image": "https://picsum.photos/seed/infopoint/800/600"
+      "id": "28",
+      "question": "Czy mogę zabrać powerbanka?",
+      "answer": "Tak, jest to nawet wskazane!"
     },
     {
-      "id": 1009,
-      "title": "Scena Akustyczna",
-      "subtitle": "Kameralne koncerty pod chmurką",
-      "time": "14:00–22:00",
-      "location": "Plac przy bibliotece głównej",
-      "category": "stage",
-      "description": "Kortez, Bambi, Kaśka Sochacka — sety akustyczne w intymnej atmosferze. Zeskanuj QR przy stoisku z winylami obok sceny.",
-      "image": "https://picsum.photos/seed/acousticstage/800/600"
+      "id": "29",
+      "question": "Czy mogę płacić kartą?",
+      "answer": "Tak! Nasza strefa gastronomiczna jest przygotowana na przyjęcie kart, jednak polecamy wziąć gotówkę!"
     },
     {
-      "id": 1010,
-      "title": "Strefa Sportowa",
-      "subtitle": "Aktywność na świeżym powietrzu",
-      "time": "10:00–18:00",
-      "location": "Boisko AZS PWr",
-      "category": "campus",
-      "description": "Turnieje siatkówki plażowej, ścianka wspinaczkowa, joga z widokiem na Odrę. Spróbuj jednej aktywności i zeskanuj kod!",
-      "image": "https://picsum.photos/seed/sportszone/800/600"
+      "id": "30",
+      "question": "Czy dostępna będzie szatnia lub przechowalnia bagażu?",
+      "answer": "Nie, nie przewidujemy takiej opcji."
     },
     {
-      "id": 1011,
-      "title": "Strefa Eko",
-      "subtitle": "Zielony festiwal",
-      "time": "12:00–20:00",
-      "location": "Sektor C, przy Strefie Chilloutu 2",
-      "category": "culture",
-      "description": "Wymiana ubrań, warsztaty upcyklingu, edukacja ekologiczna od WWF Polska. Wymień ubranie lub posadź sadzonkę i zeskanuj QR.",
-      "image": "https://picsum.photos/seed/ecozone/800/600"
+      "id": "31",
+      "question": "Czy mogę opuścić i wrócić na teren imprezy?",
+      "answer": "Tak, jednak pamiętaj o ograniczeniu liczby uczestników do 8000."
     },
     {
-      "id": 1012,
-      "title": "Foto Booth – #wrocławrazem",
-      "subtitle": "Zrób sobie zdjęcie i wygraj",
-      "time": "14:00–24:00",
-      "location": "Przy Punkcie Informacyjnym",
-      "category": "event",
-      "description": "Pamiątkowe zdjęcie z gadżetami Juwenaliów. Wrzuć na Insta z #wrocławrazem i zeskanuj QR — najlepsze zdjęcia wygrywają darmowy bilet na 2027!",
-      "image": "https://picsum.photos/seed/photobooth/800/600"
+      "id": "32",
+      "question": "Czy na miejscu będzie dostępna pomoc/opieka medyczna?",
+      "answer": "Tak! Nie bój się o swoje zdrowie!"
+    },
+    {
+      "id": "33",
+      "question": "Czy mogę zabrać aparat/kamerę?",
+      "answer": "Tak, jest to nawet wskazane!"
+    },
+    {
+      "id": "34",
+      "question": "Czy na miejscu będzie strefa chill'u lub opdoczynku?",
+      "answer": "Tak, zmęczone osoby nie będą musiały się martwić :)"
+    },
+    {
+      "id": "36",
+      "question": "Czy będą dostępne toalety?",
+      "answer": "Tak, na miejscu znajdują się toalety"
+    },
+    {
+      "id": "35",
+      "question": "Zgubiłem rzecz, co mam zrobić?",
+      "answer": "Zgłoś się do punktu informacyjnego!"
+    },
+    {
+      "id": "37",
+      "question": "Czy będą dostępne gadżety lub merch do zakupu?",
+      "answer": "Nie, na miejscu nie będzie można zakupić akcesoriów juwenaliowych."
+    },
+    {
+      "id": "38",
+      "question": "Czy będą rozdawane darmowe gadżety lub próbki?",
+      "answer": "Tak, możesz liczyć na zyskanie darmowych próbek."
+    },
+    {
+      "id": "39",
+      "question": "Jakich atrakcji możemy spodziewać się na wydarzeniu?",
+      "answer": "Mamy w zanadrzu wiele atrakcji - turniej flanek, beer joga, quizy i inne!"
+    },
+    {
+      "id": "40",
+      "question": "Czy dla uczestników przewidziane są parkingi?",
+      "answer": "Nie, na terenie imprezy nie można parkować - najlepiej dotrzeć na wydarzenie komunikacją miejską!"
     }
   ]
 }
