@@ -32,21 +32,26 @@ class FieldGameScreen extends StatelessWidget {
   final bool isLocked;
   final Future<void> Function(String id) onUnlock;
   final Future<void> Function() onLockReward;
-  final VoidCallback onRefresh;
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final palette = AppElements.water;
 
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        _buildHeader(context, cs, palette),
-        _buildDescription(context, cs),
-        _buildProgressSliver(context, cs, palette),
-        _buildCheckpointSliver(context, cs, palette),
-      ],
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: palette.base,
+      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          _buildHeader(context, cs, palette),
+          _buildDescription(context, cs),
+          _buildProgressSliver(context, cs, palette),
+          _buildCheckpointSliver(context, cs, palette),
+        ],
+      ),
     );
   }
 
@@ -632,9 +637,7 @@ class FieldGameScreen extends StatelessWidget {
     if (result == null) return;
     if (!context.mounted) return;
 
-    final cp = data.checkpoints
-        .where((c) => c.qrCode == result)
-        .firstOrNull;
+    final cp = data.checkpoints.where((c) => c.qrCode == result).firstOrNull;
 
     final sm = ScaffoldMessenger.of(context);
     sm.removeCurrentSnackBar();
@@ -666,10 +669,8 @@ class FieldGameScreen extends StatelessWidget {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => CheckpointDetailsScreen(
-                checkpoint: cp,
-                isCompleted: true,
-              ),
+              builder: (_) =>
+                  CheckpointDetailsScreen(checkpoint: cp, isCompleted: true),
             ),
           ),
         ),

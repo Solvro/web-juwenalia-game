@@ -104,11 +104,7 @@ class PartnerTier {
   final String label;
   final String? icon;
 
-  const PartnerTier({
-    required this.value,
-    required this.label,
-    this.icon,
-  });
+  const PartnerTier({required this.value, required this.label, this.icon});
 }
 
 class ImportantInfo {

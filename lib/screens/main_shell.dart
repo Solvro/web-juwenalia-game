@@ -113,12 +113,36 @@ class _MainShellState extends State<MainShell> {
     });
   }
 
-  void _refresh() {
+  /// Kicks off a fresh data fetch. Returns a Future so pull-to-refresh
+  /// handlers can await spinner lifecycle.
+  ///
+  /// When [force] is true, skips the cache/bundled-asset fallback so a
+  /// failed network fetch surfaces as an error instead of silently
+  /// returning stale data.
+  Future<void> _refresh({bool force = false}) async {
+    final future = fetchData(http.Client(), forceNetwork: force);
+    if (!mounted) return;
     setState(() {
       _imagesPrecached = false;
-      _dataFuture = fetchData(http.Client());
+      _dataFuture = future;
     });
+    try {
+      await future;
+    } catch (e) {
+      if (!force || !mounted) return;
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Nie udało się pobrać najnowszych danych.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+    }
   }
+
+  /// Shorthand used by RefreshIndicator — always forces a network fetch.
+  Future<void> _pullToRefresh() => _refresh(force: true);
 
   Future<void> _unlockCheckpoint(String id) async {
     if (_completed.contains(id)) return;
@@ -261,11 +285,11 @@ class _MainShellState extends State<MainShell> {
 
     switch (_tabIndex) {
       case 0:
-        return InfoScreen(data: data, onRefresh: _refresh);
+        return InfoScreen(data: data, onRefresh: _pullToRefresh);
       case 1:
-        return ScheduleScreen(data: data);
+        return ScheduleScreen(data: data, onRefresh: _pullToRefresh);
       case 2:
-        return MapScreen(data: data);
+        return MapScreen(data: data, onRefresh: _pullToRefresh);
       case 3:
         if (!_gameEnabled(data)) {
           return GameLockedScreen(config: data.config);
@@ -276,7 +300,7 @@ class _MainShellState extends State<MainShell> {
           isLocked: _isLocked,
           onUnlock: _unlockCheckpoint,
           onLockReward: _lockReward,
-          onRefresh: _refresh,
+          onRefresh: _pullToRefresh,
         );
       default:
         return const SizedBox.shrink();

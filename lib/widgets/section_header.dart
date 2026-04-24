@@ -15,7 +15,7 @@ class SectionHeader extends StatelessWidget {
     this.actions,
   });
 
-  /// The main title text (e.g. 'Juwenalia 2026'). 
+  /// The main title text (e.g. 'Juwenalia 2026').
   /// Ignored if [titleWidget] is provided.
   final String? title;
 
@@ -39,24 +39,26 @@ class SectionHeader extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasBottom = bottom != null;
-    
+
     // Adjust height and padding to fit tabs if present
     final expandedHeight = hasBottom ? 208.0 : 160.0;
-    final titlePadding = hasBottom 
-        ? const EdgeInsets.fromLTRB(20, 0, 16, 62) 
+    final titlePadding = hasBottom
+        ? const EdgeInsets.fromLTRB(20, 0, 16, 62)
         : const EdgeInsets.fromLTRB(20, 0, 16, 14);
     final bgBottomPos = hasBottom ? 104.0 : 56.0;
 
-    final actualTitle = titleWidget ?? Text(
-      title ?? '',
-      style: GoogleFonts.spaceGrotesk(
-        fontSize: 22,
-        fontWeight: FontWeight.w800,
-        color: cs.onSurface,
-        letterSpacing: -0.5,
-        height: 1.1,
-      ),
-    );
+    final actualTitle =
+        titleWidget ??
+        Text(
+          title ?? '',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: cs.onSurface,
+            letterSpacing: -0.5,
+            height: 1.1,
+          ),
+        );
 
     return SliverAppBar(
       pinned: true,
@@ -77,11 +79,16 @@ class SectionHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: const Alignment(0.8, 1.8), // Push gradient much further down
+                  end: const Alignment(
+                    0.8,
+                    1.8,
+                  ), // Push gradient much further down
                   colors: [
                     palette.base.withValues(alpha: isDark ? 0.20 : 0.16),
                     palette.accent.withValues(alpha: 0.10),
-                    AppTheme.surfaceContainerLowestOf(context).withValues(alpha: 0.0),
+                    AppTheme.surfaceContainerLowestOf(
+                      context,
+                    ).withValues(alpha: 0.0),
                   ],
                   stops: const [0.0, 0.4, 1.0],
                 ),

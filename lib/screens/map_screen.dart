@@ -24,9 +24,10 @@ enum _EmbeddedMapMode { live, plan }
 /// - **plan**: bundled festival plan PNG, zoomable, pins projected onto it
 /// - **live**: OpenStreetMap via flutter_map (no Google Maps dependency)
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.data});
+  const MapScreen({super.key, required this.data, this.onRefresh});
 
   final AppData data;
+  final Future<void> Function()? onRefresh;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -246,7 +247,7 @@ class _MapScreenState extends State<MapScreen> {
     final cs = Theme.of(context).colorScheme;
     final palette = AppElements.earth;
 
-    return CustomScrollView(
+    final scrollView = CustomScrollView(
       controller: _scrollController,
       physics: _interactingWithMap
           ? const NeverScrollableScrollPhysics()
@@ -261,6 +262,16 @@ class _MapScreenState extends State<MapScreen> {
         ],
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
+    );
+
+    final onRefresh = widget.onRefresh;
+    if (onRefresh == null) return scrollView;
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: palette.base,
+      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      child: scrollView,
     );
   }
 
@@ -749,9 +760,7 @@ class _MapScreenState extends State<MapScreen> {
     };
     for (final raw in grouped.keys) {
       if (seen.add(raw)) {
-        tiers.add(
-          PartnerTier(value: raw, label: fallbackLabels[raw] ?? raw),
-        );
+        tiers.add(PartnerTier(value: raw, label: fallbackLabels[raw] ?? raw));
       }
     }
 
@@ -808,35 +817,15 @@ class _TierStyle {
   factory _TierStyle.forRank(int rank, int total) {
     switch (rank) {
       case 0:
-        return const _TierStyle(
-          logoHeight: 48,
-          textSize: 15,
-          highlight: true,
-        );
+        return const _TierStyle(logoHeight: 48, textSize: 15, highlight: true);
       case 1:
-        return const _TierStyle(
-          logoHeight: 42,
-          textSize: 14,
-          highlight: true,
-        );
+        return const _TierStyle(logoHeight: 42, textSize: 14, highlight: true);
       case 2:
-        return const _TierStyle(
-          logoHeight: 36,
-          textSize: 13,
-          highlight: false,
-        );
+        return const _TierStyle(logoHeight: 36, textSize: 13, highlight: false);
       case 3:
-        return const _TierStyle(
-          logoHeight: 32,
-          textSize: 12,
-          highlight: false,
-        );
+        return const _TierStyle(logoHeight: 32, textSize: 12, highlight: false);
       default:
-        return const _TierStyle(
-          logoHeight: 28,
-          textSize: 12,
-          highlight: false,
-        );
+        return const _TierStyle(logoHeight: 28, textSize: 12, highlight: false);
     }
   }
 }
@@ -980,10 +969,9 @@ class _PartnerCard extends StatelessWidget {
     // Scale is clamped to 1.0 in the carousel so every card in a tier
     // row has the same vertical budget — lets editors shrink oversized
     // logos without breaking the rail height.
-    final logoHeight =
-        (style.logoHeight * (partner.logoScale ?? 1.0))
-            .clamp(18.0, style.logoHeight)
-            .toDouble();
+    final logoHeight = (style.logoHeight * (partner.logoScale ?? 1.0))
+        .clamp(18.0, style.logoHeight)
+        .toDouble();
     final borderColor = style.highlight
         ? AppElements.earth.base.withValues(alpha: 0.45)
         : cs.outlineVariant.withValues(alpha: 0.4);

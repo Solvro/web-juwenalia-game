@@ -47,8 +47,7 @@ Future<void> main(List<String> args) async {
       client,
       base,
       'events',
-      fields:
-          'id,name,start_time,end_time,sort,edition,day.date,location.name',
+      fields: 'id,name,start_time,end_time,sort,edition,day.date,location.name',
       sort: 'start_time,sort',
       limit: 200,
     );
@@ -257,11 +256,7 @@ void _collectAssetIds(dynamic node, String prefix, Set<String> out) {
   }
 }
 
-Future<bool> _downloadAsset(
-  HttpClient client,
-  String prefix,
-  String id,
-) async {
+Future<bool> _downloadAsset(HttpClient client, String prefix, String id) async {
   final url = '$prefix$id';
   try {
     final req = await client.getUrl(Uri.parse(url));
@@ -324,35 +319,29 @@ Map<String, dynamic> _shape({
     final start = e['start_time']?.toString();
     final dayKey =
         (day?['date'] as String?) ??
-        (start != null && start.length >= 10 ? start.substring(0, 10) : 'unknown');
+        (start != null && start.length >= 10
+            ? start.substring(0, 10)
+            : 'unknown');
     final venue = (loc?['name'] as String?) ?? '';
     dayVenues.putIfAbsent(dayKey, () => venue);
     final hhmm = start != null && start.length >= 16
         ? start.substring(11, 16)
         : '';
 
-    byDay
-        .putIfAbsent(dayKey, () => [])
-        .add({
-          'id': e['id'].toString(),
-          'artist': e['name'] ?? '',
-          'genre': '',
-          'stage': venue,
-          'time': hhmm,
-          'image_url': '',
-          'start_time': start,
-          'end_time': e['end_time']?.toString(),
-        });
+    byDay.putIfAbsent(dayKey, () => []).add({
+      'id': e['id'].toString(),
+      'artist': e['name'] ?? '',
+      'genre': '',
+      'stage': venue,
+      'time': hhmm,
+      'image_url': '',
+      'start_time': start,
+      'end_time': e['end_time']?.toString(),
+    });
   }
 
   final schedule = (byDay.keys.toList()..sort())
-      .map(
-        (k) => {
-          'label': k,
-          'venue': dayVenues[k] ?? '',
-          'events': byDay[k],
-        },
-      )
+      .map((k) => {'label': k, 'venue': dayVenues[k] ?? '', 'events': byDay[k]})
       .toList();
 
   return {

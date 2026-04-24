@@ -40,6 +40,11 @@ jobs:
 
     - run: flutter pub get
 
+    # Pull the latest CMS snapshot + prefetch photos so the APK ships with
+    # a usable offline baseline. Gitignored output regenerated per build.
+    - name: Sync CMS data
+      run: dart run tool/sync_data.dart
+
     - run: flutter build apk
 
     - uses: actions/upload-artifact@v7
@@ -59,6 +64,11 @@ jobs:
         channel: 'stable'
 
     - run: flutter pub get
+
+    # Pull the latest CMS snapshot + prefetch photos so the first paint on
+    # GH Pages doesn't wait on a round-trip to Directus.
+    - name: Sync CMS data
+      run: dart run tool/sync_data.dart
 
     - run: flutter build web
 

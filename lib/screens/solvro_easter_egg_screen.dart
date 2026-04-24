@@ -131,8 +131,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
                     onTap: _running ? () {} : null,
                     child: Stack(
                       children: [
-                        for (final dot in _dots)
-                          _buildDot(dot, constraints),
+                        for (final dot in _dots) _buildDot(dot, constraints),
                         if (!_running) _buildGameOver(cs),
                       ],
                     ),
@@ -238,8 +237,12 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: HSLColor.fromAHSL(0.6, dot.hue.toDouble(), 0.9, 0.55)
-                      .toColor(),
+                  color: HSLColor.fromAHSL(
+                    0.6,
+                    dot.hue.toDouble(),
+                    0.9,
+                    0.55,
+                  ).toColor(),
                   blurRadius: 18,
                   spreadRadius: 2,
                 ),

@@ -12,9 +12,10 @@ import '../widgets/section_header.dart';
 /// Koncerty tab — fire element. Day tabs, current-event auto-scroll,
 /// past events dimmed.
 class ScheduleScreen extends StatefulWidget {
-  const ScheduleScreen({super.key, required this.data});
+  const ScheduleScreen({super.key, required this.data, this.onRefresh});
 
   final AppData data;
+  final Future<void> Function()? onRefresh;
 
   @override
   State<ScheduleScreen> createState() => _ScheduleScreenState();
@@ -192,8 +193,9 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     int dayIndex,
   ) {
     final now = DateTime.now();
-    return CustomScrollView(
+    final list = CustomScrollView(
       key: PageStorageKey<String>(day.label),
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
@@ -214,6 +216,16 @@ class _ScheduleScreenState extends State<ScheduleScreen>
           ),
         ),
       ],
+    );
+
+    final onRefresh = widget.onRefresh;
+    if (onRefresh == null) return list;
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: palette.base,
+      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      child: list,
     );
   }
 

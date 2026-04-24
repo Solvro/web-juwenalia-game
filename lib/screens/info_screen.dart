@@ -21,7 +21,7 @@ class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key, required this.data, required this.onRefresh});
 
   final AppData data;
-  final VoidCallback onRefresh;
+  final Future<void> Function() onRefresh;
 
   @override
   State<InfoScreen> createState() => _InfoScreenState();
@@ -37,7 +37,7 @@ class _InfoScreenState extends State<InfoScreen> {
     final palette = AppElements.wind;
 
     return RefreshIndicator(
-      onRefresh: () async => widget.onRefresh(),
+      onRefresh: widget.onRefresh,
       color: palette.base,
       backgroundColor: AppTheme.surfaceContainerHighOf(context),
       child: CustomScrollView(
@@ -57,7 +57,8 @@ class _InfoScreenState extends State<InfoScreen> {
                       color: palette.base,
                       count: widget.data.news.length,
                       isExpanded: _newsExpanded,
-                      onTap: () => setState(() => _newsExpanded = !_newsExpanded),
+                      onTap: () =>
+                          setState(() => _newsExpanded = !_newsExpanded),
                     ),
                     SizedBox(
                       width: double.infinity,
@@ -375,7 +376,10 @@ class _InfoScreenState extends State<InfoScreen> {
           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
         ),
         'p': Style(margin: Margins.only(bottom: 8)),
-        'a': Style(color: AppElements.wind.base, textDecoration: TextDecoration.none),
+        'a': Style(
+          color: AppElements.wind.base,
+          textDecoration: TextDecoration.none,
+        ),
         'ul': Style(margin: Margins.only(bottom: 8)),
         'li': Style(margin: Margins.only(bottom: 4)),
       },
