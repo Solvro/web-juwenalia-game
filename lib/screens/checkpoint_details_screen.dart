@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../checkpoint.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_network_image.dart';
 
 class CheckpointDetailsScreen extends StatelessWidget {
   const CheckpointDetailsScreen({
@@ -65,13 +65,13 @@ class CheckpointDetailsScreen extends StatelessWidget {
           children: [
             Hero(
               tag: 'cp_image_${checkpoint.id}',
-              child: CachedNetworkImage(
-                imageUrl: checkpoint.image,
+              child: AppNetworkImage(
+                url: checkpoint.image,
                 fit: BoxFit.cover,
-                placeholder: (_, _) => Container(
+                placeholder: Container(
                   color: AppTheme.surfaceContainerHighestOf(context),
                 ),
-                errorWidget: (_, _, _) => Container(
+                errorWidget: Container(
                   color: AppTheme.surfaceContainerHighestOf(context),
                   child: Icon(
                     Icons.image_not_supported_outlined,

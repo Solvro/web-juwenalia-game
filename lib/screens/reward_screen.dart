@@ -29,7 +29,7 @@ class _RewardScreenState extends State<RewardScreen> {
   late bool _isLocked;
 
   int get _validCompleted => widget.completed
-      .where((id) => widget.data.checkpoints.any((c) => c.id.toString() == id))
+      .where((qr) => widget.data.checkpoints.any((c) => c.qrCode == qr))
       .length;
 
   bool get _canClaim => _validCompleted >= widget.data.goal && !_isLocked;

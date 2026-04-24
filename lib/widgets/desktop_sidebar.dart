@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/elements.dart';
 import 'brand_gradient.dart';
 import 'download_app_panel.dart';
 import 'glass_bottom_nav.dart' show NavDestination;
@@ -15,6 +16,7 @@ class DesktopSidebar extends StatelessWidget {
     required this.selectedIndex,
     required this.onSelect,
     required this.onScanQr,
+    this.qrEnabled = true,
     required this.destinations,
     this.width = 280,
   });
@@ -22,6 +24,7 @@ class DesktopSidebar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
   final VoidCallback onScanQr;
+  final bool qrEnabled;
   final List<NavDestination> destinations;
   final double width;
 
@@ -79,7 +82,7 @@ class DesktopSidebar extends StatelessWidget {
               const SizedBox(height: 28),
 
               // QR scan button — sits above the destinations as a hero action.
-              _ScanCallToAction(onTap: onScanQr),
+              _ScanCallToAction(onTap: onScanQr, enabled: qrEnabled),
               const SizedBox(height: 16),
 
               // Destinations
@@ -117,7 +120,7 @@ class _SidebarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = cs.primary;
+    final activeColor = AppElements.of(destination.element).base;
     final color = selected ? activeColor : cs.onSurfaceVariant;
 
     return Padding(
@@ -169,9 +172,10 @@ class _SidebarItem extends StatelessWidget {
 }
 
 class _ScanCallToAction extends StatelessWidget {
-  const _ScanCallToAction({required this.onTap});
+  const _ScanCallToAction({required this.onTap, required this.enabled});
 
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -184,21 +188,30 @@ class _ScanCallToAction extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            gradient: AppTheme.brandGradient,
+            gradient: enabled
+                ? AppTheme.brandGradient
+                : LinearGradient(
+                    colors: [
+                      AppTheme.brandTeal.withValues(alpha: 0.5),
+                      AppTheme.brandBlue.withValues(alpha: 0.4),
+                    ],
+                  ),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.brandTeal.withValues(alpha: 0.35),
-                blurRadius: 14,
+                color: AppTheme.brandTeal.withValues(
+                  alpha: enabled ? 0.35 : 0.18,
+                ),
+                blurRadius: enabled ? 14 : 9,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.qr_code_scanner_rounded,
-                color: Colors.white,
+                color: Colors.white.withValues(alpha: enabled ? 1 : 0.78),
                 size: 22,
               ),
               const SizedBox(width: 12),
@@ -208,13 +221,13 @@ class _ScanCallToAction extends StatelessWidget {
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: Colors.white.withValues(alpha: enabled ? 1 : 0.82),
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: Colors.white,
+                color: Colors.white.withValues(alpha: enabled ? 1 : 0.8),
                 size: 20,
               ),
             ],

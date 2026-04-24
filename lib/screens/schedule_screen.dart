@@ -1,14 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/models.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/brand_gradient.dart';
+import '../theme/elements.dart';
+import '../widgets/app_network_image.dart';
+import '../widgets/section_header.dart';
 
-/// Schedule tab — matches Stitch "Harmonogram" screen.
-/// Day-based tabs with artist cards showing genre + stage.
+/// Koncerty tab — fire element. Day tabs, current-event auto-scroll,
+/// past events dimmed.
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key, required this.data});
 
@@ -21,13 +23,76 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late final Map<String, GlobalKey> _eventKeys;
 
   @override
   void initState() {
     super.initState();
+    final days = widget.data.schedule;
+    final todayIdx = _findTodayIndex(days);
     _tabController = TabController(
-      length: widget.data.schedule.length,
+      length: days.length,
       vsync: this,
+      initialIndex: todayIdx < 0 ? 0 : todayIdx,
+    );
+
+    _eventKeys = {
+      for (final day in days)
+        for (final e in day.events) e.id: GlobalKey(),
+    };
+
+    // Scroll to the currently-happening event after first frame.
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || todayIdx < 0) return;
+      _scrollToCurrent(days[todayIdx]);
+    });
+  }
+
+  int _findTodayIndex(List<ScheduleDay> days) {
+    final now = DateTime.now();
+    for (var i = 0; i < days.length; i++) {
+      final firstStart = days[i].events
+          .map((e) => e.startTime)
+          .whereType<DateTime>()
+          .firstOrNull;
+      if (firstStart == null) continue;
+      if (firstStart.year == now.year &&
+          firstStart.month == now.month &&
+          firstStart.day == now.day) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  void _scrollToCurrent(ScheduleDay day) {
+    final now = DateTime.now();
+    final target = day.events.firstWhere(
+      (e) {
+        final end = e.endTime ?? e.startTime;
+        if (end == null) return false;
+        return end.isAfter(now);
+      },
+      orElse: () => day.events.isNotEmpty
+          ? day.events.last
+          : const ScheduleEvent(
+              id: '',
+              artist: '',
+              genre: '',
+              stage: '',
+              time: '',
+              imageUrl: '',
+            ),
+    );
+
+    final key = _eventKeys[target.id];
+    final ctx = key?.currentContext;
+    if (ctx == null) return;
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 500),
+      alignment: 0.1,
+      curve: Curves.easeOutCubic,
     );
   }
 
@@ -37,10 +102,35 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     super.dispose();
   }
 
+  String _getWeekday(String label) {
+    final datePart = label.split(',').first;
+    final date = DateTime.tryParse(datePart);
+    if (date != null) {
+      switch (date.weekday) {
+        case DateTime.monday:
+          return 'Poniedziałek';
+        case DateTime.tuesday:
+          return 'Wtorek';
+        case DateTime.wednesday:
+          return 'Środa';
+        case DateTime.thursday:
+          return 'Czwartek';
+        case DateTime.friday:
+          return 'Piątek';
+        case DateTime.saturday:
+          return 'Sobota';
+        case DateTime.sunday:
+          return 'Niedziela';
+      }
+    }
+    return datePart;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final days = widget.data.schedule;
+    final palette = AppElements.fire;
 
     if (days.isEmpty) {
       return Center(
@@ -51,142 +141,107 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       );
     }
 
+    final tabBar = TabBar(
+      controller: _tabController,
+      isScrollable: true,
+      tabAlignment: TabAlignment.start,
+      padding: EdgeInsets.zero,
+      labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+      labelColor: palette.base,
+      unselectedLabelColor: cs.onSurfaceVariant,
+      labelStyle: GoogleFonts.spaceGrotesk(
+        fontWeight: FontWeight.w700,
+        fontSize: 13,
+      ),
+      unselectedLabelStyle: GoogleFonts.spaceGrotesk(
+        fontWeight: FontWeight.w500,
+        fontSize: 13,
+      ),
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(color: palette.base, width: 3),
+        insets: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      dividerHeight: 0,
+      tabs: days.map((d) => Tab(text: _getWeekday(d.label))).toList(),
+    );
+
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        SliverAppBar(
-          pinned: true,
-          floating: true,
-          snap: true,
-          expandedHeight: 130,
-          backgroundColor: AppTheme.surfaceContainerLowestOf(context),
-          flexibleSpace: FlexibleSpaceBar(
-            titlePadding: const EdgeInsets.fromLTRB(20, 0, 16, 50),
-            background: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.brandTeal.withValues(alpha: 0.14),
-                    AppTheme.brandSeafoam.withValues(alpha: 0.05),
-                    AppTheme.surfaceContainerLowestOf(context),
-                  ],
-                ),
-              ),
-            ),
-            title: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BrandGradientText(
-                  'HARMONOGRAM',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2.4,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Juwenalia 2026',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: cs.onSurface,
-                    letterSpacing: -0.5,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const BrandGradientBar(width: 36),
-              ],
-            ),
-          ),
-          bottom: TabBar(
-            controller: _tabController,
-            labelColor: AppTheme.brandTeal,
-            unselectedLabelColor: cs.onSurfaceVariant,
-            labelStyle: GoogleFonts.spaceGrotesk(
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-            ),
-            unselectedLabelStyle: GoogleFonts.spaceGrotesk(
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
-            ),
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(color: AppTheme.brandTeal, width: 3),
-              insets: EdgeInsets.symmetric(horizontal: 16),
-            ),
-            dividerHeight: 0,
-            tabs: days.map((d) => Tab(text: d.label.split(',').first)).toList(),
-          ),
+        SectionHeader(
+          supertitle: 'KONCERTY',
+          title: 'Juwenalia 2026',
+          palette: palette,
+          bottom: tabBar,
         ),
       ],
       body: TabBarView(
         controller: _tabController,
-        children: days.map((day) => _buildDayList(context, day, cs)).toList(),
+        children: [
+          for (var i = 0; i < days.length; i++)
+            _buildDayList(context, days[i], cs, palette, i),
+        ],
       ),
     );
   }
 
-  Widget _buildDayList(BuildContext context, ScheduleDay day, ColorScheme cs) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-      children: [
-        // Day header
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                day.label,
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: cs.onSurface,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on_rounded,
-                    size: 13,
-                    color: cs.onSurfaceVariant,
+  Widget _buildDayList(
+    BuildContext context,
+    ScheduleDay day,
+    ColorScheme cs,
+    ElementPalette palette,
+    int dayIndex,
+  ) {
+    final now = DateTime.now();
+    return CustomScrollView(
+      key: PageStorageKey<String>(day.label),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              ...day.events.map((e) {
+                final isPast = _isPast(e, now);
+                return Padding(
+                  key: _eventKeys[e.id],
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Opacity(
+                    opacity: isPast ? 0.45 : 1.0,
+                    child: _buildEventCard(context, e, cs, palette, isPast),
                   ),
-                  const SizedBox(width: 3),
-                  Text(
-                    day.venue,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Event cards
-        ...day.events.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: _buildEventCard(context, e, cs),
+                );
+              }),
+            ]),
           ),
         ),
       ],
     );
+  }
+
+  bool _isPast(ScheduleEvent e, DateTime now) {
+    final end = e.endTime ?? e.startTime;
+    if (end == null) return false;
+    return end.isBefore(now);
+  }
+
+  bool _isLive(ScheduleEvent e, DateTime now) {
+    final start = e.startTime;
+    final end = e.endTime ?? start?.add(const Duration(minutes: 45));
+    if (start == null || end == null) return false;
+    return now.isAfter(start) && now.isBefore(end);
   }
 
   Widget _buildEventCard(
     BuildContext context,
     ScheduleEvent event,
     ColorScheme cs,
+    ElementPalette palette,
+    bool isPast,
   ) {
+    final now = DateTime.now();
+    final live = _isLive(event, now);
+    final displayArtist = event.artist.trim().isEmpty
+        ? 'Artysta wkrótce'
+        : event.artist;
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final surfHighest = AppTheme.surfaceContainerHighestOf(context);
 
@@ -195,24 +250,23 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       decoration: BoxDecoration(
         color: surfHigh,
         borderRadius: BorderRadius.circular(14),
+        border: live ? Border.all(color: palette.base, width: 1.5) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Artist image
           if (event.imageUrl.isNotEmpty)
             SizedBox(
               height: 160,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: event.imageUrl,
+                  AppNetworkImage(
+                    url: event.imageUrl,
                     fit: BoxFit.cover,
-                    placeholder: (_, _) => Container(color: surfHighest),
-                    errorWidget: (_, _, _) => Container(color: surfHighest),
+                    placeholder: Container(color: surfHighest),
+                    errorWidget: Container(color: surfHighest),
                   ),
-                  // Gradient overlay
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -231,40 +285,33 @@ class _ScheduleScreenState extends State<ScheduleScreen>
                       ),
                     ),
                   ),
-                  // Time badge
                   Positioned(
                     top: 10,
                     right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: cs.primaryContainer,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        event.time,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    child: _timeBadge(event.time, palette),
                   ),
+                  if (live)
+                    Positioned(top: 10, left: 12, child: _liveBadge(palette)),
                 ],
               ),
             ),
-          // Info
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    if (event.imageUrl.isEmpty) ...[
+                      _timeBadge(event.time, palette),
+                      const SizedBox(width: 8),
+                      if (live) _liveBadge(palette),
+                    ],
+                  ],
+                ),
+                if (event.imageUrl.isEmpty) const SizedBox(height: 8),
                 Text(
-                  event.artist,
+                  displayArtist,
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -272,16 +319,28 @@ class _ScheduleScreenState extends State<ScheduleScreen>
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    if (event.genre.isNotEmpty)
-                      _chip(event.genre, cs.secondary, cs),
-                    if (event.stage.isNotEmpty)
-                      _chip(event.stage, cs.primary, cs),
-                  ],
-                ),
+                if (event.stage.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 13,
+                        color: cs.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 3),
+                      Expanded(
+                        child: Text(
+                          event.stage,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -290,21 +349,54 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     );
   }
 
-  Widget _chip(String label, Color color, ColorScheme cs) {
+  Widget _timeBadge(String time, ElementPalette palette) {
+    if (time.isEmpty) return const SizedBox.shrink();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(5),
+        gradient: palette.linearGradient,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        label,
+        time,
         style: GoogleFonts.spaceGrotesk(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: color,
-          letterSpacing: 0.3,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
+      ),
+    );
+  }
+
+  Widget _liveBadge(ElementPalette palette) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: palette.base,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'NA ŻYWO',
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
       ),
     );
   }

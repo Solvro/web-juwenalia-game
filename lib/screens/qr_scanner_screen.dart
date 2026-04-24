@@ -49,43 +49,124 @@ class _QRScannerScreenState extends State<QRScannerScreen>
     final textController = TextEditingController();
     final cs = Theme.of(context).colorScheme;
 
-    showDialog(
+    void submit() {
+      final v = textController.text.trim();
+      if (v.isEmpty) return;
+      Navigator.pop(context);
+      Navigator.pop(context, v);
+    }
+
+    showDialog<void>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Wpisz kod ręcznie'),
-        content: TextField(
-          controller: textController,
-          autofocus: true,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            hintText: 'Numer strefy (np. 1001)',
-            hintStyle: GoogleFonts.plusJakartaSans(color: cs.onSurfaceVariant),
-            filled: true,
-            fillColor: AppTheme.surfaceContainerOf(context),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+      barrierDismissible: true,
+      builder: (_) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 32),
+        backgroundColor: AppTheme.surfaceContainerOf(context),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 22, 24, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: cs.primary.withValues(alpha: 0.14),
+                      ),
+                      child: Icon(
+                        Icons.keyboard_rounded,
+                        color: cs.primary,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Wpisz kod ręcznie',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded),
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Jeśli kod QR się nie skanuje, wprowadź jego numer poniżej.',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    color: cs.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                TextField(
+                  controller: textController,
+                  autofocus: true,
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                    color: cs.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '1001',
+                    hintStyle: GoogleFonts.spaceGrotesk(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 2,
+                      color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
+                    filled: true,
+                    fillColor: AppTheme.surfaceContainerHighOf(context),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 22,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: cs.primary, width: 2),
+                    ),
+                  ),
+                  onSubmitted: (_) => submit(),
+                ),
+                const SizedBox(height: 18),
+                FilledButton.icon(
+                  onPressed: submit,
+                  icon: const Icon(Icons.check_rounded, size: 20),
+                  label: const Text('Zatwierdź'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                    textStyle: GoogleFonts.spaceGrotesk(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          style: GoogleFonts.spaceGrotesk(fontSize: 18),
-          onSubmitted: (v) {
-            Navigator.pop(context);
-            Navigator.pop(context, v.trim());
-          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Anuluj'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context, textController.text.trim());
-            },
-            child: const Text('Zatwierdź'),
-          ),
-        ],
       ),
     );
   }

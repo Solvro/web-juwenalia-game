@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/elements.dart';
 
 /// Bottom navigation bar with a centered floating QR scan button, used on
 /// non-iOS platforms. iOS goes through a native UIKit view so it can use
@@ -12,6 +13,7 @@ class GlassBottomNav extends StatelessWidget {
     required this.selectedIndex,
     required this.onSelect,
     required this.onScanQr,
+    this.qrEnabled = true,
     required this.destinations,
   });
 
@@ -19,6 +21,7 @@ class GlassBottomNav extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
   final VoidCallback onScanQr;
+  final bool qrEnabled;
   final List<NavDestination> destinations;
 
   @override
@@ -67,7 +70,7 @@ class GlassBottomNav extends StatelessWidget {
                   selected: selectedIndex == 1,
                   onTap: () => onSelect(1),
                 ),
-                _ScanButton(onTap: onScanQr),
+                _ScanButton(onTap: onScanQr, enabled: qrEnabled),
                 _NavItem(
                   destination: destinations[2],
                   selected: selectedIndex == 2,
@@ -92,10 +95,12 @@ class NavDestination {
     required this.icon,
     required this.selectedIcon,
     required this.label,
+    required this.element,
   });
   final IconData icon;
   final IconData selectedIcon;
   final String label;
+  final AppElement element;
 }
 
 class _NavItem extends StatelessWidget {
@@ -112,7 +117,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final activeColor = cs.primary;
+    final activeColor = AppElements.of(destination.element).base;
     final color = selected ? activeColor : cs.onSurfaceVariant;
     final highlight = activeColor.withValues(
       alpha: Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.12,
@@ -167,9 +172,10 @@ class _NavItem extends StatelessWidget {
 }
 
 class _ScanButton extends StatelessWidget {
-  const _ScanButton({required this.onTap});
+  const _ScanButton({required this.onTap, required this.enabled});
 
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -185,23 +191,32 @@ class _ScanButton extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              gradient: AppTheme.brandGradient,
+              gradient: enabled
+                  ? AppTheme.brandGradient
+                  : LinearGradient(
+                      colors: [
+                        AppTheme.brandTeal.withValues(alpha: 0.45),
+                        AppTheme.brandBlue.withValues(alpha: 0.35),
+                      ],
+                    ),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.brandTeal.withValues(alpha: 0.45),
-                  blurRadius: 16,
+                  color: AppTheme.brandTeal.withValues(
+                    alpha: enabled ? 0.45 : 0.2,
+                  ),
+                  blurRadius: enabled ? 16 : 10,
                   offset: const Offset(0, 6),
                 ),
               ],
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.18),
+                color: Colors.white.withValues(alpha: enabled ? 0.18 : 0.12),
                 width: 1,
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.qr_code_scanner_rounded,
-              color: Colors.white,
+              color: Colors.white.withValues(alpha: enabled ? 1 : 0.78),
               size: 26,
             ),
           ),

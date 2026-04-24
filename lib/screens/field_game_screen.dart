@@ -1,12 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../checkpoint.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/brand_gradient.dart';
+import '../theme/elements.dart';
+import '../widgets/app_network_image.dart';
+import '../widgets/section_header.dart';
 import 'checkpoint_details_screen.dart';
 import 'qr_scanner_screen.dart';
 import 'reward_screen.dart';
@@ -34,108 +37,173 @@ class FieldGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final palette = AppElements.water;
 
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
-        _buildHeader(context, cs, isDark),
+        _buildHeader(context, cs, palette),
         _buildDescription(context, cs),
-        _buildProgressSliver(context, cs),
-        _buildCheckpointSliver(context, cs),
+        _buildProgressSliver(context, cs, palette),
+        _buildCheckpointSliver(context, cs, palette),
       ],
     );
   }
 
-  // ── Header ────────────────────────────────────────────────────────────────
+  Widget _buildHeader(
+    BuildContext context,
+    ColorScheme cs,
+    ElementPalette palette,
+  ) {
+    final hasTerms = data.config.gameTerms.trim().isNotEmpty;
 
-  SliverAppBar _buildHeader(BuildContext context, ColorScheme cs, bool isDark) {
-    return SliverAppBar(
-      expandedHeight: 150,
-      pinned: true,
-      stretch: true,
-      backgroundColor: AppTheme.surfaceContainerLowestOf(context),
-      flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsets.fromLTRB(20, 0, 16, 14),
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                AppTheme.brandGreen.withValues(alpha: isDark ? 0.16 : 0.10),
-                AppTheme.brandTeal.withValues(alpha: isDark ? 0.06 : 0.04),
-                AppTheme.surfaceContainerLowestOf(context),
-              ],
-            ),
-          ),
-        ),
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BrandGradientText(
-                    'GRA TERENOWA',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 2.4,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Zbierz pieczątki',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
-                      letterSpacing: -0.5,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const BrandGradientBar(width: 36),
-                ],
+    return SectionHeader(
+      supertitle: 'GRA TERENOWA',
+      title: null,
+      palette: palette,
+      titleWidget: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Text(
+              'Spróbuj wszystkiego',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: cs.onSurface,
+                letterSpacing: -0.5,
+                height: 1.1,
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // QR scanner button
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (hasTerms)
                 IconButton(
-                  icon: const Icon(Icons.qr_code_scanner_rounded, size: 22),
+                  icon: const Icon(Icons.info_outline_rounded, size: 22),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  color: cs.primary,
-                  onPressed: () => _scanQR(context),
+                  color: palette.base,
+                  tooltip: 'Zasady gry',
+                  onPressed: () => _showGameTerms(context, palette),
                 ),
-                const SizedBox(width: 4),
-                // Reward button
-                if (data.goal > 0)
-                  IconButton(
-                    icon: const Icon(Icons.card_giftcard_rounded, size: 20),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    color: cs.secondary,
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => RewardScreen(
-                          data: data,
-                          completed: completed,
-                          isLocked: isLocked,
-                          onLock: onLockReward,
-                        ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.qr_code_scanner_rounded, size: 22),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                color: palette.base,
+                onPressed: () => _scanQR(context),
+              ),
+              const SizedBox(width: 8),
+              if (data.goal > 0)
+                IconButton(
+                  icon: const Icon(Icons.card_giftcard_rounded, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  color: cs.secondary,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RewardScreen(
+                        data: data,
+                        completed: completed,
+                        isLocked: isLocked,
+                        onLock: onLockReward,
                       ),
                     ),
                   ),
-              ],
-            ),
-          ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGameTerms(BuildContext context, ElementPalette palette) {
+    final cs = Theme.of(context).colorScheme;
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+        backgroundColor: AppTheme.surfaceContainerOf(context),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520, maxHeight: 640),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 20, 10, 6),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: palette.linearGradient,
+                      ),
+                      child: const Icon(
+                        Icons.sports_esports_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Zasady gry',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(dialogCtx),
+                      icon: const Icon(Icons.close_rounded),
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(22, 16, 22, 20),
+                  child: Html(
+                    data: data.config.gameTerms,
+                    onLinkTap: (url, _, _) {
+                      if (url == null) return;
+                      launchUrl(
+                        Uri.parse(url),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    style: {
+                      'body': Style(
+                        margin: Margins.zero,
+                        padding: HtmlPaddings.zero,
+                        fontSize: FontSize(14),
+                        lineHeight: const LineHeight(1.6),
+                        color: cs.onSurface,
+                      ),
+                      'p': Style(margin: Margins.only(bottom: 10)),
+                      'a': Style(
+                        color: palette.base,
+                        textDecoration: TextDecoration.underline,
+                      ),
+                      'li': Style(margin: Margins.only(bottom: 6)),
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -148,8 +216,8 @@ class FieldGameScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         child: Text(
-          'Rozwiąż wszystkie zadania, zbierz pieczątki i zgarnij '
-          'festiwalowe nagrody. Czas ucieka!',
+          'Odwiedź strefy na terenie festiwalu, zeskanuj kody QR '
+          'i zgarnij nagrody. Spróbuj wszystkiego!',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             color: cs.onSurfaceVariant,
@@ -165,11 +233,12 @@ class FieldGameScreen extends StatelessWidget {
   SliverToBoxAdapter _buildProgressSliver(
     BuildContext context,
     ColorScheme cs,
+    ElementPalette palette,
   ) {
     if (data.goal <= 0) return const SliverToBoxAdapter(child: SizedBox());
 
     final validCount = completed
-        .where((id) => data.checkpoints.any((c) => c.id.toString() == id))
+        .where((qr) => data.checkpoints.any((c) => c.qrCode == qr))
         .length;
     final progress = (validCount / data.goal).clamp(0.0, 1.0);
     final done = validCount >= data.goal;
@@ -276,8 +345,8 @@ class FieldGameScreen extends StatelessWidget {
                                   widthFactor: v,
                                   child: Container(
                                     height: 6,
-                                    decoration: const BoxDecoration(
-                                      gradient: AppTheme.brandGradient,
+                                    decoration: BoxDecoration(
+                                      gradient: palette.linearGradient,
                                     ),
                                   ),
                                 ),
@@ -303,7 +372,11 @@ class FieldGameScreen extends StatelessWidget {
 
   // ── Checkpoint list ───────────────────────────────────────────────────────
 
-  SliverPadding _buildCheckpointSliver(BuildContext context, ColorScheme cs) {
+  SliverPadding _buildCheckpointSliver(
+    BuildContext context,
+    ColorScheme cs,
+    ElementPalette palette,
+  ) {
     final checkpoints = data.checkpoints;
 
     return SliverPadding(
@@ -312,7 +385,7 @@ class FieldGameScreen extends StatelessWidget {
         itemCount: checkpoints.length,
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (context, i) =>
-            _buildCheckpointCard(context, checkpoints[i], cs),
+            _buildCheckpointCard(context, checkpoints[i], cs, palette),
       ),
     );
   }
@@ -321,8 +394,9 @@ class FieldGameScreen extends StatelessWidget {
     BuildContext context,
     Checkpoint cp,
     ColorScheme cs,
+    ElementPalette palette,
   ) {
-    final isCompleted = completed.contains(cp.id.toString());
+    final isCompleted = completed.contains(cp.qrCode);
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final surfHighest = AppTheme.surfaceContainerHighestOf(context);
     final surfLowest = AppTheme.surfaceContainerLowestOf(context);
@@ -342,7 +416,7 @@ class FieldGameScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: isCompleted
               ? Border.all(
-                  color: cs.primaryContainer.withValues(alpha: 0.5),
+                  color: palette.base.withValues(alpha: 0.5),
                   width: 1.5,
                 )
               : null,
@@ -359,10 +433,10 @@ class FieldGameScreen extends StatelessWidget {
                   width: double.infinity,
                   child: Hero(
                     tag: 'cp_image_${cp.id}',
-                    child: CachedNetworkImage(
-                      imageUrl: cp.image,
+                    child: AppNetworkImage(
+                      url: cp.image,
                       fit: BoxFit.cover,
-                      placeholder: (_, _) => Container(
+                      placeholder: Container(
                         color: surfHighest,
                         child: const Center(
                           child: SizedBox(
@@ -372,7 +446,7 @@ class FieldGameScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      errorWidget: (_, _, _) => Container(
+                      errorWidget: Container(
                         color: surfHighest,
                         child: Icon(
                           Icons.image_not_supported_outlined,
@@ -438,7 +512,7 @@ class FieldGameScreen extends StatelessWidget {
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                              color: cs.primaryContainer,
+                              color: palette.base,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -479,7 +553,7 @@ class FieldGameScreen extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: isCompleted ? cs.primary : cs.onSurface,
+                          color: isCompleted ? palette.base : cs.onSurface,
                           letterSpacing: -0.2,
                         ),
                         maxLines: 2,
@@ -559,37 +633,47 @@ class FieldGameScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     final cp = data.checkpoints
-        .where((c) => c.id.toString() == result)
+        .where((c) => c.qrCode == result)
         .firstOrNull;
 
-    if (cp != null) {
-      await onUnlock(result);
-      if (!context.mounted) return;
-      final sm = ScaffoldMessenger.of(context);
-      sm
-        ..removeCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text('✓ Zeskanowano: ${cp.title}'),
-            action: SnackBarAction(
-              label: 'Zobacz',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CheckpointDetailsScreen(
-                    checkpoint: cp,
-                    isCompleted: true,
-                  ),
-                ),
+    final sm = ScaffoldMessenger.of(context);
+    sm.removeCurrentSnackBar();
+
+    if (cp == null) {
+      sm.showSnackBar(
+        SnackBar(
+          content: Text('Nieznany kod QR: $result'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    final alreadyScanned = completed.contains(cp.qrCode);
+    if (!alreadyScanned) await onUnlock(cp.qrCode);
+    if (!context.mounted) return;
+
+    sm.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 2),
+        content: Text(
+          alreadyScanned
+              ? '${cp.title} była już zeskanowana'
+              : '✓ Zeskanowano: ${cp.title}',
+        ),
+        action: SnackBarAction(
+          label: 'Zobacz',
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CheckpointDetailsScreen(
+                checkpoint: cp,
+                isCompleted: true,
               ),
             ),
           ),
-        );
-    } else {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text('Nieznany kod QR: $result')));
-    }
+        ),
+      ),
+    );
   }
 }
