@@ -1,4 +1,4 @@
-package com.solvro.juwenalia_app
+package pl.solvro.juwenalia_app
 
 import io.flutter.embedding.android.FlutterActivity
 

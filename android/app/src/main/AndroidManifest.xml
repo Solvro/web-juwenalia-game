@@ -3,11 +3,6 @@
         android:label="Juwenalia #WrocławRazem"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
-        <!-- Google Maps API key. Replace with your own key from
-             https://console.cloud.google.com/google/maps-apis -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDsf5hnTY2mk82eR6b3-hB7YqAIX-KkBVg" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
