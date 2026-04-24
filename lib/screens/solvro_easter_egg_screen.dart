@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,31 +22,50 @@ class SolvroEasterEggScreen extends StatefulWidget {
 class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
     with SingleTickerProviderStateMixin {
   static const _duration = Duration(seconds: 30);
-  static const _dotLifetime = Duration(milliseconds: 1400);
+  static const _initialDotLifetime = Duration(milliseconds: 1400);
+  static const _minDotLifetime = Duration(milliseconds: 500);
+  static const _initialSpawnInterval = Duration(milliseconds: 650);
+  static const _minSpawnInterval = Duration(milliseconds: 220);
 
   final _rng = Random();
   final _dots = <_Dot>[];
   int _score = 0;
   int _lives = 3;
   bool _running = true;
+  late DateTime _startedAt;
   late DateTime _endsAt;
   Timer? _spawner;
   Timer? _ticker;
 
+  /// 0.0 at start → 1.0 by the end. Drives spawn rate and dot lifetime.
+  double get _difficulty {
+    final elapsed = DateTime.now().difference(_startedAt).inMilliseconds;
+    return (elapsed / _duration.inMilliseconds).clamp(0.0, 1.0);
+  }
+
+  Duration get _dotLifetime {
+    final t = _difficulty;
+    final ms = lerpDouble(
+      _initialDotLifetime.inMilliseconds,
+      _minDotLifetime.inMilliseconds,
+      t,
+    )!;
+    return Duration(milliseconds: ms.round());
+  }
+
   @override
   void initState() {
     super.initState();
-    _endsAt = DateTime.now().add(_duration);
-    _spawner = Timer.periodic(const Duration(milliseconds: 650), (_) {
-      if (!mounted || !_running) return;
-      setState(_spawnDot);
-    });
+    _startedAt = DateTime.now();
+    _endsAt = _startedAt.add(_duration);
+    _scheduleSpawn(_initialSpawnInterval);
     _ticker = Timer.periodic(const Duration(milliseconds: 80), (_) {
       if (!mounted) return;
       final now = DateTime.now();
+      final lifetime = _dotLifetime;
       setState(() {
         _dots.removeWhere((d) {
-          if (now.isAfter(d.bornAt.add(_dotLifetime))) {
+          if (now.isAfter(d.bornAt.add(lifetime))) {
             if (_running) _lives = (_lives - 1).clamp(0, 99);
             return true;
           }
@@ -53,6 +73,20 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
         });
         if (_lives <= 0 || now.isAfter(_endsAt)) _running = false;
       });
+    });
+  }
+
+  void _scheduleSpawn(Duration delay) {
+    _spawner?.cancel();
+    _spawner = Timer(delay, () {
+      if (!mounted) return;
+      if (_running) setState(_spawnDot);
+      final nextMs = lerpDouble(
+        _initialSpawnInterval.inMilliseconds,
+        _minSpawnInterval.inMilliseconds,
+        _difficulty,
+      )!;
+      _scheduleSpawn(Duration(milliseconds: nextMs.round()));
     });
   }
 
@@ -90,8 +124,10 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
       _lives = 3;
       _dots.clear();
       _running = true;
-      _endsAt = DateTime.now().add(_duration);
+      _startedAt = DateTime.now();
+      _endsAt = _startedAt.add(_duration);
     });
+    _scheduleSpawn(_initialSpawnInterval);
   }
 
   @override
@@ -103,6 +139,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -118,30 +155,42 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
           ),
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _scoreBar(cs, seconds),
-            const SizedBox(height: 8),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: _running ? () {} : null,
-                    child: Stack(
-                      children: [
-                        for (final dot in _dots) _buildDot(dot, constraints),
-                        if (!_running) _buildGameOver(cs),
-                      ],
-                    ),
-                  );
-                },
-              ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/solvro_bg.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+          Container(color: Colors.black.withValues(alpha: 0.35)),
+          SafeArea(
+            child: Column(
+              children: [
+                _scoreBar(cs, seconds),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _running ? () {} : null,
+                        child: Stack(
+                          children: [
+                            for (final dot in _dots)
+                              _buildDot(dot, constraints),
+                            if (!_running) _buildGameOver(cs),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 18),
+              ],
             ),
-            const SizedBox(height: 18),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
