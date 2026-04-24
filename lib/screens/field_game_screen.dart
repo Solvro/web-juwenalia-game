@@ -11,7 +11,6 @@ import '../theme/elements.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/section_header.dart';
 import 'checkpoint_details_screen.dart';
-import 'qr_scanner_screen.dart';
 import 'reward_screen.dart';
 
 /// Field Game tab — matches Stitch "Gra Terenowa" screen.
@@ -22,7 +21,6 @@ class FieldGameScreen extends StatelessWidget {
     required this.data,
     required this.completed,
     required this.isLocked,
-    required this.onUnlock,
     required this.onLockReward,
     required this.onRefresh,
   });
@@ -30,7 +28,6 @@ class FieldGameScreen extends StatelessWidget {
   final AppData data;
   final List<String> completed;
   final bool isLocked;
-  final Future<void> Function(String id) onUnlock;
   final Future<void> Function() onLockReward;
   final Future<void> Function() onRefresh;
 
@@ -81,47 +78,15 @@ class FieldGameScreen extends StatelessWidget {
               ),
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (hasTerms)
-                IconButton(
-                  icon: const Icon(Icons.info_outline_rounded, size: 22),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  color: palette.base,
-                  tooltip: 'Zasady gry',
-                  onPressed: () => _showGameTerms(context, palette),
-                ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.qr_code_scanner_rounded, size: 22),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                color: palette.base,
-                onPressed: () => _scanQR(context),
-              ),
-              const SizedBox(width: 8),
-              if (data.goal > 0)
-                IconButton(
-                  icon: const Icon(Icons.card_giftcard_rounded, size: 20),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  color: cs.secondary,
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => RewardScreen(
-                        data: data,
-                        completed: completed,
-                        isLocked: isLocked,
-                        onLock: onLockReward,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          if (hasTerms)
+            IconButton(
+              icon: const Icon(Icons.info_outline_rounded, size: 22),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              color: palette.base,
+              tooltip: 'Zasady gry',
+              onPressed: () => _showGameTerms(context, palette),
+            ),
         ],
       ),
     );
@@ -410,8 +375,11 @@ class FieldGameScreen extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) =>
-              CheckpointDetailsScreen(checkpoint: cp, isCompleted: isCompleted),
+          builder: (_) => CheckpointDetailsScreen(
+            checkpoint: cp,
+            isCompleted: isCompleted,
+            data: data,
+          ),
         ),
       ),
       child: AnimatedContainer(
@@ -622,57 +590,6 @@ class FieldGameScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  // ── QR scanning ───────────────────────────────────────────────────────────
-
-  Future<void> _scanQR(BuildContext context) async {
-    final result = await Navigator.push<String>(
-      context,
-      MaterialPageRoute(builder: (_) => const QRScannerScreen()),
-    );
-    if (result == null) return;
-    if (!context.mounted) return;
-
-    final cp = data.checkpoints.where((c) => c.qrCode == result).firstOrNull;
-
-    final sm = ScaffoldMessenger.of(context);
-    sm.removeCurrentSnackBar();
-
-    if (cp == null) {
-      sm.showSnackBar(
-        SnackBar(
-          content: Text('Nieznany kod QR: $result'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    final alreadyScanned = completed.contains(cp.qrCode);
-    if (!alreadyScanned) await onUnlock(cp.qrCode);
-    if (!context.mounted) return;
-
-    sm.showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 2),
-        content: Text(
-          alreadyScanned
-              ? '${cp.title} była już zeskanowana'
-              : '✓ Zeskanowano: ${cp.title}',
-        ),
-        action: SnackBarAction(
-          label: 'Zobacz',
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  CheckpointDetailsScreen(checkpoint: cp, isCompleted: true),
-            ),
-          ),
         ),
       ),
     );

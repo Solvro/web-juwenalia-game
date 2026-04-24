@@ -40,12 +40,9 @@ class SectionHeader extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasBottom = bottom != null;
 
-    // Adjust height and padding to fit tabs if present
+    // Adjust height and padding to fit tabs if present.
     final expandedHeight = hasBottom ? 208.0 : 160.0;
-    final titlePadding = hasBottom
-        ? const EdgeInsets.fromLTRB(20, 0, 16, 62)
-        : const EdgeInsets.fromLTRB(20, 0, 16, 14);
-    final bgBottomPos = hasBottom ? 104.0 : 56.0;
+    final bottomInset = hasBottom ? 62.0 : 14.0;
 
     final actualTitle =
         titleWidget ??
@@ -60,6 +57,32 @@ class SectionHeader extends StatelessWidget {
           ),
         );
 
+    final supertitleBlock = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          supertitle.toUpperCase(),
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            color: palette.base,
+            letterSpacing: 2.4,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: 36,
+          height: 3,
+          decoration: BoxDecoration(
+            gradient: palette.linearGradient,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+
     return SliverAppBar(
       pinned: true,
       stretch: true,
@@ -70,7 +93,13 @@ class SectionHeader extends StatelessWidget {
       actions: actions,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
-        titlePadding: titlePadding,
+        // The title lives in FlexibleSpaceBar.title so the framework keeps
+        // it pinned when the header collapses (it translates into the app
+        // bar's title slot). We mirror the same padding used by the
+        // background placeholder below so the two overlap pixel-for-pixel
+        // while expanded — no visible duplicate.
+        titlePadding: EdgeInsets.only(left: 20, right: 16, bottom: bottomInset),
+        expandedTitleScale: 1.0,
         title: actualTitle,
         background: Stack(
           fit: StackFit.expand,
@@ -79,10 +108,7 @@ class SectionHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: const Alignment(
-                    0.8,
-                    1.8,
-                  ), // Push gradient much further down
+                  end: const Alignment(0.8, 1.8),
                   colors: [
                     palette.base.withValues(alpha: isDark ? 0.20 : 0.16),
                     palette.accent.withValues(alpha: 0.10),
@@ -94,32 +120,25 @@ class SectionHeader extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              left: 20,
-              right: 16,
-              bottom: bgBottomPos,
+            // Background column: visible supertitle + an invisible copy
+            // of the title that reserves the same vertical footprint as
+            // FlexibleSpaceBar.title. When the title wraps to multiple
+            // lines the Column grows upward and pushes the supertitle up
+            // instead of overlapping it.
+            Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 16,
+                bottom: bottomInset,
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    supertitle.toUpperCase(),
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      color: palette.base,
-                      letterSpacing: 2.4,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    width: 36,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      gradient: palette.linearGradient,
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
+                  supertitleBlock,
+                  // IgnorePointer so the invisible title doesn't steal
+                  // hit testing from anything below it.
+                  IgnorePointer(child: Opacity(opacity: 0, child: actualTitle)),
                 ],
               ),
             ),

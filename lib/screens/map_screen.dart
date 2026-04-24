@@ -365,7 +365,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildLiveMap(BuildContext context) {
     final points = widget.data.mapPoints
-        .where((p) => p.lat != null && p.lng != null)
+        .where((p) => !p.hidden && p.lat != null && p.lng != null)
         .toList();
 
     return FlutterMap(
@@ -460,7 +460,10 @@ class _MapScreenState extends State<MapScreen> {
                       return Stack(
                         children: [
                           ...widget.data.mapPoints
-                              .where((p) => p.lat != null && p.lng != null)
+                              .where(
+                                (p) =>
+                                    !p.hidden && p.lat != null && p.lng != null,
+                              )
                               .map((point) {
                                 final offset = _projectToPlan(
                                   point.lat!,
@@ -588,7 +591,8 @@ class _MapScreenState extends State<MapScreen> {
     ColorScheme cs,
     ElementPalette palette,
   ) {
-    if (widget.data.mapPoints.isEmpty) return const SizedBox.shrink();
+    final visible = widget.data.mapPoints.where((p) => !p.hidden).toList();
+    if (visible.isEmpty) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
@@ -618,7 +622,7 @@ class _MapScreenState extends State<MapScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          ...widget.data.mapPoints.map((p) => _buildLegendItem(context, p, cs)),
+          ...visible.map((p) => _buildLegendItem(context, p, cs)),
         ],
       ),
     );
@@ -831,8 +835,14 @@ class _TierStyle {
 }
 
 /// Horizontal carousel of partner cards. Auto-scrolls forever (marquee
-/// style) and pauses while the user drags. Items are duplicated so the
-/// rail wraps seamlessly without a visible jump.
+/// style) and pauses while the user drags.
+///
+/// We fake infinity with a huge [itemCount] and start scrolled to the
+/// middle so both directions have effectively unlimited headroom. The
+/// earlier implementation duplicated the list and jumped back at the
+/// halfway mark — that wrap was visible when the user dragged across
+/// the boundary. Modulo-indexing with a fixed [itemExtent] avoids the
+/// jump entirely and keeps build-time constant no matter the count.
 class _PartnerCarousel extends StatefulWidget {
   const _PartnerCarousel({
     required this.partners,
@@ -851,10 +861,21 @@ class _PartnerCarousel extends StatefulWidget {
 class _PartnerCarouselState extends State<_PartnerCarousel>
     with SingleTickerProviderStateMixin {
   static const _pxPerSecond = 22.0;
+  static const _cardWidth = 168.0;
   static const _cardGap = 10.0;
+  static const _itemExtent = _cardWidth + _cardGap;
   static const _resumeDelay = Duration(seconds: 2);
 
-  final ScrollController _controller = ScrollController();
+  /// Huge virtual item count — ListView.builder with a fixed itemExtent
+  /// is O(viewport), so cost is independent of this number. 2 ** 20
+  /// items ≈ 186 million pixels at 178 px each, plenty of runway in
+  /// both directions before we'd ever hit an edge.
+  static const _virtualCount = 1 << 20;
+  static const _initialIndex = _virtualCount ~/ 2;
+
+  final ScrollController _controller = ScrollController(
+    initialScrollOffset: _initialIndex * _itemExtent,
+  );
   Ticker? _ticker;
   Duration _lastTick = Duration.zero;
   bool _userInteracting = false;
@@ -875,26 +896,19 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
   }
 
   void _onTick(Duration elapsed) {
-    if (_userInteracting) {
-      _lastTick = elapsed;
-      return;
-    }
-    if (!_controller.hasClients) {
-      _lastTick = elapsed;
-      return;
-    }
-    final max = _controller.position.maxScrollExtent;
-    if (max <= 0) {
+    if (_userInteracting || !_controller.hasClients) {
       _lastTick = elapsed;
       return;
     }
     final dt = (elapsed - _lastTick).inMicroseconds / 1e6;
     _lastTick = elapsed;
-    // We loop by jumping back when past the halfway point (items list is
-    // duplicated), so visually the content never ends.
-    var next = _controller.offset + _pxPerSecond * dt;
-    final loopAt = max / 2;
-    if (next >= loopAt) next -= loopAt;
+    if (dt <= 0) return;
+    // Plain additive scroll — no wrap, no jump. The virtual count is
+    // large enough that even at max auto-scroll speed we'd run for
+    // years before reaching the end, and a user who manages to drag
+    // past it just hits the BouncingScrollPhysics edge.
+    final next = _controller.offset + _pxPerSecond * dt;
+    final max = _controller.position.maxScrollExtent;
     _controller.jumpTo(next.clamp(0, max));
   }
 
@@ -913,8 +927,8 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    // Duplicate so the rail looks infinite.
-    final items = [...widget.partners, ...widget.partners];
+    final partners = widget.partners;
+    if (partners.isEmpty) return const SizedBox.shrink();
 
     // Logo + 8 px gap + two lines of name text + vertical padding.
     // Text line-height ≈ textSize * 1.35, and we allow 2 lines.
@@ -927,20 +941,23 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
         onPointerDown: _handlePointerDown,
         onPointerUp: _handlePointerUp,
         onPointerCancel: _handlePointerUp,
-        child: ListView.separated(
+        child: ListView.builder(
           controller: _controller,
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: items.length,
-          separatorBuilder: (_, _) => const SizedBox(width: _cardGap),
+          itemExtent: _itemExtent,
+          itemCount: _virtualCount,
           itemBuilder: (context, i) {
-            final p = items[i];
-            return _PartnerCard(
-              partner: p,
-              style: widget.style,
-              cs: cs,
-              onTap: () => widget.onTap(p),
+            final p = partners[i % partners.length];
+            return Padding(
+              padding: const EdgeInsets.only(right: _cardGap),
+              child: _PartnerCard(
+                partner: p,
+                style: widget.style,
+                cs: cs,
+                onTap: () => widget.onTap(p),
+              ),
             );
           },
         ),

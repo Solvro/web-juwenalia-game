@@ -60,11 +60,14 @@ class ConnectivityService {
   }
 
   /// Called by the data layer when a fetch fails for network reasons.
-  /// Triggers a probe to confirm before flipping the pill.
-  void reportFetchFailure() {
-    // Fast path: a failed fetch means we just tried the network and lost,
-    // so a HEAD probe right now is almost certainly going to agree.
-    unawaited(_probe(force: true));
+  /// Returns once the probe has resolved so the UI pill reflects the final
+  /// verdict before the caller decides what to show (e.g. the error state
+  /// vs. "we got cached data but we're offline").
+  Future<void> reportFetchFailure() async {
+    // A failed fetch means we just tried the network and lost, so a probe
+    // right now is almost certainly going to agree. `force: true` bypasses
+    // the cooldown — we genuinely need a fresh answer.
+    await _probe(force: true);
   }
 
   /// Manual "tap the offline pill to retry" entry point.
@@ -93,13 +96,14 @@ class ConnectivityService {
     _lastProbeAt = now;
 
     try {
-      // Cheap HEAD against the CMS root. If this comes back (any status),
-      // we have working internet + DNS + TLS, which is what we actually
-      // care about for the pill.
+      // Cheap HEAD against the CMS. If this comes back (any status), we
+      // have working internet + DNS + TLS — which is what we actually
+      // care about for the pill. HEAD avoids downloading the response
+      // body even though the ping payload is tiny.
       final uri = Uri.parse('${Directus.baseUrl}/server/ping');
-      final response = await http.get(uri).timeout(const Duration(seconds: 5));
-      // Any HTTP response counts as "online" — even a 404 means we made it
-      // to the server.
+      final response = await http.head(uri).timeout(const Duration(seconds: 5));
+      // Any HTTP response counts as "online" — even a 404 or 405 means we
+      // made it to the server.
       final reachable = response.statusCode > 0;
       if (isOnline.value != reachable) isOnline.value = reachable;
     } catch (_) {

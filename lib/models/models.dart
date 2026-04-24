@@ -68,6 +68,11 @@ class MapPoint {
   final double? lng;
   final String? color;
 
+  /// When true, the CMS wants this pin excluded from the main map legend
+  /// but still reachable via checkpoint mini-maps. Defaults to false for
+  /// backwards-compat with pre-migration rows.
+  final bool hidden;
+
   const MapPoint({
     required this.id,
     required this.name,
@@ -76,6 +81,7 @@ class MapPoint {
     this.lat,
     this.lng,
     this.color,
+    this.hidden = false,
   });
 }
 
@@ -114,12 +120,23 @@ class ImportantInfo {
   final String body;
   final String color;
 
+  /// Optional external link. When non-empty the card becomes tappable and
+  /// opens the URL (e.g. event terms, full article).
+  final String? url;
+
+  /// Optional expiry. Items with [expiresAt] in the past are filtered out
+  /// in the fetcher so an announcement that ended yesterday doesn't keep
+  /// showing up today.
+  final DateTime? expiresAt;
+
   const ImportantInfo({
     required this.id,
     required this.icon,
     required this.title,
     required this.body,
     required this.color,
+    this.url,
+    this.expiresAt,
   });
 }
 

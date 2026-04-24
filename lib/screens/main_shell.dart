@@ -35,7 +35,7 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int _tabIndex = 0;
   late Future<AppData> _dataFuture;
   List<String> _completed = [];
@@ -73,10 +73,34 @@ class _MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _refresh();
     _loadProgress();
     _loadVersion();
     ConnectivityService.instance.start();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // When the user returns to a backgrounded app, silently refresh if the
+    // cache is older than the configured staleness threshold. Keeps the
+    // shell current without the user having to pull-to-refresh.
+    if (state == AppLifecycleState.resumed) {
+      _maybeRefreshOnResume();
+    }
+  }
+
+  Future<void> _maybeRefreshOnResume() async {
+    if (!mounted) return;
+    if (await shouldForceRefetch() && mounted) {
+      _refresh();
+    }
   }
 
   Future<void> _loadVersion() async {
@@ -298,7 +322,6 @@ class _MainShellState extends State<MainShell> {
           data: data,
           completed: _completed,
           isLocked: _isLocked,
-          onUnlock: _unlockCheckpoint,
           onLockReward: _lockReward,
           onRefresh: _pullToRefresh,
         );
@@ -403,8 +426,11 @@ class _MainShellState extends State<MainShell> {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  CheckpointDetailsScreen(checkpoint: cp, isCompleted: true),
+              builder: (_) => CheckpointDetailsScreen(
+                checkpoint: cp,
+                isCompleted: true,
+                data: data,
+              ),
             ),
           ),
         ),

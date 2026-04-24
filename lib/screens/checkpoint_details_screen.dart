@@ -1,20 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../checkpoint.dart';
+import '../models/models.dart';
+import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/festival_plan_map.dart';
 
 class CheckpointDetailsScreen extends StatelessWidget {
   const CheckpointDetailsScreen({
     super.key,
     required this.checkpoint,
     required this.isCompleted,
+    this.data,
   });
 
   final Checkpoint checkpoint;
   final bool isCompleted;
+
+  /// Full app payload — used to look up the checkpoint's [MapPoint] for
+  /// the mini-map and to source [PlanBounds] without duplicating them
+  /// onto the checkpoint itself. Optional because some legacy entry
+  /// points (easter-egg flows, etc.) push without [AppData] in hand.
+  final AppData? data;
+
+  MapPoint? get _locationPin {
+    final d = data;
+    final locId = checkpoint.locationId;
+    if (d == null || locId == null) return null;
+    for (final p in d.mapPoints) {
+      if (p.id == locId && p.lat != null && p.lng != null) return p;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,16 +223,100 @@ class CheckpointDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              checkpoint.description,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 15,
-                color: cs.onSurface,
-                height: 1.6,
-              ),
+            Html(
+              data: checkpoint.description,
+              onLinkTap: (url, _, _) {
+                if (url == null) return;
+                launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+              },
+              style: {
+                'body': Style(
+                  margin: Margins.zero,
+                  padding: HtmlPaddings.zero,
+                  fontSize: FontSize(15),
+                  lineHeight: const LineHeight(1.6),
+                  color: cs.onSurface,
+                ),
+                'p': Style(margin: Margins.only(bottom: 10)),
+                'a': Style(
+                  color: cs.primary,
+                  textDecoration: TextDecoration.underline,
+                ),
+                'li': Style(margin: Margins.only(bottom: 6)),
+              },
             ),
           ],
+          if (_locationPin != null && data != null) ...[
+            const SizedBox(height: 20),
+            Divider(height: 1, thickness: 1, color: cs.outlineVariant),
+            const SizedBox(height: 20),
+            Text(
+              'Gdzie szukać',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: cs.onSurfaceVariant,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 10),
+            _buildMiniMap(context, cs),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildMiniMap(BuildContext context, ColorScheme cs) {
+    final pin = _locationPin!;
+    final appData = data!;
+    final color = pin.type.mapPointColor(context);
+    final icon = pin.type.mapPointIcon;
+
+    final planPin = FestivalPlanPin(
+      id: pin.id,
+      lat: pin.lat!,
+      lng: pin.lng!,
+      builder: (context, pinScale) => Transform.scale(
+        scale: pinScale,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.95),
+              width: 3,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.5),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Icon(icon, size: 22, color: Colors.white),
+        ),
+      ),
+    );
+
+    return AspectRatio(
+      aspectRatio: 16 / 11,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceContainerOf(context),
+          ),
+          child: FestivalPlanMap(
+            bounds: appData.config.planBounds,
+            pins: [planPin],
+            autoFocus: planPin,
+            autoFocusScale: 2.4,
+          ),
+        ),
       ),
     );
   }

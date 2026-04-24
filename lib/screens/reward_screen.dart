@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
@@ -133,14 +135,30 @@ class _RewardScreenState extends State<RewardScreen> {
                   width: 1,
                 ),
               ),
-              child: Text(
-                widget.data.rewardDescription,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  color: cs.onSurface,
-                  height: 1.7,
-                ),
-                textAlign: TextAlign.center,
+              child: Html(
+                data: widget.data.rewardDescription,
+                onLinkTap: (url, _, _) {
+                  if (url == null) return;
+                  launchUrl(
+                    Uri.parse(url),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                style: {
+                  'body': Style(
+                    margin: Margins.zero,
+                    padding: HtmlPaddings.zero,
+                    fontSize: FontSize(14),
+                    lineHeight: const LineHeight(1.7),
+                    color: cs.onSurface,
+                    textAlign: TextAlign.center,
+                  ),
+                  'p': Style(margin: Margins.only(bottom: 8)),
+                  'a': Style(
+                    color: cs.primary,
+                    textDecoration: TextDecoration.underline,
+                  ),
+                },
               ),
             )
             .animate(delay: 200.ms)
@@ -150,9 +168,7 @@ class _RewardScreenState extends State<RewardScreen> {
         if (_isLocked)
           _buildRedeemedState(context, cs)
         else if (_canClaim)
-          _buildClaimButton(context, cs)
-        else
-          _buildNotEnoughPoints(context, cs),
+          _buildClaimButton(context, cs),
         const SizedBox(height: 16),
       ],
     );
@@ -445,37 +461,6 @@ class _RewardScreenState extends State<RewardScreen> {
               height: 1.5,
             ),
             textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotEnoughPoints(BuildContext context, ColorScheme cs) {
-    final remaining = widget.data.goal - _validCompleted;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerHighOf(context),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.5),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.sports_esports_rounded, color: cs.primary, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Odwiedź jeszcze $remaining ${_pluralStrefa(remaining)}, by odblokować nagrodę',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                color: cs.onSurface,
-                height: 1.4,
-              ),
-            ),
           ),
         ],
       ),

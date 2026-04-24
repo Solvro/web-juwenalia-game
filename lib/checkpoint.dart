@@ -12,6 +12,11 @@ class Checkpoint {
   final String image;
   final String location;
 
+  /// ID of the related `locations` row, if any. Used to look up coords
+  /// for the per-checkpoint mini-map without having to duplicate lat/lng
+  /// onto the Checkpoint itself.
+  final String? locationId;
+
   const Checkpoint({
     required this.id,
     required this.qrCode,
@@ -20,6 +25,7 @@ class Checkpoint {
     this.category = 'other',
     this.image = '',
     this.location = '',
+    this.locationId,
   });
 
   /// Screens still reference `subtitle` and `time` during the Phase 2

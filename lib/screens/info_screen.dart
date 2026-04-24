@@ -101,7 +101,7 @@ class _InfoScreenState extends State<InfoScreen> {
                     ),
                     const SizedBox(height: 10),
                   ],
-                  if (widget.data.importantInfo.isNotEmpty) ...[
+                  if (_activeImportantInfo().isNotEmpty) ...[
                     const SizedBox(height: 8),
                     _buildImportantInfo(context, cs),
                   ],
@@ -136,13 +136,23 @@ class _InfoScreenState extends State<InfoScreen> {
 
   // ── Pamiętaj o section ────────────────────────────────────────────────────
 
+  /// Announcements with an [ImportantInfo.expiresAt] in the past are
+  /// hidden here (not in the fetcher) so a cached payload still respects
+  /// the current wall clock when the device is offline.
+  List<ImportantInfo> _activeImportantInfo() {
+    final now = DateTime.now();
+    return widget.data.importantInfo
+        .where((i) => i.expiresAt == null || i.expiresAt!.isAfter(now))
+        .toList();
+  }
+
   Widget _buildImportantInfo(BuildContext context, ColorScheme cs) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionHeader(context, cs, 'PAMIĘTAJ O', AppElements.fire.base),
         const SizedBox(height: 12),
-        ...widget.data.importantInfo.map(
+        ..._activeImportantInfo().map(
           (info) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: _importantInfoCard(context, cs, info),
@@ -159,8 +169,9 @@ class _InfoScreenState extends State<InfoScreen> {
   ) {
     final color = _parseHexColor(info.color) ?? AppElements.fire.base;
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
+    final hasUrl = info.url != null && info.url!.isNotEmpty;
 
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: surfHigh,
@@ -185,13 +196,24 @@ class _InfoScreenState extends State<InfoScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  info.title,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: cs.onSurface,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        info.title,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ),
+                    if (hasUrl) ...[
+                      const SizedBox(width: 8),
+                      Icon(Icons.open_in_new, size: 16, color: color),
+                    ],
+                  ],
                 ),
                 if (info.body.isNotEmpty) ...[
                   const SizedBox(height: 4),
@@ -201,6 +223,20 @@ class _InfoScreenState extends State<InfoScreen> {
             ),
           ),
         ],
+      ),
+    );
+
+    if (!hasUrl) return card;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => launchUrl(
+          Uri.parse(info.url!),
+          mode: LaunchMode.externalApplication,
+        ),
+        child: card,
       ),
     );
   }
