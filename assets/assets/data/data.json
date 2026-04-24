@@ -3,7 +3,7 @@
     "edition": "2026",
     "event_starts_at": "2026-05-20T13:00:00.000Z",
     "event_ends_at": "2026-05-22T00:00:00.000Z",
-    "game_enabled_override": false,
+    "game_enabled_override": true,
     "game_goal": 14,
     "reward_description": "<p>Gratulacje! Zebrałeś wszystkie pieczątki. Pokaż ten ekran na punkcie info, aby odebrać gadżet.</p>",
     "reward_pin": "2026",
@@ -59,6 +59,14 @@
     }
   ],
   "news": [
+    {
+      "id": "7",
+      "title": "TESLA naszym partnerem ",
+      "body": "<div class=\"xdj266r x14z9mp xat24cr x1lziwak x1vvkbs x126k92a\">\n<div dir=\"auto\">Najlepsze wydarzenia przyciągają najlepszych graczy</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Do <span class=\"html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 x1ypdohk xt0psk2 x3ct3a4 xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__cft__[0]=AZb755KfObyb7jmflX2A6Mx52LaZ25QB-HXQMc1DWVbiBtI682YKYdaLYwxXcA6Ij2vXZsjT8buZQsyRDEoKAHuLPo90BBSNmxZ0n5xF0kJjfKnOoTFiEGX8GNwybq0O_m256SjB59GVwQWP-4qgU5rQvhyr4n8Iq1b5dm81Q2puHA&amp;__tn__=*NK-R\">#WrocławRazem</a></span> dołącza TESLA! Marka, kt&oacute;ra wyznacza standardy i zmienia zasady gry&nbsp;</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Czerpiemy moc ze słońca i ładujemy akumulatory na najlepsze koncerty we Wrocławiu. Razem z marką, kt&oacute;ra zrewolucjonizowała świat technologii, wkraczamy w to wydarzenie -z pełną mocą!</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Widzimy się pod sceną!</div>\n</div>",
+      "category": "general",
+      "date": "2026-04-24T13:58:10.295Z",
+      "image_url": ""
+    },
     {
       "id": "6",
       "title": "Formularz Wolontariuszy",
