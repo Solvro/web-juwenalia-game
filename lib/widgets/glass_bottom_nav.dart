@@ -64,6 +64,7 @@ class GlassBottomNav extends StatelessWidget {
                   destination: destinations[0],
                   selected: selectedIndex == 0,
                   onTap: () => onSelect(0),
+                  outerEdge: _OuterEdge.left,
                 ),
                 _NavItem(
                   destination: destinations[1],
@@ -80,6 +81,7 @@ class GlassBottomNav extends StatelessWidget {
                   destination: destinations[3],
                   selected: selectedIndex == 3,
                   onTap: () => onSelect(3),
+                  outerEdge: _OuterEdge.right,
                 ),
               ],
             ),
@@ -103,16 +105,23 @@ class NavDestination {
   final AppElement element;
 }
 
+/// Which end of the bar a nav item sits at. Outer-edge items round their
+/// outer corners more so the selected-pill highlight tracks the parent
+/// bar's 30px curve instead of standing off it.
+enum _OuterEdge { none, left, right }
+
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
     required this.selected,
     required this.onTap,
+    this.outerEdge = _OuterEdge.none,
   });
 
   final NavDestination destination;
   final bool selected;
   final VoidCallback onTap;
+  final _OuterEdge outerEdge;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +131,27 @@ class _NavItem extends StatelessWidget {
     final highlight = activeColor.withValues(
       alpha: Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.12,
     );
+
+    // Parent bar has radius 30 and the pill is inset by ~4px horizontally
+    // / 6px vertically — 24 lines up the outer arc smoothly. Inner corners
+    // stay at 18 so adjacent pills don't visually compete.
+    const innerRadius = Radius.circular(18);
+    const outerRadius = Radius.circular(24);
+    final pillRadius = switch (outerEdge) {
+      _OuterEdge.left => const BorderRadius.only(
+        topLeft: outerRadius,
+        bottomLeft: outerRadius,
+        topRight: innerRadius,
+        bottomRight: innerRadius,
+      ),
+      _OuterEdge.right => const BorderRadius.only(
+        topLeft: innerRadius,
+        bottomLeft: innerRadius,
+        topRight: outerRadius,
+        bottomRight: outerRadius,
+      ),
+      _OuterEdge.none => const BorderRadius.all(innerRadius),
+    };
 
     return Expanded(
       child: Padding(
@@ -134,7 +164,7 @@ class _NavItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: selected ? highlight : Colors.transparent,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: pillRadius,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

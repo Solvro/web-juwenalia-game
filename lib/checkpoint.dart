@@ -8,7 +8,19 @@ class Checkpoint {
   final String qrCode;
   final String title;
   final String description;
+
+  /// Stable slug from the categories CMS collection (e.g. 'stage'). Empty
+  /// when no category is assigned.
   final String category;
+
+  /// Display label sourced from `categories.display_name`. Falls back to
+  /// 'Inne' when the row has no category.
+  final String categoryLabel;
+
+  /// Hex color from `categories.color` (e.g. '#FFB963'). Empty when blank
+  /// — the UI applies its own neutral fallback.
+  final String categoryColor;
+
   final String image;
   final String location;
 
@@ -22,7 +34,9 @@ class Checkpoint {
     required this.qrCode,
     required this.title,
     required this.description,
-    this.category = 'other',
+    this.category = '',
+    this.categoryLabel = 'Inne',
+    this.categoryColor = '',
     this.image = '',
     this.location = '',
     this.locationId,

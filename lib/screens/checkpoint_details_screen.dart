@@ -10,6 +10,7 @@ import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/festival_plan_map.dart';
+import '../widgets/swipe_down_dismissible.dart';
 
 class CheckpointDetailsScreen extends StatelessWidget {
   const CheckpointDetailsScreen({
@@ -43,16 +44,21 @@ class CheckpointDetailsScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context, cs),
-          SliverToBoxAdapter(
-            child: _buildContent(context, cs)
-                .animate()
-                .fadeIn(duration: 400.ms, delay: 150.ms)
-                .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 150.ms),
+      body: SwipeDownDismissible(
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: ClampingScrollPhysics(),
           ),
-        ],
+          slivers: [
+            _buildSliverAppBar(context, cs),
+            SliverToBoxAdapter(
+              child: _buildContent(context, cs)
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 150.ms)
+                  .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 150.ms),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -158,7 +164,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, ColorScheme cs) {
-    final catColor = checkpoint.category.categoryColor(context);
+    final catColor = parseHexColor(checkpoint.categoryColor) ?? cs.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
       child: Column(
@@ -171,7 +177,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              checkpoint.category.categoryLabel,
+              checkpoint.categoryLabel,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,

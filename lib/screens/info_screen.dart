@@ -102,8 +102,9 @@ class _InfoScreenState extends State<InfoScreen> {
                     const SizedBox(height: 10),
                   ],
                   if (_activeImportantInfo().isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     _buildImportantInfo(context, cs),
+                    const SizedBox(height: 16),
                   ],
                 ],
               ),
@@ -147,17 +148,16 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 
   Widget _buildImportantInfo(BuildContext context, ColorScheme cs) {
+    final active = _activeImportantInfo();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionHeader(context, cs, 'PAMIĘTAJ O', AppElements.fire.base),
         const SizedBox(height: 12),
-        ..._activeImportantInfo().map(
-          (info) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: _importantInfoCard(context, cs, info),
-          ),
-        ),
+        for (var i = 0; i < active.length; i++) ...[
+          if (i > 0) const SizedBox(height: 10),
+          _importantInfoCard(context, cs, active[i]),
+        ],
       ],
     );
   }
@@ -167,9 +167,10 @@ class _InfoScreenState extends State<InfoScreen> {
     ColorScheme cs,
     ImportantInfo info,
   ) {
-    final color = _parseHexColor(info.color) ?? AppElements.fire.base;
+    final color = parseHexColor(info.color) ?? AppElements.fire.base;
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final hasUrl = info.url != null && info.url!.isNotEmpty;
+    final hasBody = info.body.isNotEmpty;
 
     final card = Container(
       padding: const EdgeInsets.all(14),
@@ -179,7 +180,13 @@ class _InfoScreenState extends State<InfoScreen> {
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // Center the 44px icon with the title when the body is empty so
+        // the card doesn't look bottom-heavy (icon dominates the row's
+        // height and would otherwise leave a fat blank strip below the
+        // title).
+        crossAxisAlignment: hasBody
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Container(
             width: 44,
@@ -215,7 +222,7 @@ class _InfoScreenState extends State<InfoScreen> {
                     ],
                   ],
                 ),
-                if (info.body.isNotEmpty) ...[
+                if (hasBody) ...[
                   const SizedBox(height: 4),
                   _html(info.body, cs, baseSize: 13),
                 ],
@@ -434,14 +441,6 @@ class _InfoScreenState extends State<InfoScreen> {
     }
   }
 
-  Color? _parseHexColor(String hex) {
-    var s = hex.trim();
-    if (s.isEmpty) return null;
-    if (s.startsWith('#')) s = s.substring(1);
-    if (s.length == 6) s = 'FF$s';
-    final v = int.tryParse(s, radix: 16);
-    return v == null ? null : Color(v);
-  }
 }
 
 // ── Navigation section card ────────────────────────────────────────────────

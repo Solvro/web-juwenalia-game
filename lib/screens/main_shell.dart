@@ -12,6 +12,7 @@ import '../theme/elements.dart';
 import '../widgets/desktop_sidebar.dart';
 import '../widgets/glass_bottom_nav.dart';
 import '../widgets/platform_utils.dart';
+import '../widgets/swipe_down_dismissible.dart';
 import 'checkpoint_details_screen.dart';
 import 'field_game_screen.dart';
 import 'game_locked_screen.dart';
@@ -425,8 +426,8 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           label: 'Zobacz',
           onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => CheckpointDetailsScreen(
+            swipeDownPageRoute(
+              (_) => CheckpointDetailsScreen(
                 checkpoint: cp,
                 isCompleted: true,
                 data: data,

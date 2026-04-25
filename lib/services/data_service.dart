@@ -112,6 +112,8 @@ class AppData {
             'title': c.title,
             'description': c.description,
             'category': c.category,
+            'category_label': c.categoryLabel,
+            'category_color': c.categoryColor,
             'image': c.image,
             'location': c.location,
             'location_id': c.locationId,
@@ -235,7 +237,9 @@ class AppData {
               qrCode: (j['qr_code'] as String?) ?? '',
               title: (j['title'] as String?) ?? '',
               description: (j['description'] as String?) ?? '',
-              category: (j['category'] as String?) ?? 'other',
+              category: (j['category'] as String?) ?? '',
+              categoryLabel: (j['category_label'] as String?) ?? 'Inne',
+              categoryColor: (j['category_color'] as String?) ?? '',
               image: (j['image'] as String?) ?? '',
               location: (j['location'] as String?) ?? '',
               locationId: j['location_id']?.toString(),
@@ -754,7 +758,9 @@ String _formatDayLabel(String isoDate) {
 Future<List<Checkpoint>> _fetchCheckpoints(String edition) async {
   final query = <String, String>{
     'fields':
-        'id,qr_code,title,description,image,sort,location.id,location.name',
+        'id,qr_code,title,description,image,sort,'
+        'location.id,location.name,'
+        'category.id,category.display_name,category.color',
     'sort': 'sort',
     ..._jsonEditionFilter(edition),
   };
@@ -762,11 +768,15 @@ Future<List<Checkpoint>> _fetchCheckpoints(String edition) async {
 
   return raw.cast<Map<String, dynamic>>().map((j) {
     final loc = (j['location'] as Map?)?.cast<String, dynamic>();
+    final cat = (j['category'] as Map?)?.cast<String, dynamic>();
     return Checkpoint(
       id: (j['id'] as num).toInt(),
       qrCode: (j['qr_code'] as String?) ?? '',
       title: (j['title'] as String?) ?? '',
       description: (j['description'] as String?) ?? '',
+      category: (cat?['id'] as String?) ?? '',
+      categoryLabel: (cat?['display_name'] as String?) ?? 'Inne',
+      categoryColor: (cat?['color'] as String?) ?? '',
       image: Directus.assetUrl(j['image'] as String?),
       location: (loc?['name'] as String?) ?? '',
       locationId: loc?['id']?.toString(),

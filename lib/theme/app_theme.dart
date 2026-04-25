@@ -341,55 +341,19 @@ class AppTheme {
   }
 }
 
-// ── Category display helpers (Juwenalia zones) ───────────────────────────────
+// ── Hex color parsing ────────────────────────────────────────────────────────
 
-extension CategoryDisplay on String {
-  String get categoryLabel {
-    switch (this) {
-      case 'stage':
-        return 'Scena';
-      case 'food':
-        return 'Gastro';
-      case 'chill':
-        return 'Chillout';
-      case 'gaming':
-        return 'Gaming';
-      case 'campus':
-        return 'Miasteczko';
-      case 'culture':
-        return 'Kultura';
-      case 'info':
-        return 'Info';
-      case 'event':
-        return 'Wydarzenie';
-      default:
-        return 'Inne';
-    }
-  }
-
-  Color categoryColor(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    switch (this) {
-      case 'stage':
-        return isDark ? const Color(0xFFFFB963) : const Color(0xFF7B5800);
-      case 'food':
-        return isDark ? const Color(0xFFFF9E8E) : const Color(0xFFB52D22);
-      case 'chill':
-        return isDark ? const Color(0xFF9DDFB0) : const Color(0xFF1D6B3A);
-      case 'gaming':
-        return isDark ? const Color(0xFFD4AAFF) : const Color(0xFF6B3FA0);
-      case 'campus':
-        return isDark ? const Color(0xFF88CEFF) : const Color(0xFF006590);
-      case 'culture':
-        return isDark ? const Color(0xFFFFC75A) : const Color(0xFF8A5C00);
-      case 'info':
-        return isDark ? const Color(0xFF88CEFF) : const Color(0xFF006590);
-      case 'event':
-        return isDark ? const Color(0xFFFFB963) : const Color(0xFF7B5800);
-      default:
-        return isDark ? const Color(0xFFBEC8D2) : const Color(0xFF42474E);
-    }
-  }
+/// Parses a CMS-supplied hex string ("#RRGGBB", "#RRGGBBAA", or with no
+/// leading hash) into a [Color]. Returns `null` for blank/invalid input
+/// so callers can apply their own neutral fallback.
+Color? parseHexColor(String? hex) {
+  if (hex == null) return null;
+  var s = hex.trim();
+  if (s.isEmpty) return null;
+  if (s.startsWith('#')) s = s.substring(1);
+  if (s.length == 6) s = 'FF$s';
+  final v = int.tryParse(s, radix: 16);
+  return v == null ? null : Color(v);
 }
 
 // ── Map point icon/color helpers ─────────────────────────────────────────────

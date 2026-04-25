@@ -10,6 +10,7 @@ import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/section_header.dart';
+import '../widgets/swipe_down_dismissible.dart';
 import 'checkpoint_details_screen.dart';
 import 'reward_screen.dart';
 
@@ -374,8 +375,8 @@ class FieldGameScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => CheckpointDetailsScreen(
+        swipeDownPageRoute(
+          (_) => CheckpointDetailsScreen(
             checkpoint: cp,
             isCompleted: isCompleted,
             data: data,
@@ -463,11 +464,13 @@ class FieldGameScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      cp.category.categoryLabel,
+                      cp.categoryLabel,
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: cp.category.categoryColor(context),
+                        color:
+                            parseHexColor(cp.categoryColor) ??
+                            cs.onSurfaceVariant,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -546,46 +549,52 @@ class FieldGameScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 13,
-                        color: cs.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 3),
-                      Flexible(
-                        child: Text(
-                          cp.location,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
+                  if (cp.location.trim().isNotEmpty ||
+                      cp.time.trim().isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (cp.location.trim().isNotEmpty) ...[
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 13,
                             color: cs.onSurfaceVariant,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (cp.time.trim().isNotEmpty) ...[
-                        const SizedBox(width: 10),
-                        Icon(
-                          Icons.schedule_outlined,
-                          size: 13,
-                          color: cs.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 3),
-                        Flexible(
-                          child: Text(
-                            cp.time.trim(),
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              color: cs.onSurfaceVariant,
+                          const SizedBox(width: 3),
+                          Flexible(
+                            child: Text(
+                              cp.location,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: cs.onSurfaceVariant,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
+                        ],
+                        if (cp.time.trim().isNotEmpty) ...[
+                          if (cp.location.trim().isNotEmpty)
+                            const SizedBox(width: 10),
+                          Icon(
+                            Icons.schedule_outlined,
+                            size: 13,
+                            color: cs.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 3),
+                          Flexible(
+                            child: Text(
+                              cp.time.trim(),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: cs.onSurfaceVariant,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ],
               ),
             ),
