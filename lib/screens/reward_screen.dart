@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -103,28 +105,6 @@ class _RewardScreenState extends State<RewardScreen> {
             )
             .fadeIn(duration: 300.ms),
         const SizedBox(height: 22),
-        Text(
-              _isLocked
-                  ? 'Nagroda została wydana'
-                  : _canClaim
-                  ? 'Gratulacje, nagroda czeka!'
-                  : 'Zbierz jeszcze pieczątki',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: _isLocked
-                    ? cs.primary
-                    : _canClaim
-                    ? cs.secondary
-                    : cs.onSurface,
-                letterSpacing: -0.5,
-              ),
-              textAlign: TextAlign.center,
-            )
-            .animate(delay: 150.ms)
-            .fadeIn(duration: 350.ms)
-            .slideY(begin: 0.1, end: 0, duration: 350.ms),
-        const SizedBox(height: 14),
         Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -164,6 +144,7 @@ class _RewardScreenState extends State<RewardScreen> {
             .animate(delay: 200.ms)
             .fadeIn(duration: 350.ms)
             .slideY(begin: 0.08, end: 0, duration: 350.ms),
+        const SizedBox(height: 22),
         const Spacer(),
         if (_isLocked)
           _buildRedeemedState(context, cs)
@@ -278,29 +259,18 @@ class _RewardScreenState extends State<RewardScreen> {
                     SizedBox(
                       width: 182,
                       height: 182,
-                      child: CircularProgressIndicator(
-                        value: 1,
-                        strokeWidth: 14,
-                        color: cs.outlineVariant.withValues(alpha: 0.35),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 182,
-                      height: 182,
-                      child: ShaderMask(
-                        shaderCallback: (rect) =>
-                            AppTheme.brandGradient.createShader(rect),
-                        child: TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0, end: progress),
-                          duration: const Duration(milliseconds: 1000),
-                          curve: Curves.easeOutCubic,
-                          builder: (_, v, _) => CircularProgressIndicator(
-                            value: v,
-                            strokeWidth: 14,
-                            strokeCap: StrokeCap.round,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: progress),
+                        duration: const Duration(milliseconds: 1000),
+                        curve: Curves.easeOutCubic,
+                        builder: (_, v, _) => CustomPaint(
+                          painter: _GaugePainter(
+                            progress: v,
+                            trackColor: cs.outlineVariant.withValues(
+                              alpha: 0.35,
                             ),
+                            gradient: AppTheme.brandGradient,
+                            strokeWidth: 14,
                           ),
                         ),
                       ),
@@ -349,7 +319,7 @@ class _RewardScreenState extends State<RewardScreen> {
               const SizedBox(height: 16),
               Text(
                 done
-                    ? 'Masz komplet pieczątek i możesz odebrać nagrodę'
+                    ? 'Masz komplet stref i możesz odebrać nagrodę'
                     : 'Do odblokowania zostało jeszcze $remaining ${_pluralStrefa(remaining)}',
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 16,
@@ -395,18 +365,6 @@ class _RewardScreenState extends State<RewardScreen> {
               fontSize: 16,
             ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          _hasConfiguredPin
-              ? 'Pracownik punktu wpisze PIN ustawiony w CMS, aby potwierdzić wydanie nagrody.'
-              : 'Jeśli chcesz, możesz później włączyć zabezpieczenie PIN-em z poziomu CMS.',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            color: cs.onSurfaceVariant,
-            height: 1.45,
-          ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -454,7 +412,7 @@ class _RewardScreenState extends State<RewardScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Nagroda została już oznaczona jako wydana. Jeśli to pomyłka, zmień status po stronie CMS lub wyczyść postęp w aplikacji.',
+            'Nagroda została już odebrana. Gratulacje i miłej zabawy na juwenaliach!',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               color: cs.onSurfaceVariant,
@@ -485,7 +443,7 @@ class _RewardScreenState extends State<RewardScreen> {
             builder: (_) => AlertDialog(
               title: const Text('Odbierz nagrodę'),
               content: const Text(
-                'Czy na pewno chcesz oznaczyć nagrodę jako wydaną?',
+                'Czy na pewno chcesz odebrać nagrodę? Tej akcji nie można cofnąć, więc upwnij się, że jesteś gotowy do jej odbioru w punkcie, zanim potwierdzisz.',
               ),
               actions: [
                 TextButton(
@@ -816,4 +774,59 @@ class _GlowOrb extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Gauge painter — replaces the stacked CircularProgressIndicator +
+/// ShaderMask approach. Renders a full-circle track and a progress arc
+/// in one pass; the gradient is applied directly via [Paint.shader] so
+/// rounded stroke caps colour correctly even at the gradient rect's
+/// edge (which is where the previous approach broke down).
+class _GaugePainter extends CustomPainter {
+  _GaugePainter({
+    required this.progress,
+    required this.trackColor,
+    required this.gradient,
+    required this.strokeWidth,
+  });
+
+  final double progress;
+  final Color trackColor;
+  final Gradient gradient;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final arcRect = rect.deflate(strokeWidth / 2);
+    final radius = arcRect.shortestSide / 2;
+
+    final track = Paint()
+      ..color = trackColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(arcRect.center, radius, track);
+
+    if (progress <= 0) return;
+
+    final foreground = Paint()
+      ..shader = gradient.createShader(rect)
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: arcRect.center, radius: radius),
+      -math.pi / 2,
+      progress.clamp(0.0, 1.0) * 2 * math.pi,
+      false,
+      foreground,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _GaugePainter old) =>
+      old.progress != progress ||
+      old.trackColor != trackColor ||
+      old.gradient != gradient ||
+      old.strokeWidth != strokeWidth;
 }

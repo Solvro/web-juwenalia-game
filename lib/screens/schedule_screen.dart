@@ -463,7 +463,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
           ),
           const SizedBox(width: 4),
           Text(
-            'NA ŻYWO',
+            'TERAZ',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 9,
               fontWeight: FontWeight.w800,

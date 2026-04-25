@@ -248,7 +248,11 @@ class FieldGameScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              done ? '🎉 Cel osiągnięty!' : 'Twój postęp',
+                              isLocked
+                                  ? '🏆 Nagroda odebrana'
+                                  : done
+                                  ? '🎉 Cel osiągnięty!'
+                                  : 'Twój postęp',
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -260,7 +264,9 @@ class FieldGameScreen extends StatelessWidget {
                             ),
                             const Spacer(),
                             Icon(
-                              done
+                              isLocked
+                                  ? Icons.verified_rounded
+                                  : done
                                   ? Icons.emoji_events_rounded
                                   : Icons.chevron_right_rounded,
                               size: 16,

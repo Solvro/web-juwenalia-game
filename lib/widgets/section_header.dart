@@ -114,73 +114,86 @@ class SectionHeader extends StatelessWidget {
               ? 1.0
               : ((h - minH) / (maxH - minH)).clamp(0.0, 1.0);
 
-          return FlexibleSpaceBar(
-            centerTitle: false,
-            // The title lives in FlexibleSpaceBar.title so the framework
-            // keeps it pinned when the header collapses (it translates
-            // into the app bar's title slot). We mirror the same padding
-            // used by the background placeholder below so the two
-            // overlap pixel-for-pixel while expanded — no visible
-            // duplicate.
-            titlePadding: EdgeInsets.only(
-              left: 20,
-              right: 16,
-              bottom: bottomInset,
-            ),
-            expandedTitleScale: 1.0,
-            title: actualTitle,
-            background: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: const Alignment(0.8, 1.8),
-                      colors: [
-                        palette.base.withValues(alpha: isDark ? 0.20 : 0.16),
-                        palette.accent.withValues(alpha: 0.10),
-                        AppTheme.surfaceContainerLowestOf(
-                          context,
-                        ).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 0.4, 1.0],
-                    ),
-                  ),
+          // FlexibleSpaceBar.background fades out as the bar collapses
+          // — that's fine for the gradient + supertitle, but the logo
+          // should stay visible throughout, just shrinking. So we
+          // render it as a sibling of FlexibleSpaceBar in this Stack
+          // instead of inside its background slot.
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              FlexibleSpaceBar(
+                centerTitle: false,
+                // The title lives in FlexibleSpaceBar.title so the
+                // framework keeps it pinned when the header collapses
+                // (it translates into the app bar's title slot). We
+                // mirror the same padding used by the background
+                // placeholder below so the two overlap pixel-for-pixel
+                // while expanded — no visible duplicate.
+                titlePadding: EdgeInsets.only(
+                  left: 20,
+                  right: 16,
+                  bottom: bottomInset,
                 ),
-                // Background column: visible supertitle + an invisible
-                // copy of the title that reserves the same vertical
-                // footprint as FlexibleSpaceBar.title. When the title
-                // wraps to multiple lines the Column grows upward and
-                // pushes the supertitle up instead of overlapping it.
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    right: 16,
-                    bottom: bottomInset,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      supertitleBlock,
-                      // IgnorePointer so the invisible title doesn't
-                      // steal hit testing from anything below it.
-                      IgnorePointer(
-                        child: Opacity(opacity: 0, child: actualTitle),
+                expandedTitleScale: 1.0,
+                title: actualTitle,
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: const Alignment(0.8, 1.8),
+                          colors: [
+                            palette.base.withValues(
+                              alpha: isDark ? 0.20 : 0.16,
+                            ),
+                            palette.accent.withValues(alpha: 0.10),
+                            AppTheme.surfaceContainerLowestOf(
+                              context,
+                            ).withValues(alpha: 0.0),
+                          ],
+                          stops: const [0.0, 0.4, 1.0],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    // Background column: visible supertitle + an
+                    // invisible copy of the title that reserves the
+                    // same vertical footprint as FlexibleSpaceBar.title.
+                    // When the title wraps to multiple lines the Column
+                    // grows upward and pushes the supertitle up
+                    // instead of overlapping it.
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        right: 16,
+                        bottom: bottomInset,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          supertitleBlock,
+                          // IgnorePointer so the invisible title doesn't
+                          // steal hit testing from anything below it.
+                          IgnorePointer(
+                            child: Opacity(opacity: 0, child: actualTitle),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                if (trailingLogoAsset != null)
-                  _TrailingLogo(
-                    asset: trailingLogoAsset!,
-                    progress: t,
-                    topPad: topPad,
-                    bottomH: bottomH,
-                  ),
-              ],
-            ),
+              ),
+              if (trailingLogoAsset != null)
+                _TrailingLogo(
+                  asset: trailingLogoAsset!,
+                  progress: t,
+                  topPad: topPad,
+                  bottomH: bottomH,
+                ),
+            ],
           );
         },
       ),
@@ -210,7 +223,7 @@ class _TrailingLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = _lerp(28.0, 64.0, progress);
+    final size = _lerp(42.0, 96.0, progress);
     final right = _lerp(12.0, 20.0, progress);
     // Center vertically on the toolbar strip when collapsed; nudge
     // upward toward the expanded area as the bar grows.

@@ -67,8 +67,8 @@ class GameLockedScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   start != null
-                      ? 'Gra terenowa startuje ${_formatStart(start)}. Wróć tutaj po otwarciu festiwalu, aby skanować kody QR i zbierać pieczątki.'
-                      : 'Gra terenowa ruszy razem z festiwalem. Wróć tutaj po otwarciu juwenaliów.',
+                      ? 'Gra terenowa startuje ${_formatStart(start)}. Wróć tutaj po otwarciu bram..'
+                      : 'Gra terenowa ruszy razem z juwenaliami. Wróć tutaj po otwarciu bram.',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     color: cs.onSurfaceVariant,
