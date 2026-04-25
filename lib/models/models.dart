@@ -188,28 +188,6 @@ class FaqItem {
   });
 }
 
-class PlanBounds {
-  final double north;
-  final double south;
-  final double east;
-  final double west;
-
-  const PlanBounds({
-    required this.north,
-    required this.south,
-    required this.east,
-    required this.west,
-  });
-
-  /// Default bounds for legacy clients without CMS config.
-  static const fallback = PlanBounds(
-    north: 51.1098,
-    south: 51.1062,
-    east: 17.0624,
-    west: 17.0562,
-  );
-}
-
 class AppConfig {
   final String edition;
   final DateTime? eventStartsAt;
@@ -237,8 +215,6 @@ class AppConfig {
   /// means use the bundled Polish copy so old payloads still render.
   final String? downloadPanelDescription;
 
-  final PlanBounds planBounds;
-
   const AppConfig({
     required this.edition,
     this.eventStartsAt,
@@ -257,6 +233,5 @@ class AppConfig {
     this.appStoreUrlAndroid,
     this.downloadQrUrl,
     this.downloadPanelDescription,
-    this.planBounds = PlanBounds.fallback,
   });
 }

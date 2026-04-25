@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 /// We dropped lat/lng projection in favour of direct pixel positions
 /// because editors hand-place pins on the plan photo; mapping every
 /// chair-and-tent through GPS bounds added drift and required keeping
-/// PlanBounds in sync with the plan asset.
+/// per-edition geographic bounds in sync with the plan asset.
 class FestivalPlanPin {
   const FestivalPlanPin({
     required this.id,

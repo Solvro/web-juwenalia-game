@@ -24,8 +24,8 @@ class CheckpointDetailsScreen extends StatelessWidget {
   final Checkpoint checkpoint;
   final bool isCompleted;
 
-  /// Full app payload — used to look up the checkpoint's [MapPoint] for
-  /// the mini-map and to source [PlanBounds] without duplicating them
+  /// Full app payload — used to look up the checkpoint's [MapPoint] so
+  /// the mini-map can render its plan-pin without duplicating coords
   /// onto the checkpoint itself. Optional because some legacy entry
   /// points (easter-egg flows, etc.) push without [AppData] in hand.
   final AppData? data;

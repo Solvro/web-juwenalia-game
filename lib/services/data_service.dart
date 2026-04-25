@@ -104,12 +104,6 @@ class AppData {
       'app_store_url_android': config.appStoreUrlAndroid,
       'download_qr_url': config.downloadQrUrl,
       'download_panel_description': config.downloadPanelDescription,
-      'plan_bounds': {
-        'north': config.planBounds.north,
-        'south': config.planBounds.south,
-        'east': config.planBounds.east,
-        'west': config.planBounds.west,
-      },
     },
     'checkpoints': checkpoints
         .map(
@@ -253,7 +247,6 @@ class AppData {
         downloadQrUrl: (cfg['download_qr_url'] as String?)?.trim(),
         downloadPanelDescription: (cfg['download_panel_description'] as String?)
             ?.trim(),
-        planBounds: _parsePlanBounds(cfg['plan_bounds']),
       ),
       checkpoints: ((json['checkpoints'] as List?) ?? const [])
           .cast<Map<String, dynamic>>()
@@ -601,30 +594,7 @@ Future<AppConfig> _fetchConfig() async {
     downloadQrUrl: (data['download_qr_url'] as String?)?.trim(),
     downloadPanelDescription: (data['download_panel_description'] as String?)
         ?.trim(),
-    planBounds: _parsePlanBounds(data['plan_bounds']),
   );
-}
-
-PlanBounds _parsePlanBounds(dynamic raw) {
-  Map<String, dynamic>? map;
-  if (raw is Map) {
-    map = raw.cast<String, dynamic>();
-  } else if (raw is String && raw.trim().isNotEmpty) {
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map) map = decoded.cast<String, dynamic>();
-    } catch (_) {}
-  }
-  if (map == null) return PlanBounds.fallback;
-  double? numAt(String k) => (map![k] as num?)?.toDouble();
-  final n = numAt('north');
-  final s = numAt('south');
-  final e = numAt('east');
-  final w = numAt('west');
-  if (n == null || s == null || e == null || w == null) {
-    return PlanBounds.fallback;
-  }
-  return PlanBounds(north: n, south: s, east: e, west: w);
 }
 
 Future<List<NewsItem>> _fetchNews(String edition) async {
