@@ -411,6 +411,13 @@
       "title": "Pamiętaj o legitymacji",
       "body": "<p>Legitymacja studencka przyspiesza wejście na teren festiwalu i daje zniżki u partnerów gastronomicznych.</p>",
       "color": "#F5A524"
+    },
+    {
+      "id": "4",
+      "icon": "contract",
+      "title": "Regulamin",
+      "body": "",
+      "color": "#A2B5CD"
     }
   ],
   "faqs": [
