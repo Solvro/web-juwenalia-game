@@ -271,6 +271,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                   onScanQr: data == null ? () {} : () => _scanQr(data),
                   qrEnabled: qrEnabled,
                   destinations: _destinations,
+                  config: data?.config,
                 ),
                 Expanded(
                   child: Center(

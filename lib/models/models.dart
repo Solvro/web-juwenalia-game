@@ -68,6 +68,15 @@ class MapPoint {
   final double? lng;
   final String? color;
 
+  /// Optional Material icon name. Overrides [type]'s default icon when set.
+  final String? icon;
+
+  /// Pixel coordinates on the festival plan image. Both must be non-null
+  /// for the location to render on the plan view; `lat`/`lng` are still
+  /// used for the live map. Stored as integers in the CMS.
+  final int? planX;
+  final int? planY;
+
   /// When true, the CMS wants this pin excluded from the main map legend
   /// but still reachable via checkpoint mini-maps. Defaults to false for
   /// backwards-compat with pre-migration rows.
@@ -81,7 +90,34 @@ class MapPoint {
     this.lat,
     this.lng,
     this.color,
+    this.icon,
+    this.planX,
+    this.planY,
     this.hidden = false,
+  });
+
+  /// Whether this location has the pixel coords needed to render on the
+  /// plan view.
+  bool get hasPlanPosition => planX != null && planY != null;
+}
+
+class Artist {
+  final String id;
+  final String name;
+  final String description;
+  final String imageUrl;
+  final String? instagramUrl;
+  final String? spotifyUrl;
+  final bool isPopular;
+
+  const Artist({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.imageUrl,
+    this.instagramUrl,
+    this.spotifyUrl,
+    this.isPopular = false,
   });
 }
 
@@ -190,6 +226,17 @@ class AppConfig {
   final String minAppVersionWeb;
   final String? appStoreUrlIos;
   final String? appStoreUrlAndroid;
+
+  /// URL encoded into the QR shown in the desktop sidebar's download
+  /// panel. Empty means "use [appStoreUrlAndroid] as the fallback" so
+  /// editors don't have to duplicate the Play link if they don't have a
+  /// smart redirector yet.
+  final String? downloadQrUrl;
+
+  /// Pitch text shown above the QR in the desktop download panel. Empty
+  /// means use the bundled Polish copy so old payloads still render.
+  final String? downloadPanelDescription;
+
   final PlanBounds planBounds;
 
   const AppConfig({
@@ -208,6 +255,8 @@ class AppConfig {
     this.minAppVersionWeb = '',
     this.appStoreUrlIos,
     this.appStoreUrlAndroid,
+    this.downloadQrUrl,
+    this.downloadPanelDescription,
     this.planBounds = PlanBounds.fallback,
   });
 }

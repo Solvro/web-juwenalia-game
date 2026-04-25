@@ -41,6 +41,7 @@ class AppData {
   final List<PartnerTier> partnerTiers;
   final List<ImportantInfo> importantInfo;
   final List<FaqItem> faqs;
+  final List<Artist> artists;
   final bool isFromCache;
 
   const AppData({
@@ -53,6 +54,7 @@ class AppData {
     this.partnerTiers = const [],
     this.importantInfo = const [],
     this.faqs = const [],
+    this.artists = const [],
     this.isFromCache = false,
   });
 
@@ -77,6 +79,9 @@ class AppData {
       final url = p.logoUrl;
       if (url != null && url.isNotEmpty) yield url;
     }
+    for (final a in artists) {
+      if (a.imageUrl.isNotEmpty) yield a.imageUrl;
+    }
     if (config.festivalPlanUrl.isNotEmpty) yield config.festivalPlanUrl;
   }
 
@@ -97,6 +102,8 @@ class AppData {
       'min_app_version_web': config.minAppVersionWeb,
       'app_store_url_ios': config.appStoreUrlIos,
       'app_store_url_android': config.appStoreUrlAndroid,
+      'download_qr_url': config.downloadQrUrl,
+      'download_panel_description': config.downloadPanelDescription,
       'plan_bounds': {
         'north': config.planBounds.north,
         'south': config.planBounds.south,
@@ -167,7 +174,23 @@ class AppData {
             'lat': p.lat,
             'lng': p.lng,
             'color': p.color,
+            'icon': p.icon,
+            'plan_x': p.planX,
+            'plan_y': p.planY,
             'hidden': p.hidden,
+          },
+        )
+        .toList(),
+    'artists': artists
+        .map(
+          (a) => {
+            'id': a.id,
+            'name': a.name,
+            'description': a.description,
+            'image_url': a.imageUrl,
+            'instagram_url': a.instagramUrl,
+            'spotify_url': a.spotifyUrl,
+            'is_popular': a.isPopular,
           },
         )
         .toList(),
@@ -227,6 +250,9 @@ class AppData {
         minAppVersionWeb: (cfg['min_app_version_web']?.toString()) ?? '',
         appStoreUrlIos: (cfg['app_store_url_ios'] as String?)?.trim(),
         appStoreUrlAndroid: (cfg['app_store_url_android'] as String?)?.trim(),
+        downloadQrUrl: (cfg['download_qr_url'] as String?)?.trim(),
+        downloadPanelDescription: (cfg['download_panel_description'] as String?)
+            ?.trim(),
         planBounds: _parsePlanBounds(cfg['plan_bounds']),
       ),
       checkpoints: ((json['checkpoints'] as List?) ?? const [])
@@ -300,7 +326,26 @@ class AppData {
               lat: (j['lat'] as num?)?.toDouble(),
               lng: (j['lng'] as num?)?.toDouble(),
               color: j['color'] as String?,
+              icon: (j['icon'] as String?)?.trim().isNotEmpty == true
+                  ? (j['icon'] as String).trim()
+                  : null,
+              planX: (j['plan_x'] as num?)?.toInt(),
+              planY: (j['plan_y'] as num?)?.toInt(),
               hidden: (j['hidden'] as bool?) ?? false,
+            ),
+          )
+          .toList(),
+      artists: ((json['artists'] as List?) ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(
+            (j) => Artist(
+              id: j['id'].toString(),
+              name: (j['name'] as String?) ?? '',
+              description: (j['description'] as String?) ?? '',
+              imageUrl: (j['image_url'] as String?) ?? '',
+              instagramUrl: (j['instagram_url'] as String?)?.trim(),
+              spotifyUrl: (j['spotify_url'] as String?)?.trim(),
+              isPopular: (j['is_popular'] as bool?) ?? false,
             ),
           )
           .toList(),
@@ -512,6 +557,10 @@ Future<AppData> _fetchFromDirectus({AppData? previous}) async {
       () => _fetchPartnerTiers(),
       sameEdition ? previous.partnerTiers : const [],
     ),
+    withFallback<List<Artist>>(
+      () => _fetchArtists(config.edition),
+      sameEdition ? previous.artists : const [],
+    ),
   ]);
 
   return AppData(
@@ -524,6 +573,7 @@ Future<AppData> _fetchFromDirectus({AppData? previous}) async {
     partners: results[5] as List<Partner>,
     faqs: results[6] as List<FaqItem>,
     partnerTiers: results[7] as List<PartnerTier>,
+    artists: results[8] as List<Artist>,
   );
 }
 
@@ -548,6 +598,9 @@ Future<AppConfig> _fetchConfig() async {
     minAppVersionWeb: (data['min_app_version_web']?.toString()) ?? '',
     appStoreUrlIos: (data['app_store_url_ios'] as String?)?.trim(),
     appStoreUrlAndroid: (data['app_store_url_android'] as String?)?.trim(),
+    downloadQrUrl: (data['download_qr_url'] as String?)?.trim(),
+    downloadPanelDescription: (data['download_panel_description'] as String?)
+        ?.trim(),
     planBounds: _parsePlanBounds(data['plan_bounds']),
   );
 }
@@ -786,7 +839,9 @@ Future<List<Checkpoint>> _fetchCheckpoints(String edition) async {
 
 Future<List<MapPoint>> _fetchLocations(String edition) async {
   final query = <String, String>{
-    'fields': 'id,name,point,polyline,isPolyline,description,color,hidden',
+    'fields':
+        'id,name,point,polyline,isPolyline,description,color,hidden,'
+        'icon,plan_point',
     ..._jsonEditionFilter(edition),
   };
   final raw = await Directus.items('locations', query: query) as List;
@@ -802,6 +857,8 @@ Future<List<MapPoint>> _fetchLocations(String edition) async {
         lat = coords[1].toDouble();
       }
     }
+    final iconRaw = (j['icon'] as String?)?.trim();
+    final (planX, planY) = _parsePlanPoint(j);
     return MapPoint(
       id: j['id'].toString(),
       name: (j['name'] as String?) ?? '',
@@ -810,7 +867,52 @@ Future<List<MapPoint>> _fetchLocations(String edition) async {
       lat: lat,
       lng: lng,
       color: j['color'] as String?,
+      icon: (iconRaw == null || iconRaw.isEmpty) ? null : iconRaw,
+      planX: planX,
+      planY: planY,
       hidden: (j['hidden'] as bool?) ?? false,
+    );
+  }).toList();
+}
+
+/// Reads pixel coordinates from a `locations.plan_point` JSON column
+/// (`{x, y}`, populated by the Point Picker interface).
+(int?, int?) _parsePlanPoint(Map<String, dynamic> row) {
+  final raw = row['plan_point'];
+  Map<String, dynamic>? map;
+  if (raw is Map) {
+    map = raw.cast<String, dynamic>();
+  } else if (raw is String && raw.trim().isNotEmpty) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) map = decoded.cast<String, dynamic>();
+    } catch (_) {}
+  }
+  if (map == null) return (null, null);
+  final x = (map['x'] as num?)?.toInt();
+  final y = (map['y'] as num?)?.toInt();
+  return (x, y);
+}
+
+Future<List<Artist>> _fetchArtists(String edition) async {
+  final query = <String, String>{
+    'fields':
+        'id,name,description,image,instagramUrl,spotifyUrl,isPopular,sort',
+    'sort': '-isPopular,sort',
+    'limit': '500',
+    ..._jsonEditionFilter(edition),
+  };
+  final raw = await Directus.items('artists', query: query) as List;
+
+  return raw.cast<Map<String, dynamic>>().map((j) {
+    return Artist(
+      id: j['id'].toString(),
+      name: (j['name'] as String?) ?? '',
+      description: (j['description'] as String?) ?? '',
+      imageUrl: Directus.assetUrl(j['image'] as String?),
+      instagramUrl: (j['instagramUrl'] as String?)?.trim(),
+      spotifyUrl: (j['spotifyUrl'] as String?)?.trim(),
+      isPopular: (j['isPopular'] as bool?) ?? false,
     );
   }).toList();
 }

@@ -132,6 +132,7 @@ class _InfoScreenState extends State<InfoScreen> {
         ),
       ),
       palette: palette,
+      trailingLogoAsset: 'assets/icon/icon.png',
     );
   }
 

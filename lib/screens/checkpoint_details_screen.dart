@@ -8,6 +8,7 @@ import '../checkpoint.dart';
 import '../models/models.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/icon_names.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/festival_plan_map.dart';
 import '../widgets/swipe_down_dismissible.dart';
@@ -34,7 +35,9 @@ class CheckpointDetailsScreen extends StatelessWidget {
     final locId = checkpoint.locationId;
     if (d == null || locId == null) return null;
     for (final p in d.mapPoints) {
-      if (p.id == locId && p.lat != null && p.lng != null) return p;
+      // Mini-map is plan-only — skip locations that haven't been
+      // pixel-placed by the editor yet.
+      if (p.id == locId && p.hasPlanPosition) return p;
     }
     return null;
   }
@@ -265,7 +268,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
               },
             ),
           ],
-          if (_locationPin != null && data != null) ...[
+          if (_locationPin != null) ...[
             const SizedBox(height: 20),
             Divider(height: 1, thickness: 1, color: cs.outlineVariant),
             const SizedBox(height: 20),
@@ -288,14 +291,15 @@ class CheckpointDetailsScreen extends StatelessWidget {
 
   Widget _buildMiniMap(BuildContext context, ColorScheme cs) {
     final pin = _locationPin!;
-    final appData = data!;
-    final color = pin.type.mapPointColor(context);
-    final icon = pin.type.mapPointIcon;
+    final color = parseHexColor(pin.color) ?? pin.type.mapPointColor(context);
+    final icon = pin.icon != null
+        ? iconFromName(pin.icon!)
+        : pin.type.mapPointIcon;
 
     final planPin = FestivalPlanPin(
       id: pin.id,
-      lat: pin.lat!,
-      lng: pin.lng!,
+      x: pin.planX!.toDouble(),
+      y: pin.planY!.toDouble(),
       builder: (context, pinScale) => Transform.scale(
         scale: pinScale,
         child: Container(
@@ -330,7 +334,6 @@ class CheckpointDetailsScreen extends StatelessWidget {
             color: AppTheme.surfaceContainerOf(context),
           ),
           child: FestivalPlanMap(
-            bounds: appData.config.planBounds,
             pins: [planPin],
             autoFocus: planPin,
             autoFocusScale: 2.4,

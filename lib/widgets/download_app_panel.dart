@@ -3,33 +3,50 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/models.dart';
 import '../theme/app_theme.dart';
 import 'brand_gradient.dart';
 
-/// Store URLs — wire these to real listings when you have them.
-class AppStoreLinks {
-  AppStoreLinks._();
-
-  // Replace with the real product page once published.
+/// Hard-coded fallbacks used only when the CMS fields are blank or the
+/// payload hasn't loaded yet. Update via `app_config.app_store_url_ios`
+/// / `app_store_url_android` / `download_qr_url` / `download_panel_description`
+/// in Directus — code changes are no longer needed for these.
+class _DownloadDefaults {
   static const String iosUrl =
       'https://apps.apple.com/app/juwenalia-pwr/id000000000';
   static const String androidUrl =
       'https://play.google.com/store/apps/details?id=pl.solvro.juwenalia';
-
-  /// QR encodes a "smart" URL — open the right store based on the device the
-  /// user scans with. (For now we encode the Android URL; swap for a real
-  /// branch.io / AppsFlyer / custom redirector when available.)
-  static const String universalUrl = androidUrl;
+  static const String description =
+      'Skanuj kody QR, sprawdzaj harmonogram i nawigację '
+      'bezpośrednio na telefonie.';
 }
 
 /// Side / bottom panel suggesting users to download the mobile app.
 /// Used on desktop / web breakpoints.
 class DownloadAppPanel extends StatelessWidget {
-  const DownloadAppPanel({super.key, this.compact = false});
+  const DownloadAppPanel({super.key, this.config, this.compact = false});
+
+  /// CMS-sourced URLs / copy. Falls back to bundled defaults when null
+  /// (e.g. on first paint before [fetchData] resolves).
+  final AppConfig? config;
 
   /// When true, hides the QR + uses a vertically denser layout for narrow
   /// sidebars.
   final bool compact;
+
+  String? _trimmed(String? v) {
+    final t = v?.trim();
+    return (t == null || t.isEmpty) ? null : t;
+  }
+
+  String get _iosUrl =>
+      _trimmed(config?.appStoreUrlIos) ?? _DownloadDefaults.iosUrl;
+  String get _androidUrl =>
+      _trimmed(config?.appStoreUrlAndroid) ?? _DownloadDefaults.androidUrl;
+  String get _qrUrl => _trimmed(config?.downloadQrUrl) ?? _androidUrl;
+  String get _description =>
+      _trimmed(config?.downloadPanelDescription) ??
+      _DownloadDefaults.description;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +97,7 @@ class DownloadAppPanel extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Skanuj kody QR, sprawdzaj harmonogram i nawigację bezpośrednio na telefonie.',
+            _description,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               color: cs.onSurfaceVariant,
@@ -97,7 +114,7 @@ class DownloadAppPanel extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: QrImageView(
-                  data: AppStoreLinks.universalUrl,
+                  data: _qrUrl,
                   size: 124,
                   version: QrVersions.auto,
                   backgroundColor: Colors.white,
@@ -121,13 +138,13 @@ class DownloadAppPanel extends StatelessWidget {
           _StoreButton(
             icon: Icons.apple_rounded,
             label: 'App Store',
-            url: AppStoreLinks.iosUrl,
+            url: _iosUrl,
           ),
           const SizedBox(height: 8),
           _StoreButton(
             icon: Icons.shop_rounded,
             label: 'Google Play',
-            url: AppStoreLinks.androidUrl,
+            url: _androidUrl,
           ),
         ],
       ),

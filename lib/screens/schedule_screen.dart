@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
 import '../services/data_service.dart';
@@ -134,6 +135,13 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     final palette = AppElements.fire;
 
     if (days.isEmpty) {
+      // Before the day-by-day schedule is published, fall back to a flat
+      // list of confirmed artists so the tab still has something useful
+      // to show. The festival team usually announces the lineup weeks
+      // before the run-of-show locks in.
+      if (widget.data.artists.isNotEmpty) {
+        return _buildArtistsFallback(context, cs, palette);
+      }
       return Center(
         child: Text(
           'Harmonogram niedostępny',
@@ -380,6 +388,61 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     );
   }
 
+  // ── Artists fallback ─────────────────────────────────────────────────────
+
+  Widget _buildArtistsFallback(
+    BuildContext context,
+    ColorScheme cs,
+    ElementPalette palette,
+  ) {
+    final artists = widget.data.artists;
+    final list = CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SectionHeader(
+          supertitle: 'KONCERTY',
+          title: 'Lineup 2026',
+          palette: palette,
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Text(
+              'Pełny harmonogram pojawi się wkrótce. '
+              'Tymczasem zobacz, kto wystąpi:',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                color: cs.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, i) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _ArtistCard(artist: artists[i], palette: palette),
+              ),
+              childCount: artists.length,
+            ),
+          ),
+        ),
+      ],
+    );
+
+    final onRefresh = widget.onRefresh;
+    if (onRefresh == null) return list;
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: palette.base,
+      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      child: list,
+    );
+  }
+
   Widget _liveBadge(ElementPalette palette) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -409,6 +472,155 @@ class _ScheduleScreenState extends State<ScheduleScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ArtistCard extends StatelessWidget {
+  const _ArtistCard({required this.artist, required this.palette});
+
+  final Artist artist;
+  final ElementPalette palette;
+
+  void _open(String? raw) {
+    if (raw == null || raw.isEmpty) return;
+    launchUrl(Uri.parse(raw), mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final surfHigh = AppTheme.surfaceContainerHighOf(context);
+    final surfHighest = AppTheme.surfaceContainerHighestOf(context);
+    final hasImage = artist.imageUrl.isNotEmpty;
+    final hasInsta =
+        artist.instagramUrl != null && artist.instagramUrl!.isNotEmpty;
+    final hasSpotify =
+        artist.spotifyUrl != null && artist.spotifyUrl!.isNotEmpty;
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: surfHigh,
+        borderRadius: BorderRadius.circular(14),
+        border: artist.isPopular
+            ? Border.all(color: palette.base.withValues(alpha: 0.6), width: 1.2)
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (hasImage)
+            SizedBox(
+              height: 200,
+              child: AppNetworkImage(
+                url: artist.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: Container(color: surfHighest),
+                errorWidget: Container(color: surfHighest),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        artist.name,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ),
+                    if (artist.isPopular)
+                      Icon(Icons.star_rounded, size: 18, color: palette.base),
+                  ],
+                ),
+                if (artist.description.trim().isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    artist.description,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: cs.onSurfaceVariant,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+                if (hasInsta || hasSpotify) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      if (hasInsta)
+                        _ArtistLinkButton(
+                          icon: Icons.camera_alt_outlined,
+                          label: 'Instagram',
+                          onTap: () => _open(artist.instagramUrl),
+                        ),
+                      if (hasInsta && hasSpotify) const SizedBox(width: 8),
+                      if (hasSpotify)
+                        _ArtistLinkButton(
+                          icon: Icons.music_note_rounded,
+                          label: 'Spotify',
+                          onTap: () => _open(artist.spotifyUrl),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ArtistLinkButton extends StatelessWidget {
+  const _ArtistLinkButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerHighestOf(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: cs.onSurfaceVariant),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: cs.onSurface,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

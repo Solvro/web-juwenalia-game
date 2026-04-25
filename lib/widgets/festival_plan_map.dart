@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-
-/// Pin projected onto the festival plan. Lat/lng are mapped to pixel
-/// offsets using [PlanBounds] the same way the main map does — a shared
-/// projection keeps both renders visually consistent.
+/// Pin positioned on the festival plan via raw pixel coordinates in the
+/// plan image's native coordinate space (1600×1100 by default — see
+/// [FestivalPlanMap.naturalSize]).
+///
+/// We dropped lat/lng projection in favour of direct pixel positions
+/// because editors hand-place pins on the plan photo; mapping every
+/// chair-and-tent through GPS bounds added drift and required keeping
+/// PlanBounds in sync with the plan asset.
 class FestivalPlanPin {
   const FestivalPlanPin({
     required this.id,
-    required this.lat,
-    required this.lng,
+    required this.x,
+    required this.y,
     required this.builder,
   });
 
   final String id;
-  final double lat;
-  final double lng;
+  final double x;
+  final double y;
 
   /// Called every frame with the current inverse-scale so pins can
   /// counter-scale and stay pixel-sized regardless of zoom.
@@ -26,13 +29,14 @@ class FestivalPlanPin {
 /// checkpoint mini-map — anything that wants to render pins onto the
 /// bundled plan PNG.
 ///
-/// The plan asset path is fixed (the asset is bundled in pubspec.yaml);
-/// the caller supplies [bounds] so different editions can ship different
-/// plans without a code change.
+/// Layout: an inner [SizedBox] sized to [naturalSize] holds the image
+/// and pin stack in the image's own pixel space. A [FittedBox] then
+/// scales that whole composition to fit the available area uniformly,
+/// so a pin placed at (800, 550) always lands on the same spot on the
+/// image regardless of the widget's outer size.
 class FestivalPlanMap extends StatefulWidget {
   const FestivalPlanMap({
     super.key,
-    required this.bounds,
     required this.pins,
     this.controller,
     this.autoFocus,
@@ -42,12 +46,17 @@ class FestivalPlanMap extends StatefulWidget {
     this.onInteractionChanged,
     this.panEnabled = true,
     this.scaleEnabled = true,
+    this.naturalSize = const Size(1600, 1100),
   });
 
   static const String planAsset = 'assets/maps/festival_plan.png';
 
-  final PlanBounds bounds;
   final List<FestivalPlanPin> pins;
+
+  /// Native pixel dimensions of the plan asset. Pins coordinate in this
+  /// space; the [FittedBox] handles screen-fit scaling. Defaults to the
+  /// bundled 1600×1100 plan.
+  final Size naturalSize;
 
   /// Optional external controller. Lets the parent drive zoom/reset
   /// without having to reach into this widget's state.
@@ -96,31 +105,25 @@ class _FestivalPlanMapState extends State<FestivalPlanMap> {
     super.dispose();
   }
 
-  Offset _project(double lat, double lng, Size size) {
-    final b = widget.bounds;
-    final lngRange = (b.east - b.west).abs();
-    final latRange = (b.north - b.south).abs();
-    final safeLngRange = lngRange == 0 ? 1 : lngRange;
-    final safeLatRange = latRange == 0 ? 1 : latRange;
-
-    const horizontalPadding = 78.0;
-    const verticalPadding = 62.0;
-    final usableWidth = size.width - horizontalPadding * 2;
-    final usableHeight = size.height - verticalPadding * 2;
-
-    final x = ((lng - b.west) / safeLngRange).clamp(0.0, 1.0);
-    final y = ((b.north - lat) / safeLatRange).clamp(0.0, 1.0);
-
-    return Offset(
-      horizontalPadding + usableWidth * x,
-      verticalPadding + usableHeight * y,
+  /// FittedBox(BoxFit.contain) scales the natural-sized stack uniformly
+  /// to fit [_viewport]. We replicate that math so we can convert a pin's
+  /// natural-space (x, y) into viewport-space pixels for auto-focus.
+  Offset _projectToViewport(double x, double y) {
+    if (_viewport == Size.zero) return Offset.zero;
+    final natural = widget.naturalSize;
+    final scale = (_viewport.width / natural.width).clamp(
+      0.0,
+      _viewport.height / natural.height,
     );
+    final dx = (_viewport.width - natural.width * scale) / 2;
+    final dy = (_viewport.height - natural.height * scale) / 2;
+    return Offset(dx + x * scale, dy + y * scale);
   }
 
   void _applyAutoFocus() {
     final pin = widget.autoFocus;
     if (pin == null || _viewport == Size.zero) return;
-    final target = _project(pin.lat, pin.lng, _viewport);
+    final target = _projectToViewport(pin.x, pin.y);
     final scale = widget.autoFocusScale.clamp(widget.minScale, widget.maxScale);
     final dx = _viewport.width / 2 - target.dx * scale;
     final dy = _viewport.height / 2 - target.dy * scale;
@@ -143,6 +146,59 @@ class _FestivalPlanMapState extends State<FestivalPlanMap> {
           }
         }
 
+        // Inner stack lives in the plan's native pixel space — pins
+        // position with raw (x, y). FittedBox + BoxFit.contain scales
+        // it uniformly into the viewport without cropping.
+        final naturalStack = SizedBox(
+          width: widget.naturalSize.width,
+          height: widget.naturalSize.height,
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: Image(
+                  image: AssetImage(FestivalPlanMap.planAsset),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, _) {
+                  final sceneScale = _controller.value
+                      .getMaxScaleOnAxis()
+                      .clamp(widget.minScale, widget.maxScale)
+                      .toDouble();
+                  // FittedBox scales the natural stack into the viewport
+                  // by fitScale; InteractiveViewer then scales by
+                  // sceneScale on top of that. Pin builders apply
+                  // Transform.scale(pinScale) themselves so the painted
+                  // pin lands at a constant viewport size regardless of
+                  // either factor.
+                  final fitScale = _viewport == Size.zero
+                      ? 1.0
+                      : (_viewport.width / widget.naturalSize.width).clamp(
+                          1e-3,
+                          double.infinity,
+                        );
+                  final pinScale = 1.0 / (fitScale * sceneScale);
+
+                  return Stack(
+                    children: [
+                      for (final pin in widget.pins)
+                        Positioned(
+                          left: pin.x - 22,
+                          top: pin.y - 22,
+                          width: 44,
+                          height: 44,
+                          child: Center(child: pin.builder(context, pinScale)),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+
         final viewer = InteractiveViewer(
           transformationController: _controller,
           minScale: widget.minScale,
@@ -153,45 +209,7 @@ class _FestivalPlanMapState extends State<FestivalPlanMap> {
           child: SizedBox(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
-            child: Stack(
-              children: [
-                const Positioned.fill(
-                  child: Image(
-                    image: AssetImage(FestivalPlanMap.planAsset),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned.fill(
-                  child: AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, _) {
-                      final sceneScale = _controller.value
-                          .getMaxScaleOnAxis()
-                          .clamp(widget.minScale, widget.maxScale)
-                          .toDouble();
-                      final pinScale = 1 / sceneScale;
-
-                      return Stack(
-                        children: [
-                          for (final pin in widget.pins)
-                            Positioned(
-                              left:
-                                  _project(pin.lat, pin.lng, _viewport).dx - 22,
-                              top:
-                                  _project(pin.lat, pin.lng, _viewport).dy - 22,
-                              width: 44,
-                              height: 44,
-                              child: Center(
-                                child: pin.builder(context, pinScale),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+            child: FittedBox(fit: BoxFit.contain, child: naturalStack),
           ),
         );
 

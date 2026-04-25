@@ -11,9 +11,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
+import '../services/connectivity_service.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
+import '../theme/icon_names.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/platform_utils.dart';
 import '../widgets/section_header.dart';
@@ -38,6 +40,10 @@ class _MapScreenState extends State<MapScreen> {
   static const _planAspectRatio = 16 / 11;
   static const _planAsset = 'assets/maps/festival_plan.png';
 
+  /// Native pixel dimensions of [_planAsset]. Pin coords land in this
+  /// space; FittedBox handles screen-fit scaling.
+  static const _planNaturalSize = Size(1600, 1100);
+
   final TransformationController _planController = TransformationController();
   final MapController _liveController = MapController();
   final ScrollController _scrollController = ScrollController();
@@ -49,25 +55,17 @@ class _MapScreenState extends State<MapScreen> {
   Size _planViewport = Size.zero;
   late _EmbeddedMapMode _preferredMode;
 
+  /// Latest device location, populated by [_locationSub] or by the
+  /// one-shot `_handleLocateMe` request. `null` until the user grants
+  /// permission and a fix arrives.
+  LatLng? _myLocation;
+  StreamSubscription<Position>? _locationSub;
+
   bool get _supportsLiveMap =>
       kIsWeb || PlatformUtils.isAndroid || PlatformUtils.isIOS;
 
   _EmbeddedMapMode get _effectiveMode =>
       _supportsLiveMap ? _preferredMode : _EmbeddedMapMode.plan;
-
-  /// Geographic extents of the bundled festival plan PNG, sourced from
-  /// CMS config so editors can replace the plan asset without requiring
-  /// an app update. Falls back to hardcoded campus bounds if the CMS
-  /// value is missing (older clients / pre-migration cache).
-  _GeoBounds get _bounds {
-    final pb = widget.data.config.planBounds;
-    return _GeoBounds(
-      minLat: pb.south,
-      maxLat: pb.north,
-      minLng: pb.west,
-      maxLng: pb.east,
-    );
-  }
 
   @override
   void initState() {
@@ -76,6 +74,7 @@ class _MapScreenState extends State<MapScreen> {
     for (final p in widget.data.mapPoints) {
       _legendKeys[p.id] = GlobalKey();
     }
+    if (_supportsLiveMap) _maybeStartLocationStream();
   }
 
   @override
@@ -90,44 +89,174 @@ class _MapScreenState extends State<MapScreen> {
   void dispose() {
     _planController.dispose();
     _scrollController.dispose();
+    _locationSub?.cancel();
     super.dispose();
   }
 
-  Future<void> _focus(MapPoint p, {bool fromPin = false}) async {
-    if (p.lat == null || p.lng == null) {
-      setState(() => _selectedId = p.id);
-      return;
+  /// Subscribe to position updates **only if** the user has already
+  /// granted permission. We don't trigger the system prompt here —
+  /// that's reserved for the explicit "locate me" tap so the dialog
+  /// can't appear out of nowhere when the screen first opens.
+  Future<void> _maybeStartLocationStream() async {
+    try {
+      final enabled = await Geolocator.isLocationServiceEnabled();
+      if (!enabled) return;
+      final perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.always ||
+          perm == LocationPermission.whileInUse) {
+        _startLocationStream();
+      }
+    } catch (_) {
+      // Plugin can throw on unsupported platforms (desktop). Treat as
+      // no-op — the user just won't see the dot.
     }
+  }
+
+  void _startLocationStream() {
+    _locationSub?.cancel();
+    _locationSub =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            // Coalesce micro-movements; the dot would jitter otherwise.
+            distanceFilter: 4,
+          ),
+        ).listen(
+          (pos) {
+            if (!mounted) return;
+            setState(() => _myLocation = LatLng(pos.latitude, pos.longitude));
+          },
+          onError: (_) {
+            // Permission revoked mid-stream, GPS lost, etc. — keep the
+            // last known dot but stop spamming setState.
+          },
+        );
+  }
+
+  /// Routes a location selection. We respect the user's current view
+  /// when possible — flipping plan↔live just because both have data
+  /// would be jarring. Order:
+  ///   1. Tapped pin (any view) → just highlight + scroll the legend.
+  ///   2. The active view can show the location → focus there.
+  ///   3. Otherwise switch to the other view if *it* can show the
+  ///      location, then focus.
+  ///   4. Neither can → snackbar with an "Otwórz w Mapach" action when
+  ///      we have lat/lng, otherwise a plain "no location" message.
+  Future<void> _focus(MapPoint p, {bool fromPin = false}) async {
     setState(() => _selectedId = p.id);
 
-    if (_effectiveMode == _EmbeddedMapMode.live) {
-      _liveController.move(LatLng(p.lat!, p.lng!), 18);
-    } else {
-      _focusPlanPosition(p.lat!, p.lng!, scale: 2.2);
+    if (fromPin) {
+      // The user tapped a pin already on screen — they want to see the
+      // legend entry, not re-focus the map view they're already on.
+      await _scrollLegendTo(p.id);
+      return;
     }
 
-    if (fromPin) {
-      await Future<void>.delayed(const Duration(milliseconds: 80));
-      final ctx = _legendKeys[p.id]?.currentContext;
-      if (ctx != null && ctx.mounted) {
-        await Scrollable.ensureVisible(
-          ctx,
-          duration: const Duration(milliseconds: 420),
-          curve: Curves.easeOutCubic,
-          alignment: 0.1,
-        );
-      }
+    final hasPlan = p.hasPlanPosition;
+    final hasGeo = p.lat != null && p.lng != null;
+    final isOnline = ConnectivityService.instance.isOnline.value;
+    final canShowLive = _supportsLiveMap && hasGeo && isOnline;
+
+    // 1. Stay on the current view if it can render this location.
+    if (_effectiveMode == _EmbeddedMapMode.plan && hasPlan) {
+      _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
+      return;
     }
+    if (_effectiveMode == _EmbeddedMapMode.live && canShowLive) {
+      _liveController.move(LatLng(p.lat!, p.lng!), 18);
+      return;
+    }
+
+    // 2. Current view can't show it — switch to whichever can.
+    if (hasPlan) {
+      setState(() => _preferredMode = _EmbeddedMapMode.plan);
+      // Wait for the AnimatedSwitcher swap (and the LayoutBuilder to
+      // record the new viewport size) before driving the controller.
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
+      return;
+    }
+    if (canShowLive) {
+      setState(() => _preferredMode = _EmbeddedMapMode.live);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      _liveController.move(LatLng(p.lat!, p.lng!), 18);
+      return;
+    }
+
+    // 3. Neither view can show it — fall back to Google Maps if we at
+    // least have GPS coords, otherwise just inform the user.
+    _showOutsidePlanSnackBar(p, hasGeo: hasGeo);
+  }
+
+  Future<void> _scrollLegendTo(String id) async {
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    if (!mounted) return;
+    final ctx = _legendKeys[id]?.currentContext;
+    if (ctx != null && ctx.mounted) {
+      await Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+        alignment: 0.1,
+      );
+    }
+  }
+
+  void _showOutsidePlanSnackBar(MapPoint p, {required bool hasGeo}) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.removeCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 5),
+        content: Text(
+          hasGeo
+              ? 'To miejsce jest poza terenem festiwalu — '
+                    'mapę można otworzyć w Google Maps.'
+              : 'To miejsce nie ma przypisanej lokalizacji.',
+        ),
+        action: hasGeo
+            ? SnackBarAction(
+                label: 'Otwórz w Mapach',
+                onPressed: () => _openInGoogleMaps(p),
+              )
+            : null,
+      ),
+    );
+  }
+
+  Future<void> _openInGoogleMaps(MapPoint p) async {
+    if (p.lat == null || p.lng == null) return;
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}',
+    );
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _handleLocateMe() async {
     if (_locating) return;
+
+    // Instant feedback — if the position stream has already given us a
+    // fix, recenter the camera *before* firing off another fetch. The
+    // user sees the dot snap into view right away even if the refresh
+    // below times out (which getCurrentPosition is prone to do on web
+    // when called repeatedly).
+    final cached = _myLocation;
+    final centeredFromCache =
+        cached != null && _effectiveMode == _EmbeddedMapMode.live;
+    if (centeredFromCache) {
+      _liveController.move(cached, 17.5);
+    }
+
     setState(() => _locating = true);
 
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        _showMessage('Włącz usługi lokalizacji, aby odnaleźć swoją pozycję.');
+        if (!centeredFromCache) {
+          _showMessage('Włącz usługi lokalizacji, aby odnaleźć swoją pozycję.');
+        }
         return;
       }
 
@@ -138,27 +267,52 @@ class _MapScreenState extends State<MapScreen> {
 
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        _showMessage('Brak zgody na lokalizację.');
+        if (!centeredFromCache) _showMessage('Brak zgody na lokalizację.');
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.best,
-          timeLimit: Duration(seconds: 8),
-        ),
-      );
+      // Make sure the stream is running so future taps land in the
+      // fast path even if this one-shot times out.
+      if (_locationSub == null) _startLocationStream();
+
+      // Geolocator's `timeLimit` isn't honoured on every platform
+      // (notably web, where the underlying browser API can hang
+      // indefinitely). Wrap in Future.timeout so the spinner always
+      // recovers; if it does time out and we already moved the
+      // camera from cache, stay quiet — the user got their feedback.
+      LatLng? fresh;
+      try {
+        final position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 8),
+          ),
+        ).timeout(const Duration(seconds: 10));
+        fresh = LatLng(position.latitude, position.longitude);
+      } on TimeoutException {
+        fresh = _myLocation;
+      }
 
       if (!mounted) return;
 
+      if (fresh == null) {
+        if (!centeredFromCache) {
+          _showMessage(
+            'Nie udało się pobrać lokalizacji w rozsądnym czasie. '
+            'Sprawdź, czy GPS jest aktywny i spróbuj ponownie.',
+          );
+        }
+        return;
+      }
+
+      setState(() => _myLocation = fresh);
       if (_effectiveMode == _EmbeddedMapMode.live) {
-        _liveController.move(
-          LatLng(position.latitude, position.longitude),
-          17.5,
-        );
+        _liveController.move(fresh, 17.5);
       }
     } catch (_) {
-      _showMessage('Nie udało się pobrać Twojej lokalizacji.');
+      if (!centeredFromCache) {
+        _showMessage('Nie udało się pobrać Twojej lokalizacji.');
+      }
     } finally {
       if (mounted) setState(() => _locating = false);
     }
@@ -208,9 +362,13 @@ class _MapScreenState extends State<MapScreen> {
     return MatrixUtils.transformPoint(inverse, center);
   }
 
-  void _focusPlanPosition(double lat, double lng, {double scale = 2.2}) {
+  void _focusPlanPosition(int planX, int planY, {double scale = 2.2}) {
     if (_planViewport == Size.zero) return;
-    final target = _projectToPlan(lat, lng, _planViewport);
+    final target = _projectPlanPointToViewport(
+      planX.toDouble(),
+      planY.toDouble(),
+      _planViewport,
+    );
     final dx = _planViewport.width / 2 - target.dx * scale;
     final dy = _planViewport.height / 2 - target.dy * scale;
     _planController.value = Matrix4.diagonal3Values(scale, scale, 1)
@@ -221,25 +379,18 @@ class _MapScreenState extends State<MapScreen> {
     _planController.value = Matrix4.identity();
   }
 
-  Offset _projectToPlan(double lat, double lng, Size size) {
-    final bounds = _bounds;
-    final lngRange = (bounds.maxLng - bounds.minLng).abs();
-    final latRange = (bounds.maxLat - bounds.minLat).abs();
-    final safeLngRange = lngRange == 0 ? 1 : lngRange;
-    final safeLatRange = latRange == 0 ? 1 : latRange;
-
-    const horizontalPadding = 78.0;
-    const verticalPadding = 62.0;
-    final usableWidth = size.width - horizontalPadding * 2;
-    final usableHeight = size.height - verticalPadding * 2;
-
-    final x = ((lng - bounds.minLng) / safeLngRange).clamp(0.0, 1.0);
-    final y = ((bounds.maxLat - lat) / safeLatRange).clamp(0.0, 1.0);
-
-    return Offset(
-      horizontalPadding + usableWidth * x,
-      verticalPadding + usableHeight * y,
+  /// Mirrors the math FittedBox(BoxFit.contain) applies to the natural
+  /// 1600×1100 plan stack. Returns the viewport-space pixel where a
+  /// natural-space (planX, planY) lands before InteractiveViewer's own
+  /// scale/translation kicks in.
+  Offset _projectPlanPointToViewport(double planX, double planY, Size size) {
+    final fitScale = (size.width / _planNaturalSize.width).clamp(
+      0.0,
+      size.height / _planNaturalSize.height,
     );
+    final dx = (size.width - _planNaturalSize.width * fitScale) / 2;
+    final dy = (size.height - _planNaturalSize.height * fitScale) / 2;
+    return Offset(dx + planX * fitScale, dy + planY * fitScale);
   }
 
   @override
@@ -397,6 +548,16 @@ class _MapScreenState extends State<MapScreen> {
                   onTap: () => _focus(p, fromPin: true),
                 ),
               ),
+            // Last because Marker layer paints in order — keep the
+            // user's blue dot above the venue pins so it's never
+            // hidden behind a clustered pin.
+            if (_myLocation != null)
+              Marker(
+                point: _myLocation!,
+                width: 26,
+                height: 26,
+                child: const _MyLocationDot(),
+              ),
           ],
         ),
       ],
@@ -434,6 +595,61 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context, constraints) {
         _planViewport = Size(constraints.maxWidth, constraints.maxHeight);
 
+        // Inner stack lives in the plan's native pixel space — pins
+        // position with raw plan_point.x / plan_point.y. FittedBox then
+        // scales the whole thing uniformly into the viewport so a pin
+        // placed at (800, 550) always lands on the same spot of the
+        // image regardless of the surface size.
+        final naturalStack = SizedBox(
+          width: _planNaturalSize.width,
+          height: _planNaturalSize.height,
+          child: AnimatedBuilder(
+            animation: _planController,
+            builder: (context, _) {
+              final sceneScale = _planController.value
+                  .getMaxScaleOnAxis()
+                  .clamp(1.0, 4.0)
+                  .toDouble();
+              final fitScale = _planViewport == Size.zero
+                  ? 1.0
+                  : (_planViewport.width / _planNaturalSize.width)
+                        .clamp(1e-3, double.infinity)
+                        .toDouble();
+              // Counter-scale by 1/(fit*scene) so pins paint at a
+              // constant viewport size whether the user has zoomed in
+              // or the device has a small screen.
+              final pinScale = 1.0 / (fitScale * sceneScale);
+
+              return Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(_planAsset, fit: BoxFit.fill),
+                  ),
+                  for (final point in widget.data.mapPoints.where(
+                    (p) => !p.hidden && p.hasPlanPosition,
+                  ))
+                    Positioned(
+                      left: point.planX! - 22,
+                      top: point.planY! - 22,
+                      width: 44,
+                      height: 44,
+                      child: Center(
+                        child: Transform.scale(
+                          scale: pinScale,
+                          child: _MapPin(
+                            point: point,
+                            selected: point.id == _selectedId,
+                            onTap: () => _focus(point, fromPin: true),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        );
+
         return InteractiveViewer(
           transformationController: _planController,
           minScale: 1,
@@ -442,61 +658,7 @@ class _MapScreenState extends State<MapScreen> {
           child: SizedBox(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.asset(_planAsset, fit: BoxFit.cover),
-                ),
-                Positioned.fill(
-                  child: AnimatedBuilder(
-                    animation: _planController,
-                    builder: (context, _) {
-                      final sceneScale = _planController.value
-                          .getMaxScaleOnAxis()
-                          .clamp(1.0, 4.0)
-                          .toDouble();
-                      final pinScale = 1 / sceneScale;
-
-                      return Stack(
-                        children: [
-                          ...widget.data.mapPoints
-                              .where(
-                                (p) =>
-                                    !p.hidden && p.lat != null && p.lng != null,
-                              )
-                              .map((point) {
-                                final offset = _projectToPlan(
-                                  point.lat!,
-                                  point.lng!,
-                                  _planViewport,
-                                );
-                                final selected = point.id == _selectedId;
-
-                                return Positioned(
-                                  left: offset.dx - 22,
-                                  top: offset.dy - 22,
-                                  width: 44,
-                                  height: 44,
-                                  child: Transform.scale(
-                                    scale: pinScale,
-                                    child: Center(
-                                      child: _MapPin(
-                                        point: point,
-                                        selected: selected,
-                                        onTap: () =>
-                                            _focus(point, fromPin: true),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+            child: FittedBox(fit: BoxFit.contain, child: naturalStack),
           ),
         );
       },
@@ -633,8 +795,11 @@ class _MapScreenState extends State<MapScreen> {
     MapPoint point,
     ColorScheme cs,
   ) {
-    final color = point.type.mapPointColor(context);
-    final icon = point.type.mapPointIcon;
+    final color =
+        parseHexColor(point.color) ?? point.type.mapPointColor(context);
+    final icon = point.icon != null
+        ? iconFromName(point.icon!)
+        : point.type.mapPointIcon;
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final selected = _selectedId == point.id;
     final key = _legendKeys.putIfAbsent(point.id, () => GlobalKey());
@@ -1067,20 +1232,6 @@ class _PartnerLogo extends StatelessWidget {
   }
 }
 
-class _GeoBounds {
-  const _GeoBounds({
-    required this.minLat,
-    required this.maxLat,
-    required this.minLng,
-    required this.maxLng,
-  });
-
-  final double minLat;
-  final double maxLat;
-  final double minLng;
-  final double maxLng;
-}
-
 class _MapPin extends StatelessWidget {
   const _MapPin({
     required this.point,
@@ -1094,8 +1245,11 @@ class _MapPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = point.type.mapPointColor(context);
-    final icon = point.type.mapPointIcon;
+    final color =
+        parseHexColor(point.color) ?? point.type.mapPointColor(context);
+    final icon = point.icon != null
+        ? iconFromName(point.icon!)
+        : point.type.mapPointIcon;
 
     return GestureDetector(
       onTap: onTap,
@@ -1196,6 +1350,34 @@ class _MapControlButton extends StatelessWidget {
             child: Icon(icon, size: 20, color: cs.onSurface),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Standard "you are here" blue dot for the live map. A static (non-
+/// animated) version is fine here — flutter_map redraws the marker
+/// every time the position stream emits, so the dot moves with the
+/// device without us doing any tweening.
+class _MyLocationDot extends StatelessWidget {
+  const _MyLocationDot();
+
+  @override
+  Widget build(BuildContext context) {
+    const accent = Color(0xFF2D7DFF);
+    return Container(
+      decoration: BoxDecoration(
+        color: accent,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.45),
+            blurRadius: 14,
+            spreadRadius: 2,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
     );
   }

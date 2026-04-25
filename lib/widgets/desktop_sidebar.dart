@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import 'brand_gradient.dart';
@@ -18,6 +19,7 @@ class DesktopSidebar extends StatelessWidget {
     required this.onScanQr,
     this.qrEnabled = true,
     required this.destinations,
+    this.config,
     this.width = 280,
   });
 
@@ -26,6 +28,12 @@ class DesktopSidebar extends StatelessWidget {
   final VoidCallback onScanQr;
   final bool qrEnabled;
   final List<NavDestination> destinations;
+
+  /// CMS config — passed down to [DownloadAppPanel] so QR + store URLs
+  /// + description can be edited without an app release. Null while
+  /// the first fetch is in flight.
+  final AppConfig? config;
+
   final double width;
 
   @override
@@ -44,11 +52,9 @@ class DesktopSidebar extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final topItems = <Widget>[
               // Brand header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -80,25 +86,52 @@ class DesktopSidebar extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-
-              // QR scan button — sits above the destinations as a hero action.
               _ScanCallToAction(onTap: onScanQr, enabled: qrEnabled),
               const SizedBox(height: 16),
-
-              // Destinations
               for (var i = 0; i < destinations.length; i++)
                 _SidebarItem(
                   destination: destinations[i],
                   selected: selectedIndex == i,
                   onTap: () => onSelect(i),
                 ),
+            ];
 
-              const Spacer(),
+            // Approximate natural height of the full column. Header
+            // (~96) + scan button (~48) + 4 × destination (~50) +
+            // spacing (~44) + DownloadAppPanel (~360) ≈ 700 px. When
+            // the viewport is at least this tall we anchor the panel
+            // to the bottom with a Spacer; on shorter viewports we
+            // switch to a scrollable column so nothing overflows.
+            const naturalContentHeight = 720.0;
+            final fitsWithSlack = constraints.maxHeight >= naturalContentHeight;
 
-              // Download-app prompt
-              const DownloadAppPanel(),
-            ],
-          ),
+            if (fitsWithSlack) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ...topItems,
+                    const Spacer(),
+                    const SizedBox(height: 16),
+                    DownloadAppPanel(config: config),
+                  ],
+                ),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ...topItems,
+                  const SizedBox(height: 24),
+                  DownloadAppPanel(config: config),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
