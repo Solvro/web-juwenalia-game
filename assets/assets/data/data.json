@@ -4,10 +4,10 @@
     "event_starts_at": "2026-05-20T13:00:00.000Z",
     "event_ends_at": "2026-05-22T00:00:00.000Z",
     "game_enabled_override": true,
-    "game_goal": 14,
-    "reward_description": "<p>Gratulacje! Zebrałeś wszystkie pieczątki. Pokaż ten ekran na punkcie info, aby odebrać gadżet.</p>",
+    "game_goal": 1,
+    "reward_description": "<p>Odwiedź wszystkie strefy żeby odebrać super gadżety!</p>",
     "reward_pin": "2026",
-    "game_terms": "<h3>Regulamin Gry Terenowej</h3><p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p><p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
+    "game_terms": "<h3>Regulamin Gry Terenowej</h3>\n<p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p>\n<p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
     "festival_plan_url": "https://cms.juwenalia.solvro.pl/assets/1f213fbf-23b4-4327-9d62-a3685a0d205e",
     "data_version": "2"
   },
@@ -19,7 +19,7 @@
       "description": "<p>Serce festiwalu. Tu odbywają się największe koncerty — zobacz się z headlinerami i złap pieczątkę.</p>",
       "category": "other",
       "image": "https://cms.juwenalia.solvro.pl/assets/6af16597-406d-4586-bbb8-3d6ccd1ffa12",
-      "location": "Dni kultury"
+      "location": "Scena Główna"
     },
     {
       "id": 2,
@@ -391,6 +391,13 @@
     }
   ],
   "important_info": [
+    {
+      "id": "5",
+      "icon": "local_activity",
+      "title": "Kup bilet na Juwenalia!",
+      "body": "<p>Bilety <span class=\"text-4xl sm:text-6xl md:text-7xl lg:text-[5rem]\">są już dostępne</span></p>",
+      "color": "#024DDF"
+    },
     {
       "id": "1",
       "icon": "water_drop",
