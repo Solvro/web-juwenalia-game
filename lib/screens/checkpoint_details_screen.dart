@@ -45,30 +45,42 @@ class CheckpointDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       body: SwipeDownDismissible(
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
-            parent: ClampingScrollPhysics(),
-          ),
-          slivers: [
-            _buildSliverAppBar(context, cs),
-            SliverToBoxAdapter(
-              child: _buildContent(context, cs)
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: 150.ms)
-                  .slideY(begin: 0.06, end: 0, duration: 400.ms, delay: 150.ms),
+        builder: (context, offset, progress) => Opacity(
+          opacity: 1.0 - progress * 0.35,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: ClampingScrollPhysics(),
             ),
-          ],
+            slivers: [
+              _buildSliverAppBar(context, cs, stretch: offset),
+              SliverToBoxAdapter(
+                child: _buildContent(context, cs)
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 150.ms)
+                    .slideY(
+                      begin: 0.06,
+                      end: 0,
+                      duration: 400.ms,
+                      delay: 150.ms,
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  SliverAppBar _buildSliverAppBar(BuildContext context, ColorScheme cs) {
+  SliverAppBar _buildSliverAppBar(
+    BuildContext context,
+    ColorScheme cs, {
+    double stretch = 0,
+  }) {
     final surfaceHigh = AppTheme.surfaceContainerHighOf(context);
     final surfaceLowest = AppTheme.surfaceContainerLowestOf(context);
 
     return SliverAppBar(
-      expandedHeight: 280,
+      expandedHeight: 280 + stretch,
       pinned: true,
       stretch: true,
       backgroundColor: surfaceLowest,

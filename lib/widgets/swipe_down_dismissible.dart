@@ -13,22 +13,32 @@ import 'package:flutter/material.dart';
 /// [swipeDownPageRoute]) so the previous screen is visible behind the
 /// translated body during the gesture; otherwise the exposed area is
 /// just black.
+/// Builds the dismissible body. [offset] is the current pull distance in
+/// logical pixels (0 when idle); [progress] is `offset/maxOffset` clamped
+/// to 0..1, useful for fades. Use [offset] to drive any visual you want
+/// — translate, scale, stretch a hero image, etc.
+typedef SwipeDownBuilder = Widget Function(
+  BuildContext context,
+  double offset,
+  double progress,
+);
+
 class SwipeDownDismissible extends StatefulWidget {
   const SwipeDownDismissible({
     super.key,
-    required this.child,
+    required this.builder,
     this.threshold = 110,
     this.maxOffset = 360,
   });
 
-  final Widget child;
+  final SwipeDownBuilder builder;
 
   /// How far the user has to pull down before releasing dismisses the
   /// route. Below this, the body springs back.
   final double threshold;
 
-  /// Caps the translate offset so even an aggressive fling doesn't push
-  /// the body further than the user can see.
+  /// Caps the offset so even an aggressive fling doesn't push the body
+  /// further than the user can see.
   final double maxOffset;
 
   @override
@@ -109,13 +119,9 @@ class _SwipeDownDismissibleState extends State<SwipeDownDismissible>
   @override
   Widget build(BuildContext context) {
     final progress = (_offset / widget.maxOffset).clamp(0.0, 1.0);
-    final opacity = 1.0 - progress * 0.35;
     return NotificationListener<ScrollNotification>(
       onNotification: _onNotification,
-      child: Transform.translate(
-        offset: Offset(0, _offset),
-        child: Opacity(opacity: opacity, child: widget.child),
-      ),
+      child: widget.builder(context, _offset, progress),
     );
   }
 }
