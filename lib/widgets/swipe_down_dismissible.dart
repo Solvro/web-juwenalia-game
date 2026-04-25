@@ -17,11 +17,8 @@ import 'package:flutter/material.dart';
 /// logical pixels (0 when idle); [progress] is `offset/maxOffset` clamped
 /// to 0..1, useful for fades. Use [offset] to drive any visual you want
 /// — translate, scale, stretch a hero image, etc.
-typedef SwipeDownBuilder = Widget Function(
-  BuildContext context,
-  double offset,
-  double progress,
-);
+typedef SwipeDownBuilder =
+    Widget Function(BuildContext context, double offset, double progress);
 
 class SwipeDownDismissible extends StatefulWidget {
   const SwipeDownDismissible({
@@ -101,12 +98,14 @@ class _SwipeDownDismissibleState extends State<SwipeDownDismissible>
   void _springBack() {
     _stopSpring();
     final from = _offset;
-    final anim = Tween<double>(begin: from, end: 0).animate(
-      CurvedAnimation(parent: _spring, curve: Curves.easeOutCubic),
-    );
+    final anim = Tween<double>(
+      begin: from,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _spring, curve: Curves.easeOutCubic));
     void onTick() {
       if (mounted) setState(() => _offset = anim.value);
     }
+
     anim.addListener(onTick);
     _springAnim = anim;
     _springListener = onTick;

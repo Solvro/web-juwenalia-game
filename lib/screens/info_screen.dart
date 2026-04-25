@@ -440,7 +440,6 @@ class _InfoScreenState extends State<InfoScreen> {
       return DateFormat('d MMM yyyy').format(dt);
     }
   }
-
 }
 
 // ── Navigation section card ────────────────────────────────────────────────
