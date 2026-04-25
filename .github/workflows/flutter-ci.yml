@@ -55,7 +55,10 @@ jobs:
       - name: Sync CMS data
         run: dart run tool/sync_data.dart
 
-      - run: flutter build apk
+      # --no-tree-shake-icons: required because lib/theme/icon_names.dart
+      # constructs IconData dynamically from CMS-supplied names, so the
+      # tree-shaker can't prove which glyphs are used.
+      - run: flutter build apk --no-tree-shake-icons
 
       - uses: actions/upload-artifact@v7
         with:
@@ -79,7 +82,7 @@ jobs:
       - name: Sync CMS data
         run: dart run tool/sync_data.dart
 
-      - run: flutter build web
+      - run: flutter build web --no-tree-shake-icons
 
       - name: Deploy web app 🚀
         uses: JamesIves/github-pages-deploy-action@v4

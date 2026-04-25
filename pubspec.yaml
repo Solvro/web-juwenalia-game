@@ -35,6 +35,7 @@ dependencies:
   flutter_map: ^8.2.0
   latlong2: ^0.9.1
   package_info_plus: ^9.0.0
+  material_symbols_icons: ^4.2928.1
 
 dev_dependencies:
   flutter_test:
