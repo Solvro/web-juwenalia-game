@@ -10,13 +10,12 @@ import 'brand_gradient.dart';
 /// Fallbacks used only before [fetchData] resolves or when the CMS
 /// fields are blank.
 class _DownloadDefaults {
-  static const String iosUrl =
-      'https://apps.apple.com/app/juwenalia-pwr/id000000000';
+  static const String iosUrl = 'https://apps.apple.com/';
   static const String androidUrl =
       'https://play.google.com/store/apps/details?id=pl.solvro.juwenalia';
+  static const String qrUrl = 'https://juwenalia.wroc.pl/app';
   static const String description =
-      'Skanuj kody QR, sprawdzaj harmonogram i nawigację '
-      'bezpośrednio na telefonie.';
+      'Pobierz naszą oficjalną aplikację, by zagrać w grę na Juwenaliach i mieć wszystkie informacje zawsze pod ręką!';
 }
 
 class DownloadAppPanel extends StatelessWidget {
@@ -36,7 +35,8 @@ class DownloadAppPanel extends StatelessWidget {
       _trimmed(config?.appStoreUrlIos) ?? _DownloadDefaults.iosUrl;
   String get _androidUrl =>
       _trimmed(config?.appStoreUrlAndroid) ?? _DownloadDefaults.androidUrl;
-  String get _qrUrl => _trimmed(config?.downloadQrUrl) ?? _androidUrl;
+  String get _qrUrl =>
+      _trimmed(config?.downloadQrUrl) ?? _DownloadDefaults.qrUrl;
   String get _description =>
       _trimmed(config?.downloadPanelDescription) ??
       _DownloadDefaults.description;
