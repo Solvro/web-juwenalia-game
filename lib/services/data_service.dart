@@ -561,7 +561,7 @@ Map<String, String> _newsQuery(String edition) => {
   'fields': 'id,title,content,date_created,image,edition',
   'sort': '-date_created',
   'limit': '100',
-  ..._stringEditionFilter(edition),
+  ..._jsonEditionFilter(edition),
 };
 
 Map<String, String> _importantInfoQuery(String edition) => {
@@ -578,7 +578,7 @@ Map<String, String> _eventsQuery(String edition) => {
       'artists.artists_id.spotifyUrl,artists.artists_id.sort',
   'sort': 'start_time,sort',
   'limit': '200',
-  ..._stringEditionFilter(edition),
+  ..._jsonEditionFilter(edition),
 };
 
 Map<String, String> _checkpointsQuery(String edition) => {
@@ -600,7 +600,7 @@ Map<String, String> _locationsQuery(String edition) => {
 Map<String, String> _partnersQuery(String edition) => {
   'fields': 'id,name,url,logo,logoScale,role,sort,edition',
   'sort': 'sort',
-  ..._stringEditionFilter(edition),
+  ..._jsonEditionFilter(edition),
 };
 
 Map<String, String> _faqsQuery(String edition) => {
@@ -627,27 +627,6 @@ Map<String, String> _jsonEditionFilter(String edition) {
       '_or': [
         {
           'edition': {'_contains': target},
-        },
-        {
-          'edition': {'_null': true},
-        },
-        {
-          'edition': {'_empty': true},
-        },
-      ],
-    }),
-  };
-}
-
-/// Same as [_jsonEditionFilter] but for single-select string editions.
-Map<String, String> _stringEditionFilter(String edition) {
-  final target = edition.trim();
-  if (target.isEmpty) return const {};
-  return {
-    'filter': jsonEncode({
-      '_or': [
-        {
-          'edition': {'_eq': target},
         },
         {
           'edition': {'_null': true},
