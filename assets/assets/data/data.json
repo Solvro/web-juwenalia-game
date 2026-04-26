@@ -110,38 +110,20 @@
   "locations": [
     {
       "id": 5,
-      "name": "Śniadanie z rektorem",
+      "name": "Śniadanie z Rektorem",
       "point": {
         "type": "Point",
         "coordinates": [
-          17.056824822261603,
-          51.108609127142984
+          17.056818713898764,
+          51.10872034525423
         ]
       },
       "polyline": null,
       "isPolyline": false,
-      "description": "Śniadanie z rektorem",
+      "description": "Śniadanie z Rektorem",
       "color": "#00D19D",
       "hidden": false,
-      "icon": null,
-      "plan_point": null
-    },
-    {
-      "id": 6,
-      "name": "Dni kultury",
-      "point": {
-        "type": "Point",
-        "coordinates": [
-          17.085686672774784,
-          51.10353243944036
-        ]
-      },
-      "polyline": null,
-      "isPolyline": false,
-      "description": "Dni kultury",
-      "color": "#B89F00",
-      "hidden": false,
-      "icon": null,
+      "icon": "account_balance",
       "plan_point": null
     },
     {
@@ -150,14 +132,14 @@
       "point": {
         "type": "Point",
         "coordinates": [
-          16.946014527819727,
-          51.14007042712316
+          16.946021183649634,
+          51.140041195172586
         ]
       },
       "polyline": null,
       "isPolyline": false,
       "description": "Scena główna wydarzenia",
-      "color": "#E100FF",
+      "color": "#FFA439",
       "hidden": false,
       "icon": "accessibility",
       "plan_point": {
@@ -167,12 +149,12 @@
     },
     {
       "id": 9,
-      "name": "Bramy",
+      "name": "Brama Główna",
       "point": {
         "type": "Point",
         "coordinates": [
-          17.012812807469913,
-          51.1251935848216
+          16.94730810401171,
+          51.14261863915493
         ]
       },
       "polyline": null,
@@ -182,8 +164,71 @@
       "hidden": false,
       "icon": "gate",
       "plan_point": {
-        "x": 1746,
-        "y": 598
+        "x": 563,
+        "y": 561
+      }
+    },
+    {
+      "id": 10,
+      "name": "Strefa gastronomiczna",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.94609261884051,
+          51.142114907453134
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Foodtruck'i - kuchnia z całego świata",
+      "color": "#E35169",
+      "hidden": false,
+      "icon": "fastfood",
+      "plan_point": {
+        "x": 735,
+        "y": 624
+      }
+    },
+    {
+      "id": 11,
+      "name": "Strefa chillu",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.946609371464234,
+          51.14184009122667
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Strefa chilloutu i wypoczynku",
+      "color": "#0297E4",
+      "hidden": false,
+      "icon": "cloud",
+      "plan_point": {
+        "x": 770,
+        "y": 558
+      }
+    },
+    {
+      "id": 12,
+      "name": "Strefa EKO",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.946115365241468,
+          51.14121942605743
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Strefa ekologicznej kreatywności i gier zero-waste",
+      "color": "#26A224",
+      "hidden": false,
+      "icon": "eco",
+      "plan_point": {
+        "x": 948,
+        "y": 573
       }
     }
   ],
