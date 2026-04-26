@@ -479,13 +479,7 @@ List<ScheduleDay> _parseSchedule(List<dynamic> rawEvents) {
 
   final keys = byDay.keys.toList()..sort();
   return keys
-      .map(
-        (k) => ScheduleDay(
-          label: _formatDayLabel(k),
-          venue: '',
-          events: byDay[k]!,
-        ),
-      )
+      .map((k) => ScheduleDay(label: k, venue: '', events: byDay[k]!))
       .toList();
 }
 
@@ -532,16 +526,6 @@ List<_ArtistRef> _extractArtists(dynamic rawArtists) {
   }
 
   return result;
-}
-
-String _formatDayLabel(String isoDate) {
-  final dt = DateTime.tryParse(isoDate);
-  if (dt == null) return isoDate;
-  try {
-    return DateFormat('EEEE, d MMMM', 'pl').format(dt).toUpperCase();
-  } catch (_) {
-    return DateFormat('EEEE, d MMMM').format(dt).toUpperCase();
-  }
 }
 
 Future<Map<String, dynamic>> _directusConfig() async {

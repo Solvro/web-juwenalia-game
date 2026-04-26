@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'screens/main_shell.dart';
 import 'services/bundled_photos.dart';
@@ -10,6 +11,7 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
+  await initializeDateFormatting('pl', null);
   await BundledPhotos.load();
   runApp(const JuwenaliaApp());
 }

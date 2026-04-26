@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -102,27 +103,9 @@ class _ScheduleScreenState extends State<ScheduleScreen>
   }
 
   String _getWeekday(String label) {
-    final datePart = label.split(',').first;
-    final date = DateTime.tryParse(datePart);
-    if (date != null) {
-      switch (date.weekday) {
-        case DateTime.monday:
-          return 'Poniedziałek';
-        case DateTime.tuesday:
-          return 'Wtorek';
-        case DateTime.wednesday:
-          return 'Środa';
-        case DateTime.thursday:
-          return 'Czwartek';
-        case DateTime.friday:
-          return 'Piątek';
-        case DateTime.saturday:
-          return 'Sobota';
-        case DateTime.sunday:
-          return 'Niedziela';
-      }
-    }
-    return datePart;
+    final date = DateTime.tryParse(label);
+    if (date == null) return label;
+    return (DateFormat.EEEE('pl').format(date).toUpperCase());
   }
 
   @override
