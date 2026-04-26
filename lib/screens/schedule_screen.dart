@@ -297,10 +297,12 @@ class _ScheduleScreenState extends State<ScheduleScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (event.imageUrl.isEmpty) ...[
                       _timeBadge(event.time, palette),
                       const SizedBox(width: 8),
+                      const Spacer(),
                       if (live) _liveBadge(palette),
                     ],
                   ],
@@ -421,7 +423,14 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: palette.base,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFE53935),
+            Color.lerp(palette.base, const Color(0xFFB71C1C), 0.5)!,
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -478,9 +487,6 @@ class _ArtistCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfHigh,
         borderRadius: BorderRadius.circular(14),
-        border: artist.isPopular
-            ? Border.all(color: palette.base.withValues(alpha: 0.6), width: 1.2)
-            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -500,22 +506,14 @@ class _ArtistCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        artist.name,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: cs.onSurface,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                    if (artist.isPopular)
-                      Icon(Icons.star_rounded, size: 18, color: palette.base),
-                  ],
+                Text(
+                  artist.name,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: cs.onSurface,
+                    letterSpacing: -0.3,
+                  ),
                 ),
                 if (artist.description.trim().isNotEmpty) ...[
                   const SizedBox(height: 6),

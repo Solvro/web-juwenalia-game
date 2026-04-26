@@ -97,9 +97,9 @@ Future<void> main(List<String> args) async {
         base,
         'artists',
         fields:
-            'id,name,description,image,instagramUrl,spotifyUrl,isPopular,'
+            'id,name,description,image,instagramUrl,spotifyUrl,'
             'sort,edition',
-        sort: '-isPopular,sort',
+        sort: 'sort',
         limit: 500,
         filter: _jsonEditionFilter(edition),
       ),

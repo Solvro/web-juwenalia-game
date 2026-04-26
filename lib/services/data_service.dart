@@ -71,6 +71,19 @@ DateTime? _parseDate(dynamic raw) {
   return DateTime.tryParse(s);
 }
 
+/// Combines a Directus `time` field (e.g. `"16:30:00"`) with a `date`
+/// field (e.g. `"2026-05-13"`) into a single [DateTime]. Falls back to
+/// [DateTime.tryParse] if [raw] is already a full ISO timestamp.
+DateTime? _parseEventTime(String? dayDate, dynamic raw) {
+  if (raw == null) return null;
+  final s = raw.toString().trim();
+  if (s.isEmpty) return null;
+  if (dayDate != null && dayDate.isNotEmpty && !s.contains('T')) {
+    return DateTime.tryParse('${dayDate}T$s');
+  }
+  return DateTime.tryParse(s);
+}
+
 /// Three-tier fallback: network → SharedPreferences cache → bundled
 /// `assets/data/data.json`. Pass [forceNetwork] to skip the fallback
 /// chain on pull-to-refresh.
@@ -375,7 +388,6 @@ Artist _parseArtist(Map<String, dynamic> j) {
     imageUrl: Directus.assetUrl(j['image'] as String?),
     instagramUrl: (j['instagramUrl'] as String?)?.trim(),
     spotifyUrl: (j['spotifyUrl'] as String?)?.trim(),
-    isPopular: (j['isPopular'] as bool?) ?? false,
   );
 }
 
@@ -408,16 +420,21 @@ List<ScheduleDay> _parseSchedule(List<dynamic> rawEvents) {
     final e = entry.cast<String, dynamic>();
     final day = (e['day'] as Map?)?.cast<String, dynamic>();
     final loc = (e['location'] as Map?)?.cast<String, dynamic>();
-    final start = _parseDate(e['start_time']);
-    final end = _parseDate(e['end_time']);
+    final dayDate = day?['date'] as String?;
+    final start = _parseEventTime(dayDate, e['start_time']);
+    final end = _parseEventTime(dayDate, e['end_time']);
     final artists = _extractArtists(e['artists']);
     final artistNames = artists.map((a) => a.name).toList();
 
     final dayKey =
-        (day?['date'] as String?) ??
+        dayDate ??
         (start != null ? DateFormat('yyyy-MM-dd').format(start) : 'unknown');
 
-    final time = start != null ? DateFormat('HH:mm').format(start) : '';
+    final time = start == null
+        ? ''
+        : end == null
+        ? DateFormat('HH:mm').format(start)
+        : '${DateFormat('HH:mm').format(start)}–${DateFormat('HH:mm').format(end)}';
     final fallbackName = (e['name'] as String?)?.trim() ?? '';
     final displayArtist = artistNames.isNotEmpty
         ? artistNames.join(' • ')
@@ -571,9 +588,8 @@ Map<String, String> _faqsQuery(String edition) => {
 };
 
 Map<String, String> _artistsQuery(String edition) => {
-  'fields':
-      'id,name,description,image,instagramUrl,spotifyUrl,isPopular,sort,edition',
-  'sort': '-isPopular,sort',
+  'fields': 'id,name,description,image,instagramUrl,spotifyUrl,sort,edition',
+  'sort': 'sort',
   'limit': '500',
   ..._jsonEditionFilter(edition),
 };

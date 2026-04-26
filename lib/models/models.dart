@@ -101,7 +101,6 @@ class Artist {
   final String imageUrl;
   final String? instagramUrl;
   final String? spotifyUrl;
-  final bool isPopular;
 
   const Artist({
     required this.id,
@@ -110,7 +109,6 @@ class Artist {
     required this.imageUrl,
     this.instagramUrl,
     this.spotifyUrl,
-    this.isPopular = false,
   });
 }
 
