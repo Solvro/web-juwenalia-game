@@ -10,15 +10,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../checkpoint.dart';
 import '../models/models.dart';
+import '../widgets/app_network_image.dart';
 import 'connectivity_service.dart';
 import 'directus.dart';
+import 'image_loader.dart';
 
 const _kCacheBody = 'cached_data_json';
 const _kCacheTimestamp = 'cached_data_timestamp';
 const _kCacheEdition = 'cached_data_edition';
 const _kCompletedCheckpoints = 'completedCheckpoints';
 const _kIsLocked = 'isLocked';
-const _kLastFetchedImageSet = 'cached_image_urls';
 const _localAssetPath = 'assets/data/data.json';
 const _kForceRefetchAfter = Duration(hours: 24);
 
@@ -48,28 +49,6 @@ class AppData {
     this.artists = const [],
     this.isFromCache = false,
   });
-
-  Iterable<String> get allImageUrls sync* {
-    for (final c in checkpoints) {
-      if (c.image.isNotEmpty) yield c.image;
-    }
-    for (final day in schedule) {
-      for (final ev in day.events) {
-        if (ev.imageUrl.isNotEmpty) yield ev.imageUrl;
-      }
-    }
-    for (final n in news) {
-      if (n.imageUrl.isNotEmpty) yield n.imageUrl;
-    }
-    for (final p in partners) {
-      final url = p.logoUrl;
-      if (url != null && url.isNotEmpty) yield url;
-    }
-    for (final a in artists) {
-      if (a.imageUrl.isNotEmpty) yield a.imageUrl;
-    }
-    if (config.festivalPlanUrl.isNotEmpty) yield config.festivalPlanUrl;
-  }
 }
 
 class _Raw {
@@ -157,7 +136,6 @@ Future<void> _resetEditionState(SharedPreferences prefs) async {
   await prefs.remove(_kIsLocked);
   await prefs.remove(_kCacheBody);
   await prefs.remove(_kCacheTimestamp);
-  await prefs.remove(_kLastFetchedImageSet);
 }
 
 Future<Map<String, dynamic>> _fetchRawFromDirectus({
@@ -623,56 +601,99 @@ Map<String, String> _jsonEditionFilter(String edition) {
   };
 }
 
-/// Monotonic counter so overlapping precache passes don't race to write
-/// [_kLastFetchedImageSet]; the older pass aborts when it sees a newer id.
+/// Cap used for partner logos. Mirrors the override in `_PartnerLogo`
+/// so the precache and the widget request the same URL.
+const int _kPartnerLogoCap = 50;
+
+/// Monotonic counter so overlapping precache passes don't compete; the
+/// older pass aborts when it sees a newer id.
 int _precacheGeneration = 0;
 
+/// Warms the image cache for every asset in [data] by routing every
+/// URL through [imageProviderFor] — the same call AppNetworkImage uses
+/// at render time. Identical [ImageProvider]s mean the in-memory and
+/// on-disk caches dedupe between precache and runtime, so an offline
+/// user sees images on screens they haven't visited yet.
 Future<void> precacheAppImages(AppData data, {BuildContext? context}) async {
   final myGen = ++_precacheGeneration;
-  final urls = data.allImageUrls.toSet();
-  if (urls.isEmpty) return;
+
+  final providers = <ImageProvider>[];
+  final seenKeys = <Object>{};
+
+  void add(String url, {int width = AppNetworkImage.defaultContentCap}) {
+    if (url.isEmpty) return;
+    final p = imageProviderFor(url, width: width);
+    if (p == null) return;
+    final key = _providerKey(p);
+    if (seenKeys.add(key)) providers.add(p);
+  }
+
+  for (final c in data.checkpoints) {
+    add(c.image);
+  }
+  for (final day in data.schedule) {
+    for (final ev in day.events) {
+      add(ev.imageUrl);
+    }
+  }
+  for (final n in data.news) {
+    add(n.imageUrl);
+  }
+  for (final a in data.artists) {
+    add(a.imageUrl);
+  }
+  for (final p in data.partners) {
+    final url = p.logoUrl;
+    if (url != null) add(url, width: _kPartnerLogoCap);
+  }
+  if (providers.isEmpty) return;
 
   const concurrency = 4;
-  final iterator = urls.iterator;
+  final iter = providers.iterator;
 
   Future<void> worker() async {
     while (true) {
       if (_precacheGeneration != myGen) return;
-      if (!iterator.moveNext()) return;
-      final url = iterator.current;
-      try {
-        final provider = CachedNetworkImageProvider(url);
-        if (context != null && context.mounted) {
-          await precacheImage(provider, context);
-        } else {
-          final completer = Completer<void>();
-          final stream = provider.resolve(ImageConfiguration.empty);
-          late final ImageStreamListener listener;
-          listener = ImageStreamListener(
-            (info, _) {
-              if (!completer.isCompleted) completer.complete();
-              stream.removeListener(listener);
-            },
-            onError: (e, _) {
-              if (!completer.isCompleted) completer.complete();
-              stream.removeListener(listener);
-            },
-          );
-          stream.addListener(listener);
-          await completer.future.timeout(
-            const Duration(seconds: 10),
-            onTimeout: () {},
-          );
-        }
-      } catch (_) {}
+      if (!iter.moveNext()) return;
+      await _warmProvider(iter.current, context);
     }
   }
 
   await Future.wait(List.generate(concurrency, (_) => worker()));
+}
 
-  if (_precacheGeneration != myGen) return;
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList(_kLastFetchedImageSet, urls.toList());
+Object _providerKey(ImageProvider p) {
+  if (p is AssetImage) return p.assetName;
+  if (p is NetworkImage) return p.url;
+  if (p is CachedNetworkImageProvider) return p.url;
+  return p;
+}
+
+Future<void> _warmProvider(
+  ImageProvider provider,
+  BuildContext? context,
+) async {
+  if (context != null && context.mounted) {
+    try {
+      await precacheImage(provider, context, onError: (_, _) {});
+    } catch (_) {}
+    return;
+  }
+  final completer = Completer<void>();
+  final stream = provider.resolve(ImageConfiguration.empty);
+  late final ImageStreamListener listener;
+  listener = ImageStreamListener(
+    (_, _) {
+      if (!completer.isCompleted) completer.complete();
+      stream.removeListener(listener);
+    },
+    onError: (_, _) {
+      if (!completer.isCompleted) completer.complete();
+      stream.removeListener(listener);
+    },
+  );
+  stream.addListener(listener);
+  await completer.future.timeout(const Duration(seconds: 10), onTimeout: () {});
 }
 
 Future<DateTime?> lastSyncTime() async {

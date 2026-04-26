@@ -1,40 +1,39 @@
-import 'dart:convert';
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 
-import 'package:flutter/services.dart' show rootBundle;
-
-/// Registry of asset UUIDs shipped inside the app bundle by
-/// `tool/sync_data.dart`. Lets images load instantly (and offline) on
-/// first launch.
+/// Registry of UUIDs that are physically present in the app bundle
+/// under [_photosPrefix]. Backed by Flutter's [AssetManifest], so we
+/// only ever advertise files that genuinely exist — no 404s when the
+/// pubspec or sync_data state drifts.
 class BundledPhotos {
+  static const _photosPrefix = 'assets/data/photos/';
   static Set<String> _ids = const {};
   static bool _loaded = false;
 
-  /// Idempotent — first call wins. Never throws.
+  /// Idempotent. Safe to call without awaiting in `main` — lookups
+  /// before this finishes just return false (network fallback kicks in).
   static Future<void> load() async {
     if (_loaded) return;
     _loaded = true;
     try {
-      final raw = await rootBundle.loadString(
-        'assets/data/photos_manifest.json',
-      );
-      final decoded = jsonDecode(raw);
-      final list = (decoded is Map)
-          ? (decoded['ids'] as List?)
-          : (decoded is List ? decoded : null);
-      if (list == null) return;
-      _ids = list.map((e) => e.toString()).toSet();
-    } catch (_) {}
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      _ids = manifest
+          .listAssets()
+          .where((p) => p.startsWith(_photosPrefix))
+          .map((p) => p.substring(_photosPrefix.length))
+          .toSet();
+    } catch (_) {
+      _ids = const {};
+    }
   }
 
-  static final _assetUrlPattern = RegExp(r'/assets/([^/?#]+)');
+  static bool has(String uuid) => _ids.contains(uuid);
 
-  /// Bundled-asset path for [url], or null if its UUID isn't present.
-  static String? assetFor(String url) {
-    if (_ids.isEmpty || url.isEmpty) return null;
-    final m = _assetUrlPattern.firstMatch(url);
-    if (m == null) return null;
-    final id = m.group(1)!;
-    if (!_ids.contains(id)) return null;
-    return 'assets/data/photos/$id';
-  }
+  static String pathFor(String uuid) => '$_photosPrefix$uuid';
+
+  static final _uuidPattern = RegExp(r'/assets/([^/?#]+)');
+
+  /// Pulls the file UUID out of a Directus asset URL, with or without
+  /// transform query params.
+  static String? uuidFromUrl(String url) =>
+      _uuidPattern.firstMatch(url)?.group(1);
 }

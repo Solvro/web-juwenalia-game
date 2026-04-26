@@ -1191,6 +1191,7 @@ class _PartnerLogo extends StatelessWidget {
       url: url,
       height: height,
       fit: BoxFit.contain,
+      cap: 50,
       placeholder: SizedBox(width: height, height: height),
       errorWidget: SizedBox(width: height, height: height),
     );

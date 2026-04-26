@@ -108,6 +108,35 @@ class Directus {
         : '?${params.entries.map((e) => '${e.key}=${e.value}').join('&')}';
     return '$baseUrl/assets/$uuid$qs';
   }
+
+  /// Adds the canonical transform query (`width`, `format=webp`,
+  /// `quality=80`, `withoutEnlargement`). [width] is in *device pixels* —
+  /// we do NOT multiply by DPR, so the URL is identical on every device
+  /// and shares cache entries between bundle, runtime and precache.
+  /// Non-Directus URLs and ones with explicit transform params pass
+  /// through unchanged.
+  static String transformedAssetUrl(String url, {int? width = 500}) {
+    if (url.isEmpty) return url;
+    final uri = Uri.tryParse(url);
+    if (uri == null) return url;
+    final segments = uri.pathSegments;
+    if (segments.length < 2 || segments[segments.length - 2] != 'assets') {
+      return url;
+    }
+
+    final existing = uri.queryParameters;
+    final params = <String, String>{
+      ...existing,
+      if (width != null && !existing.containsKey('width'))
+        'width': width.toString(),
+      if (!existing.containsKey('format')) 'format': 'webp',
+      if (!existing.containsKey('quality')) 'quality': '80',
+      if (width != null && !existing.containsKey('withoutEnlargement'))
+        'withoutEnlargement': 'true',
+    };
+
+    return uri.replace(queryParameters: params).toString();
+  }
 }
 
 class DirectusException implements Exception {

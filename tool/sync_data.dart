@@ -14,7 +14,6 @@ import 'dart:typed_data' show BytesBuilder;
 const _directusBase = 'https://cms.juwenalia.solvro.pl';
 const _outputPath = 'assets/data/data.json';
 const _photosDir = 'assets/data/photos';
-const _manifestPath = 'assets/data/photos_manifest.json';
 
 Future<void> main(List<String> args) async {
   final base = args.isNotEmpty ? args.first : _directusBase;
@@ -255,9 +254,10 @@ String _jsonEditionFilter(String edition) {
   });
 }
 
-/// Walks the snapshot for image-field UUIDs and downloads each into
-/// `assets/data/photos/<uuid>`. Writes a manifest of successful IDs
-/// for [BundledPhotos] to consume.
+/// Downloads every image-field UUID into `assets/data/photos/<uuid>`.
+/// The runtime reads Flutter's `AssetManifest` to know which UUIDs are
+/// genuinely bundled — so we no longer need to write our own manifest
+/// file. Stale photos in the directory are pruned.
 Future<void> _syncPhotos(
   HttpClient client,
   String base,
@@ -266,16 +266,15 @@ Future<void> _syncPhotos(
   final ids = <String>{};
   _collectAssetIds(snapshot, ids);
 
-  if (ids.isEmpty) {
-    stdout.writeln('▸ No photo UUIDs referenced — skipping prefetch.');
-    await _writeManifest(const []);
-    return;
-  }
-
   final dir = Directory(_photosDir);
   await dir.create(recursive: true);
 
-  stdout.writeln('▸ Prefetching ${ids.length} photo(s) into $_photosDir …');
+  if (ids.isEmpty) {
+    stdout.writeln('▸ No photo UUIDs referenced — pruning bundle dir.');
+  } else {
+    stdout.writeln('▸ Prefetching ${ids.length} photo(s) into $_photosDir …');
+  }
+
   final downloaded = <String>[];
   var failures = 0;
   for (final id in ids) {
@@ -298,11 +297,12 @@ Future<void> _syncPhotos(
     }
   }
 
-  await _writeManifest(downloaded);
-  stdout.writeln(
-    '✓ Prefetched ${downloaded.length}/${ids.length} photo(s)'
-    '${failures == 0 ? '' : ' ($failures failed)'}.',
-  );
+  if (ids.isNotEmpty) {
+    stdout.writeln(
+      '✓ Prefetched ${downloaded.length}/${ids.length} photo(s)'
+      '${failures == 0 ? '' : ' ($failures failed)'}.',
+    );
+  }
 }
 
 /// JSON keys known to hold a `directus_files` UUID.
@@ -355,12 +355,4 @@ Future<List<int>> _collectBytes(HttpClientResponse res) async {
     builder.add(chunk);
   }
   return builder.takeBytes();
-}
-
-Future<void> _writeManifest(List<String> ids) async {
-  final sorted = [...ids]..sort();
-  final file = File(_manifestPath);
-  await file.parent.create(recursive: true);
-  const encoder = JsonEncoder.withIndent('  ');
-  await file.writeAsString('${encoder.convert({'ids': sorted})}\n');
 }
