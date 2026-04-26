@@ -46,7 +46,7 @@ Future<void> main(List<String> args) async {
         fields: 'id,title,content,date_created,image,edition',
         sort: '-date_created',
         limit: 100,
-        filter: _stringEditionFilter(edition),
+        filter: _jsonEditionFilter(edition),
       ),
       _getList(
         client,
@@ -59,7 +59,7 @@ Future<void> main(List<String> args) async {
             'artists.artists_id.spotifyUrl,artists.artists_id.sort',
         sort: 'start_time,sort',
         limit: 200,
-        filter: _stringEditionFilter(edition),
+        filter: _jsonEditionFilter(edition),
       ),
       _getList(
         client,
@@ -76,7 +76,7 @@ Future<void> main(List<String> args) async {
         'organisations',
         fields: 'id,name,url,logo,logoScale,role,sort,edition',
         sort: 'sort',
-        filter: _stringEditionFilter(edition),
+        filter: _jsonEditionFilter(edition),
       ),
       _getList(
         client,
@@ -238,32 +238,12 @@ Future<String> _get(HttpClient client, String url) async {
   return res.transform(utf8.decoder).join();
 }
 
-// Mirrors `_jsonEditionFilter` / `_stringEditionFilter` in
-// data_service.dart so the snapshot scopes to the active edition.
-
 String _jsonEditionFilter(String edition) {
   if (edition.isEmpty) return '';
   return jsonEncode({
     '_or': [
       {
         'edition': {'_contains': edition},
-      },
-      {
-        'edition': {'_null': true},
-      },
-      {
-        'edition': {'_empty': true},
-      },
-    ],
-  });
-}
-
-String _stringEditionFilter(String edition) {
-  if (edition.isEmpty) return '';
-  return jsonEncode({
-    '_or': [
-      {
-        'edition': {'_eq': edition},
       },
       {
         'edition': {'_null': true},
@@ -348,8 +328,11 @@ void _collectAssetIds(dynamic node, Set<String> out) {
   }
 }
 
+const _bundledTransform =
+    'width=500&format=webp&quality=80&withoutEnlargement=true';
+
 Future<bool> _downloadAsset(HttpClient client, String prefix, String id) async {
-  final url = '$prefix$id';
+  final url = '$prefix$id?$_bundledTransform';
   try {
     final req = await client.getUrl(Uri.parse(url));
     final res = await req.close();

@@ -100,6 +100,9 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
       );
     }
 
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final transformedUrl = _withDirectusTransform(widget.url, widget.width, dpr);
+
     if (_rasterFailed) {
       if (_svgFailed) return _error();
       return _SafeSvgNetwork(
@@ -114,7 +117,7 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
 
     if (kIsWeb) {
       return Image.network(
-        widget.url,
+        transformedUrl,
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
@@ -126,7 +129,7 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
     }
 
     return CachedNetworkImage(
-      imageUrl: widget.url,
+      imageUrl: transformedUrl,
       width: widget.width,
       height: widget.height,
       fit: widget.fit,
@@ -137,6 +140,41 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
       },
     );
   }
+}
+
+String _withDirectusTransform(
+  String url,
+  double? logicalWidth,
+  double dpr,
+) {
+  if (url.isEmpty) return url;
+  final uri = Uri.tryParse(url);
+  if (uri == null) return url;
+  final segments = uri.pathSegments;
+  if (segments.length < 2 || segments[segments.length - 2] != 'assets') {
+    return url;
+  }
+
+  final existing = uri.queryParameters;
+
+  String? targetWidth() {
+    if (existing.containsKey('width')) return existing['width'];
+    if (logicalWidth == null || logicalWidth <= 0) return null;
+    // 1200 px covers any phone at 3× DPR plus tablets in landscape;
+    // anything bigger just wastes bytes for the typical layout sizes.
+    final px = (logicalWidth * dpr).round().clamp(1, 1200);
+    return px.toString();
+  }
+
+  final params = <String, String>{
+    ...existing,
+    'width': ?targetWidth(),
+    if (!existing.containsKey('format')) 'format': 'webp',
+    if (!existing.containsKey('quality')) 'quality': '80',
+    if (!existing.containsKey('withoutEnlargement')) 'withoutEnlargement': 'true',
+  };
+
+  return uri.replace(queryParameters: params).toString();
 }
 
 /// `SvgPicture.network` inside a probe so we can catch parse failures
