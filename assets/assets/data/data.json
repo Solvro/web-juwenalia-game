@@ -8,7 +8,7 @@
     "reward_description": "<p>Odwiedź wszystkie strefy żeby odebrać super gadżety!</p>",
     "reward_pin": "2026",
     "game_terms": "<h3>Regulamin Gry Terenowej</h3>\n<p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p>\n<p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
-    "festival_plan": "1f213fbf-23b4-4327-9d62-a3685a0d205e",
+    "festival_plan": "d751e1e3-834d-405a-8ff0-80a1583a4ea6",
     "min_app_version_ios": "1",
     "min_app_version_android": "1",
     "min_app_version_web": "1",
@@ -23,16 +23,16 @@
       "qr_code": "JUWE-CP-01-MAIN-STAGE",
       "title": "Scena Główna",
       "description": "<p>Serce festiwalu. Tu odbywają się największe koncerty — zobacz się z headlinerami i złap pieczątkę.</p>",
-      "image": "6af16597-406d-4586-bbb8-3d6ccd1ffa12",
+      "image": "e474891a-d44b-4a1b-b7c2-e04afe00ccd7",
       "sort": 1,
       "location": {
         "id": 8,
         "name": "Scena Główna"
       },
       "category": {
-        "id": "food",
-        "display_name": "Gastro",
-        "color": "#FF9E8E"
+        "id": "stage",
+        "display_name": "Scena",
+        "color": "#FFB963"
       }
     },
     {
@@ -40,20 +40,28 @@
       "qr_code": "JUWE-CP-02-SOLVRO",
       "title": "Stoisko Solvro",
       "description": "<p>KN Solvro — twórcy tej aplikacji. Zagaduj, sprawdź projekty i zdobądź pieczątkę.</p>",
-      "image": null,
+      "image": "078a9848-3fa6-402e-a59c-3f9624dcb33b",
       "sort": 2,
       "location": null,
-      "category": null
+      "category": {
+        "id": "info",
+        "display_name": "Info",
+        "color": "#88CEFF"
+      }
     },
     {
       "id": 3,
       "qr_code": "JUWE-CP-03-FOOD",
       "title": "Strefa Foodtrucków",
       "description": "<p>Zrób sobie przerwę na jedzenie. Przy kasach foodtrucków znajdziesz kod QR do zeskanowania.</p>",
-      "image": null,
+      "image": "9dc817fc-a958-4fc0-b1f7-5d7f445515db",
       "sort": 3,
       "location": null,
-      "category": null
+      "category": {
+        "id": "food",
+        "display_name": "Gastro",
+        "color": "#FF9E8E"
+      }
     },
     {
       "id": 4,
@@ -153,8 +161,8 @@
       "hidden": false,
       "icon": "accessibility",
       "plan_point": {
-        "x": 1212,
-        "y": 728
+        "x": 1379,
+        "y": 508
       }
     },
     {
@@ -172,8 +180,11 @@
       "description": "Wejście na wydarzenie",
       "color": "#0F57FF",
       "hidden": false,
-      "icon": null,
-      "plan_point": null
+      "icon": "gate",
+      "plan_point": {
+        "x": 1746,
+        "y": 598
+      }
     }
   ],
   "organisations": [
