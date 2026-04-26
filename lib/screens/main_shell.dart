@@ -23,12 +23,6 @@ import 'schedule_screen.dart';
 import 'solvro_easter_egg_screen.dart';
 import 'update_required_screen.dart';
 
-/// Main 4-tab shell with a centered QR scan action.
-///   Aktualności · Harmonogram · [QR] · Mapa · Gra Terenowa
-///
-/// Layout adapts to window size:
-///   - compact (mobile)        → glass bottom nav with floating QR button
-///   - expanded (desktop/web)  → left sidebar with download-app prompt
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -89,9 +83,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // When the user returns to a backgrounded app, silently refresh if the
-    // cache is older than the configured staleness threshold. Keeps the
-    // shell current without the user having to pull-to-refresh.
     if (state == AppLifecycleState.resumed) {
       _maybeRefreshOnResume();
     }
@@ -109,12 +100,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       final info = await PackageInfo.fromPlatform();
       if (!mounted) return;
       setState(() => _appVersion = info.version);
-    } catch (_) {
-      // Best-effort: fall back to an empty string (never gates the shell).
-    }
+    } catch (_) {}
   }
 
-  /// Returns the min version required for this platform from [config].
   String _platformMinVersion(AppConfig config) {
     if (kIsWeb) return config.minAppVersionWeb;
     if (PlatformUtils.isIOS) return config.minAppVersionIos;
@@ -138,12 +126,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     });
   }
 
-  /// Kicks off a fresh data fetch. Returns a Future so pull-to-refresh
-  /// handlers can await spinner lifecycle.
-  ///
-  /// When [force] is true, skips the cache/bundled-asset fallback so a
-  /// failed network fetch surfaces as an error instead of silently
-  /// returning stale data.
   Future<void> _refresh({bool force = false}) async {
     final future = fetchData(http.Client(), forceNetwork: force);
     if (!mounted) return;
@@ -166,7 +148,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     }
   }
 
-  /// Shorthand used by RefreshIndicator — always forces a network fetch.
   Future<void> _pullToRefresh() => _refresh(force: true);
 
   Future<void> _unlockCheckpoint(String id) async {
@@ -182,19 +163,14 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     await prefs.setBool('isLocked', true);
   }
 
-  /// Kicks off background image precaching the first time data lands.
-  /// Idempotent — a second invocation is a no-op until data is reloaded.
   void _maybePrecacheImages(AppData data) {
     if (_imagesPrecached) return;
     _imagesPrecached = true;
-    // Defer until after the current build so we have a settled context.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       precacheAppImages(data, context: context);
     });
   }
-
-  // ── Build ──────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -205,8 +181,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           _maybePrecacheImages(snapshot.data!);
         }
 
-        // Hard update gate — shown above the entire shell when the
-        // running build is older than the platform's minimum.
         final data = snapshot.data;
         if (data != null && _needsUpdate(data.config)) {
           return UpdateRequiredScreen(
@@ -226,8 +200,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       },
     );
   }
-
-  // ── Mobile shell ───────────────────────────────────────────────────────────
 
   Widget _buildMobileShell(AsyncSnapshot<AppData> snapshot) {
     final data = snapshot.data;
@@ -251,8 +223,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       ),
     );
   }
-
-  // ── Desktop shell ──────────────────────────────────────────────────────────
 
   Widget _buildDesktopShell(AsyncSnapshot<AppData> snapshot) {
     final data = snapshot.data;
@@ -289,8 +259,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       ),
     );
   }
-
-  // ── Body (shared) ──────────────────────────────────────────────────────────
 
   Widget _buildBody(AsyncSnapshot<AppData> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -372,8 +340,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     );
   }
 
-  // ── QR scanning (centralised here so both layouts share it) ────────────────
-
   Future<void> _scanQr(AppData data) async {
     if (!_gameEnabled(data)) {
       setState(() => _tabIndex = 3);
@@ -386,8 +352,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     );
     if (result == null || !mounted) return;
 
-    // Easter egg: a specific code (either scanned or typed) opens a tiny
-    // mini-game instead of the regular checkpoint flow.
+    // Easter-egg short-circuit before the regular checkpoint flow.
     if (result.trim().toLowerCase() == 'kochamsolvro123') {
       await Navigator.push(
         context,
@@ -441,8 +406,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 }
 
-/// Floating orange pill shown whenever connectivity_plus reports no network.
-/// Tapping re-checks immediately. Renders nothing when online.
 class _OfflinePill extends StatelessWidget {
   const _OfflinePill({required this.alignment});
 

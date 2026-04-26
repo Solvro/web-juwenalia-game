@@ -7,12 +7,9 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Let the system manage overlay brightness based on theme.
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
-  // Register any images that ship inside the bundle so AppNetworkImage
-  // can short-circuit to asset loads. Best-effort: ignores missing manifest.
   await BundledPhotos.load();
   runApp(const JuwenaliaApp());
 }

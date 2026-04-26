@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -24,10 +25,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
   final Checkpoint checkpoint;
   final bool isCompleted;
 
-  /// Full app payload — used to look up the checkpoint's [MapPoint] so
-  /// the mini-map can render its plan-pin without duplicating coords
-  /// onto the checkpoint itself. Optional because some legacy entry
-  /// points (easter-egg flows, etc.) push without [AppData] in hand.
+  /// Optional — some legacy push sites don't have [AppData] in hand.
   final AppData? data;
 
   MapPoint? get _locationPin {
@@ -35,8 +33,6 @@ class CheckpointDetailsScreen extends StatelessWidget {
     final locId = checkpoint.locationId;
     if (d == null || locId == null) return null;
     for (final p in d.mapPoints) {
-      // Mini-map is plan-only — skip locations that haven't been
-      // pixel-placed by the editor yet.
       if (p.id == locId && p.hasPlanPosition) return p;
     }
     return null;
@@ -334,6 +330,9 @@ class CheckpointDetailsScreen extends StatelessWidget {
             color: AppTheme.surfaceContainerOf(context),
           ),
           child: FestivalPlanMap(
+            imageProvider: CachedNetworkImageProvider(
+              data!.config.festivalPlanUrl,
+            ),
             pins: [planPin],
             autoFocus: planPin,
             autoFocusScale: 2.4,

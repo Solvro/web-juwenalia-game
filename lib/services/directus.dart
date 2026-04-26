@@ -3,21 +3,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-/// Thin REST wrapper for the Juwenalia Directus instance.
-/// All reads go through public (anon) access — no auth header needed.
+/// Public-access REST wrapper for the Juwenalia Directus instance.
 class Directus {
   Directus._();
 
   static const String baseUrl = 'https://cms.juwenalia.solvro.pl';
 
-  /// Fetches items from a collection. [query] is appended as query string.
-  /// For singletons, Directus returns `{"data": {...}}` (single object).
-  /// For regular collections, Directus returns `{"data": [...]}` (array).
-  /// Callers get the raw decoded `data` value and cast as needed.
-  ///
-  /// Retries transient failures (timeouts, network blips, 5xx) up to
-  /// [retries] times with a small linear backoff. 4xx responses are not
-  /// retried — they indicate a caller bug, not a flaky link.
+  /// Returns the raw `data` payload — Map for singletons, List for
+  /// collections. Retries timeouts and 5xx; 4xx raises immediately.
   static Future<dynamic> items(
     String collection, {
     Map<String, String>? query,
@@ -38,10 +31,8 @@ class Directus {
     return decoded['data'];
   }
 
-  /// Fetches a single field definition from `/fields/:collection/:field`.
-  /// Returns the `data` payload (a Map with `meta.options.choices` for
-  /// dropdowns). Used to keep enum-like selects (e.g. partner tier) in sync
-  /// with the CMS instead of hard-coding their values in the app.
+  /// Returns `/fields/:collection/:field` — used for `meta.options.choices`
+  /// on enum-like fields.
   static Future<Map<String, dynamic>?> field(
     String collection,
     String field, {
@@ -62,8 +53,6 @@ class Directus {
     return null;
   }
 
-  /// GET with linear backoff. Retries on timeout, socket-level errors, and
-  /// 5xx. 4xx raises immediately (a bad query won't get better by retrying).
   static Future<http.Response> _getWithRetry(
     Uri uri, {
     required Duration timeout,
@@ -84,7 +73,6 @@ class Directus {
           );
           continue;
         }
-        // 4xx — no point retrying.
         throw DirectusException(
           'GET $uri failed: ${response.statusCode} ${response.reasonPhrase}',
           statusCode: response.statusCode,
@@ -98,9 +86,8 @@ class Directus {
     throw lastError!;
   }
 
-  /// Asset URL for a Directus file uuid. Optional transform params.
-  /// Returns empty string for null/empty uuids so callers can use the result
-  /// directly with `imageUrl.isNotEmpty` guards.
+  /// Returns empty string for null/empty uuids so callers can guard
+  /// with `.isNotEmpty`.
   static String assetUrl(
     String? uuid, {
     int? width,

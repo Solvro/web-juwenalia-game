@@ -7,11 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 
-/// "kochamsolvro123" easter egg. A tiny reflex game: taps on the floating
-/// Solvro dots score points; misses cost a life. Unapologetically silly.
-///
-/// Navigate here via [Navigator.push] — the main shell triggers it from
-/// the keystroke listener in [MainShell].
 class SolvroEasterEggScreen extends StatefulWidget {
   const SolvroEasterEggScreen({super.key});
 
@@ -37,7 +32,6 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
   Timer? _spawner;
   Timer? _ticker;
 
-  /// 0.0 at start → 1.0 by the end. Drives spawn rate and dot lifetime.
   double get _difficulty {
     final elapsed = DateTime.now().difference(_startedAt).inMilliseconds;
     return (elapsed / _duration.inMilliseconds).clamp(0.0, 1.0);
@@ -101,7 +95,6 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
     _dots.add(
       _Dot(
         id: _rng.nextInt(1 << 30),
-        // Normalised position so Stack placement is size-agnostic.
         dx: _rng.nextDouble(),
         dy: 0.08 + _rng.nextDouble() * 0.8,
         hue: _rng.nextInt(360),

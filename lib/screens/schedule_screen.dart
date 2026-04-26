@@ -10,8 +10,6 @@ import '../theme/elements.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/section_header.dart';
 
-/// Koncerty tab — fire element. Day tabs, current-event auto-scroll,
-/// past events dimmed.
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key, required this.data, this.onRefresh});
 
@@ -43,7 +41,6 @@ class _ScheduleScreenState extends State<ScheduleScreen>
         for (final e in day.events) e.id: GlobalKey(),
     };
 
-    // Scroll to the currently-happening event after first frame.
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (!mounted || todayIdx < 0) return;
       _scrollToCurrent(days[todayIdx]);
@@ -135,10 +132,6 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     final palette = AppElements.fire;
 
     if (days.isEmpty) {
-      // Before the day-by-day schedule is published, fall back to a flat
-      // list of confirmed artists so the tab still has something useful
-      // to show. The festival team usually announces the lineup weeks
-      // before the run-of-show locks in.
       if (widget.data.artists.isNotEmpty) {
         return _buildArtistsFallback(context, cs, palette);
       }
@@ -387,8 +380,6 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       ),
     );
   }
-
-  // ── Artists fallback ─────────────────────────────────────────────────────
 
   Widget _buildArtistsFallback(
     BuildContext context,

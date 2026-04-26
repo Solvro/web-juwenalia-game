@@ -6,8 +6,6 @@ import '../models/models.dart';
 import '../theme/elements.dart';
 import '../widgets/section_header.dart';
 
-/// Shown in place of the field game until `event_starts_at` has passed
-/// (or `game_enabled_override` flips it on).
 class GameLockedScreen extends StatelessWidget {
   const GameLockedScreen({super.key, required this.config});
 

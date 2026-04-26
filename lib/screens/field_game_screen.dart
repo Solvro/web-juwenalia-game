@@ -14,8 +14,6 @@ import '../widgets/swipe_down_dismissible.dart';
 import 'checkpoint_details_screen.dart';
 import 'reward_screen.dart';
 
-/// Field Game tab — matches Stitch "Gra Terenowa" screen.
-/// Checkpoint list with QR scanning, progress tracking, and rewards.
 class FieldGameScreen extends StatelessWidget {
   const FieldGameScreen({
     super.key,
@@ -180,8 +178,6 @@ class FieldGameScreen extends StatelessWidget {
     );
   }
 
-  // ── Description ───────────────────────────────────────────────────────────
-
   SliverToBoxAdapter _buildDescription(BuildContext context, ColorScheme cs) {
     return SliverToBoxAdapter(
       child: Padding(
@@ -199,20 +195,20 @@ class FieldGameScreen extends StatelessWidget {
     );
   }
 
-  // ── Progress ──────────────────────────────────────────────────────────────
-
   SliverToBoxAdapter _buildProgressSliver(
     BuildContext context,
     ColorScheme cs,
     ElementPalette palette,
   ) {
-    if (data.goal <= 0) return const SliverToBoxAdapter(child: SizedBox());
+    if (data.config.gameGoal <= 0) {
+      return const SliverToBoxAdapter(child: SizedBox());
+    }
 
     final validCount = completed
         .where((qr) => data.checkpoints.any((c) => c.qrCode == qr))
         .length;
-    final progress = (validCount / data.goal).clamp(0.0, 1.0);
-    final done = validCount >= data.goal;
+    final progress = (validCount / data.config.gameGoal).clamp(0.0, 1.0);
+    final done = validCount >= data.config.gameGoal;
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -293,7 +289,7 @@ class FieldGameScreen extends StatelessWidget {
                                 left: 2,
                               ),
                               child: Text(
-                                ' / ${data.goal} stref',
+                                ' / ${data.config.gameGoal} stref',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -346,8 +342,6 @@ class FieldGameScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ── Checkpoint list ───────────────────────────────────────────────────────
 
   SliverPadding _buildCheckpointSliver(
     BuildContext context,
@@ -405,7 +399,6 @@ class FieldGameScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
             Stack(
               children: [
                 SizedBox(
@@ -437,7 +430,6 @@ class FieldGameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Bottom gradient
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -456,7 +448,6 @@ class FieldGameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Category chip
                 Positioned(
                   top: 10,
                   left: 12,
@@ -482,7 +473,6 @@ class FieldGameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Completion badge
                 Positioned(
                   top: 10,
                   right: 12,
@@ -520,7 +510,6 @@ class FieldGameScreen extends StatelessWidget {
                 ),
               ],
             ),
-            // Content
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 10, 14, 13),
               child: Column(

@@ -1,32 +1,13 @@
-/// Field-game checkpoint. Mirrors the Directus `checkpoints` collection.
-///
-/// Scanning/matching is keyed on [qrCode] (unique, encoded into the
-/// printed QR poster). The numeric [id] is kept for Hero-tag stability
-/// across the details screen.
 class Checkpoint {
   final int id;
   final String qrCode;
   final String title;
   final String description;
-
-  /// Stable slug from the categories CMS collection (e.g. 'stage'). Empty
-  /// when no category is assigned.
   final String category;
-
-  /// Display label sourced from `categories.display_name`. Falls back to
-  /// 'Inne' when the row has no category.
   final String categoryLabel;
-
-  /// Hex color from `categories.color` (e.g. '#FFB963'). Empty when blank
-  /// — the UI applies its own neutral fallback.
   final String categoryColor;
-
   final String image;
   final String location;
-
-  /// ID of the related `locations` row, if any. Used to look up coords
-  /// for the per-checkpoint mini-map without having to duplicate lat/lng
-  /// onto the Checkpoint itself.
   final String? locationId;
 
   const Checkpoint({
@@ -42,9 +23,6 @@ class Checkpoint {
     this.locationId,
   });
 
-  /// Screens still reference `subtitle` and `time` during the Phase 2
-  /// rework. The CMS has no equivalent fields yet — keep empty getters so
-  /// the existing layouts skip the rows gracefully.
   String get subtitle => '';
   String get time => '';
 }

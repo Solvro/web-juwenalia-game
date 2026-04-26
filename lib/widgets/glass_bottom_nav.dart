@@ -4,9 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 
-/// Bottom navigation bar with a centered floating QR scan button, used on
-/// non-iOS platforms. iOS goes through a native UIKit view so it can use
-/// the real iOS 26 liquid-glass material.
 class GlassBottomNav extends StatelessWidget {
   const GlassBottomNav({
     super.key,
@@ -17,7 +14,6 @@ class GlassBottomNav extends StatelessWidget {
     required this.destinations,
   });
 
-  /// Index into [destinations].
   final int selectedIndex;
   final ValueChanged<int> onSelect;
   final VoidCallback onScanQr;
@@ -37,7 +33,6 @@ class GlassBottomNav extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Padding(
-        // Floats above the screen edge — gives the QR FAB room to overhang.
         padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -105,9 +100,6 @@ class NavDestination {
   final AppElement element;
 }
 
-/// Which end of the bar a nav item sits at. Outer-edge items round their
-/// outer corners more so the selected-pill highlight tracks the parent
-/// bar's 30px curve instead of standing off it.
 enum _OuterEdge { none, left, right }
 
 class _NavItem extends StatelessWidget {
@@ -132,9 +124,6 @@ class _NavItem extends StatelessWidget {
       alpha: Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.12,
     );
 
-    // Parent bar has radius 30 and the pill is inset by ~4px horizontally
-    // / 6px vertically — 24 lines up the outer arc smoothly. Inner corners
-    // stay at 18 so adjacent pills don't visually compete.
     const innerRadius = Radius.circular(18);
     const outerRadius = Radius.circular(24);
     final pillRadius = switch (outerEdge) {

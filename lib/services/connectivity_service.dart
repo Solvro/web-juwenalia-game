@@ -6,71 +6,42 @@ import 'package:http/http.dart' as http;
 
 import 'directus.dart';
 
-/// Tracks whether the app can reach the CMS.
-///
-/// `connectivity_plus` on its own is unreliable: on Flutter Web it often
-/// reports `ConnectivityResult.none` even when the browser is clearly online,
-/// and even on native it only knows about network interfaces, not actual
-/// reachability. So we treat the platform signal as a *hint*, and confirm
-/// with a real HEAD probe before flipping the pill to "offline".
-///
-/// `fetchData` also calls [reportFetchSuccess] / [reportFetchFailure] so the
-/// UI state stays in sync with what the user actually sees.
+/// Tracks reachability of the CMS. Treats `connectivity_plus` as a hint
+/// and confirms with a HEAD probe — `connectivity_plus` on Flutter Web
+/// frequently reports `none` while the browser is online.
 class ConnectivityService {
   ConnectivityService._();
 
   static final ConnectivityService instance = ConnectivityService._();
 
-  /// `true` means we believe the app can reach the CMS. Starts optimistic
-  /// so we don't flash the offline pill before the first probe finishes.
   final ValueNotifier<bool> isOnline = ValueNotifier<bool>(true);
 
   StreamSubscription<List<ConnectivityResult>>? _sub;
   bool _started = false;
   DateTime _lastProbeAt = DateTime.fromMillisecondsSinceEpoch(0);
 
-  /// Anything more recent than this and we skip re-probing.
   static const _probeCooldown = Duration(seconds: 15);
 
   Future<void> start() async {
     if (_started) return;
     _started = true;
 
-    // Subscribe first so we don't miss the burst of events that some
-    // platforms emit right after `checkConnectivity()`.
-    _sub = Connectivity().onConnectivityChanged.listen((results) {
-      _handleSignal(results);
-    });
+    _sub = Connectivity().onConnectivityChanged.listen(_handleSignal);
 
-    // Initial signal.
     try {
-      final initial = await Connectivity().checkConnectivity();
-      _handleSignal(initial);
+      _handleSignal(await Connectivity().checkConnectivity());
     } catch (_) {
-      // If the platform can't even tell us, assume online and let real
-      // fetches correct us.
       isOnline.value = true;
     }
   }
 
-  /// Called by the data layer after a successful network fetch.
   void reportFetchSuccess() {
     _lastProbeAt = DateTime.now();
     if (!isOnline.value) isOnline.value = true;
   }
 
-  /// Called by the data layer when a fetch fails for network reasons.
-  /// Returns once the probe has resolved so the UI pill reflects the final
-  /// verdict before the caller decides what to show (e.g. the error state
-  /// vs. "we got cached data but we're offline").
-  Future<void> reportFetchFailure() async {
-    // A failed fetch means we just tried the network and lost, so a probe
-    // right now is almost certainly going to agree. `force: true` bypasses
-    // the cooldown — we genuinely need a fresh answer.
-    await _probe(force: true);
-  }
+  Future<void> reportFetchFailure() => _probe(force: true);
 
-  /// Manual "tap the offline pill to retry" entry point.
   Future<void> refresh() => _probe(force: true);
 
   void dispose() {
@@ -81,11 +52,8 @@ class ConnectivityService {
 
   void _handleSignal(List<ConnectivityResult> results) {
     if (_hasInterface(results)) {
-      // Interface looks usable — trust it optimistically.
       isOnline.value = true;
     } else {
-      // Platform claims offline; confirm with a real probe before showing
-      // the pill. This dodges the connectivity_plus web false-negative.
       unawaited(_probe(force: false));
     }
   }
@@ -96,14 +64,9 @@ class ConnectivityService {
     _lastProbeAt = now;
 
     try {
-      // Cheap HEAD against the CMS. If this comes back (any status), we
-      // have working internet + DNS + TLS — which is what we actually
-      // care about for the pill. HEAD avoids downloading the response
-      // body even though the ping payload is tiny.
       final uri = Uri.parse('${Directus.baseUrl}/server/ping');
       final response = await http.head(uri).timeout(const Duration(seconds: 5));
-      // Any HTTP response counts as "online" — even a 404 or 405 means we
-      // made it to the server.
+      // Any HTTP response (including 404/405) means we reached the server.
       final reachable = response.statusCode > 0;
       if (isOnline.value != reachable) isOnline.value = reachable;
     } catch (_) {

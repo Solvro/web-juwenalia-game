@@ -1,6 +1,3 @@
-// Data models for the Juwenalia #WrocławRazem app.
-// Shapes mirror the Directus CMS collections.
-
 class NewsItem {
   final String id;
   final String title;
@@ -68,18 +65,16 @@ class MapPoint {
   final double? lng;
   final String? color;
 
-  /// Optional Material icon name. Overrides [type]'s default icon when set.
+  /// CMS-supplied Material icon name; overrides [type]'s default.
   final String? icon;
 
-  /// Pixel coordinates on the festival plan image. Both must be non-null
-  /// for the location to render on the plan view; `lat`/`lng` are still
-  /// used for the live map. Stored as integers in the CMS.
+  /// Pixel coordinates on the festival plan. Both must be non-null
+  /// for the location to render on the plan view.
   final int? planX;
   final int? planY;
 
-  /// When true, the CMS wants this pin excluded from the main map legend
-  /// but still reachable via checkpoint mini-maps. Defaults to false for
-  /// backwards-compat with pre-migration rows.
+  /// Excludes the pin from the main map legend but keeps it reachable
+  /// via checkpoint mini-maps.
   final bool hidden;
 
   const MapPoint({
@@ -96,8 +91,6 @@ class MapPoint {
     this.hidden = false,
   });
 
-  /// Whether this location has the pixel coords needed to render on the
-  /// plan view.
   bool get hasPlanPosition => planX != null && planY != null;
 }
 
@@ -139,8 +132,6 @@ class Partner {
   });
 }
 
-/// Dropdown-choice metadata for the `organisations.role` field. Pulled from
-/// Directus so editors can rename/reorder tiers without an app release.
 class PartnerTier {
   final String value;
   final String label;
@@ -156,13 +147,7 @@ class ImportantInfo {
   final String body;
   final String color;
 
-  /// Optional external link. When non-empty the card becomes tappable and
-  /// opens the URL (e.g. event terms, full article).
   final String? url;
-
-  /// Optional expiry. Items with [expiresAt] in the past are filtered out
-  /// in the fetcher so an announcement that ended yesterday doesn't keep
-  /// showing up today.
   final DateTime? expiresAt;
 
   const ImportantInfo({
@@ -191,41 +176,32 @@ class FaqItem {
 class AppConfig {
   final String edition;
   final DateTime? eventStartsAt;
-  final DateTime? eventEndsAt;
   final bool? gameEnabledOverride;
   final int gameGoal;
   final String rewardDescription;
   final String? rewardPin;
   final String gameTerms;
   final String festivalPlanUrl;
-  final String dataVersion;
   final String minAppVersionIos;
   final String minAppVersionAndroid;
   final String minAppVersionWeb;
   final String? appStoreUrlIos;
   final String? appStoreUrlAndroid;
 
-  /// URL encoded into the QR shown in the desktop sidebar's download
-  /// panel. Empty means "use [appStoreUrlAndroid] as the fallback" so
-  /// editors don't have to duplicate the Play link if they don't have a
-  /// smart redirector yet.
+  /// URL encoded into the desktop sidebar QR. Empty falls back to
+  /// [appStoreUrlAndroid].
   final String? downloadQrUrl;
-
-  /// Pitch text shown above the QR in the desktop download panel. Empty
-  /// means use the bundled Polish copy so old payloads still render.
   final String? downloadPanelDescription;
 
   const AppConfig({
     required this.edition,
     this.eventStartsAt,
-    this.eventEndsAt,
     this.gameEnabledOverride,
     this.gameGoal = 0,
     this.rewardDescription = '',
     this.rewardPin,
     this.gameTerms = '',
     this.festivalPlanUrl = '',
-    this.dataVersion = '',
     this.minAppVersionIos = '',
     this.minAppVersionAndroid = '',
     this.minAppVersionWeb = '',

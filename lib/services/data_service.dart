@@ -13,23 +13,14 @@ import '../models/models.dart';
 import 'connectivity_service.dart';
 import 'directus.dart';
 
-// ── Persistence keys ─────────────────────────────────────────────────────────
-
 const _kCacheBody = 'cached_data_json';
 const _kCacheTimestamp = 'cached_data_timestamp';
 const _kCacheEdition = 'cached_data_edition';
-const _kCacheDataVersion = 'cached_data_version';
 const _kCompletedCheckpoints = 'completedCheckpoints';
 const _kIsLocked = 'isLocked';
 const _kLastFetchedImageSet = 'cached_image_urls';
 const _localAssetPath = 'assets/data/data.json';
-
-/// If a fetch ever succeeds but the `data_version` hasn't changed for
-/// longer than this, we still force a full refetch. Keeps the bundled
-/// snapshot from going stale when the CMS forgets to bump versions.
 const _kForceRefetchAfter = Duration(hours: 24);
-
-// ── AppData ──────────────────────────────────────────────────────────────────
 
 class AppData {
   final AppConfig config;
@@ -58,11 +49,6 @@ class AppData {
     this.isFromCache = false,
   });
 
-  // ── Back-compat getters for callers not yet migrated to AppConfig ──────────
-  int get goal => config.gameGoal;
-  String get rewardDescription => config.rewardDescription;
-  String? get rewardPin => config.rewardPin;
-
   Iterable<String> get allImageUrls sync* {
     for (final c in checkpoints) {
       if (c.image.isNotEmpty) yield c.image;
@@ -84,314 +70,19 @@ class AppData {
     }
     if (config.festivalPlanUrl.isNotEmpty) yield config.festivalPlanUrl;
   }
+}
 
-  Map<String, dynamic> toJson() => {
-    'config': {
-      'edition': config.edition,
-      'event_starts_at': config.eventStartsAt?.toIso8601String(),
-      'event_ends_at': config.eventEndsAt?.toIso8601String(),
-      'game_enabled_override': config.gameEnabledOverride,
-      'game_goal': config.gameGoal,
-      'reward_description': config.rewardDescription,
-      'reward_pin': config.rewardPin,
-      'game_terms': config.gameTerms,
-      'festival_plan_url': config.festivalPlanUrl,
-      'data_version': config.dataVersion,
-      'min_app_version_ios': config.minAppVersionIos,
-      'min_app_version_android': config.minAppVersionAndroid,
-      'min_app_version_web': config.minAppVersionWeb,
-      'app_store_url_ios': config.appStoreUrlIos,
-      'app_store_url_android': config.appStoreUrlAndroid,
-      'download_qr_url': config.downloadQrUrl,
-      'download_panel_description': config.downloadPanelDescription,
-    },
-    'checkpoints': checkpoints
-        .map(
-          (c) => {
-            'id': c.id,
-            'qr_code': c.qrCode,
-            'title': c.title,
-            'description': c.description,
-            'category': c.category,
-            'category_label': c.categoryLabel,
-            'category_color': c.categoryColor,
-            'image': c.image,
-            'location': c.location,
-            'location_id': c.locationId,
-          },
-        )
-        .toList(),
-    'news': news
-        .map(
-          (n) => {
-            'id': n.id,
-            'title': n.title,
-            'body': n.body,
-            'category': n.category,
-            'date': n.date.toIso8601String(),
-            'image_url': n.imageUrl,
-          },
-        )
-        .toList(),
-    'schedule': schedule
-        .map(
-          (d) => {
-            'label': d.label,
-            'venue': d.venue,
-            'events': d.events
-                .map(
-                  (e) => {
-                    'id': e.id,
-                    'artist': e.artist,
-                    'genre': e.genre,
-                    'stage': e.stage,
-                    'time': e.time,
-                    'image_url': e.imageUrl,
-                    'start_time': e.startTime?.toIso8601String(),
-                    'end_time': e.endTime?.toIso8601String(),
-                    'artist_description': e.artistDescription,
-                    'artist_instagram_url': e.artistInstagramUrl,
-                    'artist_spotify_url': e.artistSpotifyUrl,
-                  },
-                )
-                .toList(),
-          },
-        )
-        .toList(),
-    'map_points': mapPoints
-        .map(
-          (p) => {
-            'id': p.id,
-            'name': p.name,
-            'type': p.type,
-            'description': p.description,
-            'lat': p.lat,
-            'lng': p.lng,
-            'color': p.color,
-            'icon': p.icon,
-            'plan_x': p.planX,
-            'plan_y': p.planY,
-            'hidden': p.hidden,
-          },
-        )
-        .toList(),
-    'artists': artists
-        .map(
-          (a) => {
-            'id': a.id,
-            'name': a.name,
-            'description': a.description,
-            'image_url': a.imageUrl,
-            'instagram_url': a.instagramUrl,
-            'spotify_url': a.spotifyUrl,
-            'is_popular': a.isPopular,
-          },
-        )
-        .toList(),
-    'partners': partners
-        .map(
-          (p) => {
-            'id': p.id,
-            'name': p.name,
-            'tier': p.tier,
-            'logo_url': p.logoUrl,
-            'url': p.url,
-            'logo_scale': p.logoScale,
-          },
-        )
-        .toList(),
-    'partner_tiers': partnerTiers
-        .map((t) => {'value': t.value, 'label': t.label, 'icon': t.icon})
-        .toList(),
-    'important_info': importantInfo
-        .map(
-          (i) => {
-            'id': i.id,
-            'icon': i.icon,
-            'title': i.title,
-            'body': i.body,
-            'color': i.color,
-            'url': i.url,
-            'expires_at': i.expiresAt?.toIso8601String(),
-          },
-        )
-        .toList(),
-    'faqs': faqs
-        .map((f) => {'id': f.id, 'question': f.question, 'answer': f.answer})
-        .toList(),
-  };
-
-  factory AppData.fromJson(
-    Map<String, dynamic> json, {
-    bool isFromCache = false,
-  }) {
-    final cfg = (json['config'] as Map?)?.cast<String, dynamic>() ?? const {};
-    return AppData(
-      config: AppConfig(
-        edition: (cfg['edition'] as String?) ?? '',
-        eventStartsAt: _parseDate(cfg['event_starts_at']),
-        eventEndsAt: _parseDate(cfg['event_ends_at']),
-        gameEnabledOverride: cfg['game_enabled_override'] as bool?,
-        gameGoal: (cfg['game_goal'] as num?)?.toInt() ?? 0,
-        rewardDescription: (cfg['reward_description'] as String?) ?? '',
-        rewardPin: (cfg['reward_pin'] as String?)?.trim(),
-        gameTerms: (cfg['game_terms'] as String?) ?? '',
-        festivalPlanUrl: (cfg['festival_plan_url'] as String?) ?? '',
-        dataVersion: (cfg['data_version'] as String?) ?? '',
-        minAppVersionIos: (cfg['min_app_version_ios']?.toString()) ?? '',
-        minAppVersionAndroid:
-            (cfg['min_app_version_android']?.toString()) ?? '',
-        minAppVersionWeb: (cfg['min_app_version_web']?.toString()) ?? '',
-        appStoreUrlIos: (cfg['app_store_url_ios'] as String?)?.trim(),
-        appStoreUrlAndroid: (cfg['app_store_url_android'] as String?)?.trim(),
-        downloadQrUrl: (cfg['download_qr_url'] as String?)?.trim(),
-        downloadPanelDescription: (cfg['download_panel_description'] as String?)
-            ?.trim(),
-      ),
-      checkpoints: ((json['checkpoints'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => Checkpoint(
-              id: (j['id'] as num).toInt(),
-              qrCode: (j['qr_code'] as String?) ?? '',
-              title: (j['title'] as String?) ?? '',
-              description: (j['description'] as String?) ?? '',
-              category: (j['category'] as String?) ?? '',
-              categoryLabel: (j['category_label'] as String?) ?? 'Inne',
-              categoryColor: (j['category_color'] as String?) ?? '',
-              image: (j['image'] as String?) ?? '',
-              location: (j['location'] as String?) ?? '',
-              locationId: j['location_id']?.toString(),
-            ),
-          )
-          .toList(),
-      news: ((json['news'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => NewsItem(
-              id: j['id'].toString(),
-              title: (j['title'] as String?) ?? '',
-              body: (j['body'] as String?) ?? '',
-              category: (j['category'] as String?) ?? 'general',
-              date: _parseDate(j['date']) ?? DateTime.now(),
-              imageUrl: (j['image_url'] as String?) ?? '',
-            ),
-          )
-          .toList(),
-      schedule: ((json['schedule'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (d) => ScheduleDay(
-              label: (d['label'] as String?) ?? '',
-              venue: (d['venue'] as String?) ?? '',
-              events: ((d['events'] as List?) ?? const [])
-                  .cast<Map<String, dynamic>>()
-                  .map(
-                    (e) => ScheduleEvent(
-                      id: e['id'].toString(),
-                      artist: (e['artist'] as String?) ?? '',
-                      genre: (e['genre'] as String?) ?? '',
-                      stage: (e['stage'] as String?) ?? '',
-                      time: (e['time'] as String?) ?? '',
-                      imageUrl: (e['image_url'] as String?) ?? '',
-                      startTime: _parseDate(e['start_time']),
-                      endTime: _parseDate(e['end_time']),
-                      artistDescription: (e['artist_description'] as String?)
-                          ?.trim(),
-                      artistInstagramUrl: (e['artist_instagram_url'] as String?)
-                          ?.trim(),
-                      artistSpotifyUrl: (e['artist_spotify_url'] as String?)
-                          ?.trim(),
-                    ),
-                  )
-                  .toList(),
-            ),
-          )
-          .toList(),
-      mapPoints: ((json['map_points'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => MapPoint(
-              id: j['id'].toString(),
-              name: (j['name'] as String?) ?? '',
-              type: (j['type'] as String?) ?? 'other',
-              description: j['description'] as String?,
-              lat: (j['lat'] as num?)?.toDouble(),
-              lng: (j['lng'] as num?)?.toDouble(),
-              color: j['color'] as String?,
-              icon: (j['icon'] as String?)?.trim().isNotEmpty == true
-                  ? (j['icon'] as String).trim()
-                  : null,
-              planX: (j['plan_x'] as num?)?.toInt(),
-              planY: (j['plan_y'] as num?)?.toInt(),
-              hidden: (j['hidden'] as bool?) ?? false,
-            ),
-          )
-          .toList(),
-      artists: ((json['artists'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => Artist(
-              id: j['id'].toString(),
-              name: (j['name'] as String?) ?? '',
-              description: (j['description'] as String?) ?? '',
-              imageUrl: (j['image_url'] as String?) ?? '',
-              instagramUrl: (j['instagram_url'] as String?)?.trim(),
-              spotifyUrl: (j['spotify_url'] as String?)?.trim(),
-              isPopular: (j['is_popular'] as bool?) ?? false,
-            ),
-          )
-          .toList(),
-      partners: ((json['partners'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => Partner(
-              id: j['id'].toString(),
-              name: (j['name'] as String?) ?? '',
-              tier: (j['tier'] as String?) ?? 'media',
-              logoUrl: j['logo_url'] as String?,
-              url: j['url'] as String?,
-              logoScale: (j['logo_scale'] as num?)?.toDouble(),
-            ),
-          )
-          .toList(),
-      partnerTiers: ((json['partner_tiers'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => PartnerTier(
-              value: (j['value']?.toString()) ?? '',
-              label: (j['label'] as String?) ?? '',
-              icon: (j['icon'] as String?),
-            ),
-          )
-          .toList(),
-      importantInfo: ((json['important_info'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => ImportantInfo(
-              id: j['id'].toString(),
-              icon: (j['icon'] as String?) ?? '',
-              title: (j['title'] as String?) ?? '',
-              body: (j['body'] as String?) ?? '',
-              color: (j['color'] as String?) ?? '',
-              url: (j['url'] as String?)?.trim(),
-              expiresAt: _parseDate(j['expires_at']),
-            ),
-          )
-          .toList(),
-      faqs: ((json['faqs'] as List?) ?? const [])
-          .cast<Map<String, dynamic>>()
-          .map(
-            (j) => FaqItem(
-              id: j['id'].toString(),
-              question: (j['question'] as String?) ?? '',
-              answer: (j['answer'] as String?) ?? '',
-            ),
-          )
-          .toList(),
-      isFromCache: isFromCache,
-    );
-  }
+class _Raw {
+  static const config = 'app_config';
+  static const checkpoints = 'checkpoints';
+  static const news = 'news';
+  static const events = 'events';
+  static const locations = 'locations';
+  static const organisations = 'organisations';
+  static const importantInfo = 'important_info';
+  static const faqs = 'faqs';
+  static const artists = 'artists';
+  static const roleFieldMeta = 'organisations_role_meta';
 }
 
 DateTime? _parseDate(dynamic raw) {
@@ -401,81 +92,53 @@ DateTime? _parseDate(dynamic raw) {
   return DateTime.tryParse(s);
 }
 
-// ── Fetch ────────────────────────────────────────────────────────────────────
-
-/// Fetches the composite app payload from Directus with a 3-tier fallback:
-///   1. Network → aggregate all collections, cache, return fresh.
-///   2. SharedPreferences cache → last successful fetch.
-///   3. Bundled asset → snapshot written at build time by `tool/sync_data.dart`.
-///
-/// Collections are fetched concurrently; individual collection failures
-/// degrade to the previously-cached values (when the edition matches) so a
-/// flaky CMS doesn't wipe everything the user just saw.
-///
-/// Pass [forceNetwork] to bypass the cache/asset fallback — used by
-/// pull-to-refresh to surface genuine network failures to the user
-/// instead of silently returning stale data. Note: partial-collection
-/// failures still degrade quietly even when [forceNetwork] is true; only
-/// a full failure (e.g. config fetch throws) re-raises.
+/// Three-tier fallback: network → SharedPreferences cache → bundled
+/// `assets/data/data.json`. Pass [forceNetwork] to skip the fallback
+/// chain on pull-to-refresh.
 Future<AppData> fetchData(
   http.Client client, {
   bool forceNetwork = false,
 }) async {
   final prefs = await SharedPreferences.getInstance();
 
-  // Load previous cache once, up front — we use it as both the per-collection
-  // fallback during the fetch *and* as the overall fallback when the fetch
-  // fails outright.
-  AppData? previous;
+  Map<String, dynamic>? previousRaw;
   final cached = prefs.getString(_kCacheBody);
   if (cached != null) {
     try {
-      previous = AppData.fromJson(
-        jsonDecode(cached) as Map<String, dynamic>,
-        isFromCache: true,
-      );
-    } catch (_) {
-      // corrupt cache — ignore, we'll overwrite on success
-    }
+      previousRaw = (jsonDecode(cached) as Map).cast<String, dynamic>();
+    } catch (_) {}
   }
 
   try {
-    final data = await _fetchFromDirectus(previous: previous);
+    final raw = await _fetchRawFromDirectus(previousRaw: previousRaw);
     ConnectivityService.instance.reportFetchSuccess();
 
-    // Edition-reset: if the new payload is for a different edition than
-    // the one we last cached, wipe per-edition state before persisting.
+    final newEdition = _editionFromRaw(raw);
     final previousEdition = prefs.getString(_kCacheEdition);
     if (previousEdition != null &&
         previousEdition.isNotEmpty &&
-        previousEdition != data.config.edition) {
+        previousEdition != newEdition) {
       await _resetEditionState(prefs);
     }
 
-    final encoded = jsonEncode(data.toJson());
-    await prefs.setString(_kCacheBody, encoded);
+    await prefs.setString(_kCacheBody, jsonEncode(raw));
     await prefs.setInt(_kCacheTimestamp, DateTime.now().millisecondsSinceEpoch);
-    await prefs.setString(_kCacheEdition, data.config.edition);
-    await prefs.setString(_kCacheDataVersion, data.config.dataVersion);
+    await prefs.setString(_kCacheEdition, newEdition);
 
-    return data;
+    return _appDataFromRaw(raw);
   } catch (e) {
     await ConnectivityService.instance.reportFetchFailure();
     if (forceNetwork) rethrow;
-    // else fall through to cache/asset
   }
 
-  if (previous != null) return previous;
+  if (previousRaw != null) {
+    return _appDataFromRaw(previousRaw, isFromCache: true);
+  }
 
-  // Bundled snapshot is optional: it's generated by `tool/sync_data.dart`
-  // and gitignored, so a fresh clone doesn't ship one. If it's missing
-  // we treat the whole chain as a network failure — the UI handles it.
   try {
     final assetBody = await rootBundle.loadString(_localAssetPath);
-    return AppData.fromJson(
-      jsonDecode(assetBody) as Map<String, dynamic>,
-      isFromCache: true,
-    );
+    final raw = (jsonDecode(assetBody) as Map).cast<String, dynamic>();
+    return _appDataFromRaw(raw, isFromCache: true);
   } catch (_) {
     throw StateError(
       'No network, no cached data, no bundled snapshot — '
@@ -484,27 +147,30 @@ Future<AppData> fetchData(
   }
 }
 
-/// Clears every persisted key that is tied to a specific edition.
-/// Called when the CMS switches editions so old-edition state (progress,
-/// cached payload, precached image URL list) doesn't leak into the new one.
+String _editionFromRaw(Map<String, dynamic> raw) {
+  final cfg = (raw[_Raw.config] as Map?)?.cast<String, dynamic>();
+  return (cfg?['edition'] as String?) ?? '';
+}
+
 Future<void> _resetEditionState(SharedPreferences prefs) async {
   await prefs.remove(_kCompletedCheckpoints);
   await prefs.remove(_kIsLocked);
   await prefs.remove(_kCacheBody);
   await prefs.remove(_kCacheTimestamp);
-  await prefs.remove(_kCacheDataVersion);
   await prefs.remove(_kLastFetchedImageSet);
 }
 
-Future<AppData> _fetchFromDirectus({AppData? previous}) async {
-  // Config first — everything else filters by edition. If config fails we
-  // want the whole fetch to fail so `fetchData` can fall back to cache.
-  final config = await _fetchConfig();
-
-  // Only reuse previous values when the edition matches — otherwise stale
-  // rows from the old edition would leak into the new payload.
-  final sameEdition =
-      previous != null && previous.config.edition == config.edition;
+Future<Map<String, dynamic>> _fetchRawFromDirectus({
+  Map<String, dynamic>? previousRaw,
+}) async {
+  final config = await _directusConfig();
+  final edition = (config['edition'] as String?) ?? '';
+  final previousEdition = previousRaw == null
+      ? ''
+      : ((previousRaw[_Raw.config] as Map?)?.cast<String, dynamic>()['edition']
+                as String?) ??
+            '';
+  final sameEdition = previousRaw != null && previousEdition == edition;
 
   Future<T> withFallback<T>(Future<T> Function() fn, T fallback) async {
     try {
@@ -514,78 +180,100 @@ Future<AppData> _fetchFromDirectus({AppData? previous}) async {
     }
   }
 
-  // All collections in flight concurrently — the previous "two-wave" split
-  // serialized the second half behind the first and gave no real ordering
-  // benefit since the shell awaits the full AppData anyway.
+  T prev<T>(String key, T empty) {
+    if (!sameEdition) return empty;
+    final v = previousRaw[key];
+    return v is T ? v : empty;
+  }
+
   final results = await Future.wait([
-    withFallback<List<NewsItem>>(
-      () => _fetchNews(config.edition),
-      sameEdition ? previous.news : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('news', _newsQuery(edition)),
+      prev<List<dynamic>>(_Raw.news, const <dynamic>[]),
     ),
-    withFallback<List<ImportantInfo>>(
-      () => _fetchImportantInfo(config.edition),
-      sameEdition ? previous.importantInfo : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('important_info', _importantInfoQuery(edition)),
+      prev<List<dynamic>>(_Raw.importantInfo, const <dynamic>[]),
     ),
-    withFallback<List<ScheduleDay>>(
-      () => _fetchSchedule(config.edition),
-      sameEdition ? previous.schedule : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('events', _eventsQuery(edition)),
+      prev<List<dynamic>>(_Raw.events, const <dynamic>[]),
     ),
-    withFallback<List<Checkpoint>>(
-      () => _fetchCheckpoints(config.edition),
-      sameEdition ? previous.checkpoints : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('checkpoints', _checkpointsQuery(edition)),
+      prev<List<dynamic>>(_Raw.checkpoints, const <dynamic>[]),
     ),
-    withFallback<List<MapPoint>>(
-      () => _fetchLocations(config.edition),
-      sameEdition ? previous.mapPoints : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('locations', _locationsQuery(edition)),
+      prev<List<dynamic>>(_Raw.locations, const <dynamic>[]),
     ),
-    withFallback<List<Partner>>(
-      () => _fetchPartners(config.edition),
-      sameEdition ? previous.partners : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('organisations', _partnersQuery(edition)),
+      prev<List<dynamic>>(_Raw.organisations, const <dynamic>[]),
     ),
-    withFallback<List<FaqItem>>(
-      () => _fetchFaqs(config.edition),
-      sameEdition ? previous.faqs : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('faqs', _faqsQuery(edition)),
+      prev<List<dynamic>>(_Raw.faqs, const <dynamic>[]),
     ),
-    withFallback<List<PartnerTier>>(
-      () => _fetchPartnerTiers(),
-      sameEdition ? previous.partnerTiers : const [],
+    withFallback<Map<String, dynamic>?>(
+      () => Directus.field('organisations', 'role'),
+      prev<Map<String, dynamic>?>(_Raw.roleFieldMeta, null),
     ),
-    withFallback<List<Artist>>(
-      () => _fetchArtists(config.edition),
-      sameEdition ? previous.artists : const [],
+    withFallback<List<dynamic>>(
+      () => _directusList('artists', _artistsQuery(edition)),
+      prev<List<dynamic>>(_Raw.artists, const <dynamic>[]),
     ),
   ]);
 
+  return <String, dynamic>{
+    _Raw.config: config,
+    _Raw.news: results[0],
+    _Raw.importantInfo: results[1],
+    _Raw.events: results[2],
+    _Raw.checkpoints: results[3],
+    _Raw.locations: results[4],
+    _Raw.organisations: results[5],
+    _Raw.faqs: results[6],
+    if (results[7] != null) _Raw.roleFieldMeta: results[7],
+    _Raw.artists: results[8],
+  };
+}
+
+AppData _appDataFromRaw(Map<String, dynamic> raw, {bool isFromCache = false}) {
+  final cfg = (raw[_Raw.config] as Map?)?.cast<String, dynamic>() ?? const {};
   return AppData(
-    config: config,
-    news: results[0] as List<NewsItem>,
-    importantInfo: results[1] as List<ImportantInfo>,
-    schedule: results[2] as List<ScheduleDay>,
-    checkpoints: results[3] as List<Checkpoint>,
-    mapPoints: results[4] as List<MapPoint>,
-    partners: results[5] as List<Partner>,
-    faqs: results[6] as List<FaqItem>,
-    partnerTiers: results[7] as List<PartnerTier>,
-    artists: results[8] as List<Artist>,
+    config: _parseConfig(cfg),
+    news: _parseList(raw[_Raw.news], _parseNews),
+    importantInfo: _parseList(raw[_Raw.importantInfo], _parseImportantInfo),
+    schedule: _parseSchedule((raw[_Raw.events] as List?) ?? const []),
+    checkpoints: _parseList(raw[_Raw.checkpoints], _parseCheckpoint),
+    mapPoints: _parseList(raw[_Raw.locations], _parseLocation),
+    partners: _parseList(raw[_Raw.organisations], _parsePartner),
+    faqs: _parseList(raw[_Raw.faqs], _parseFaq),
+    artists: _parseList(raw[_Raw.artists], _parseArtist),
+    partnerTiers: _parsePartnerTiers(raw[_Raw.roleFieldMeta]),
+    isFromCache: isFromCache,
   );
 }
 
-// ── Collection fetchers ──────────────────────────────────────────────────────
+List<T> _parseList<T>(dynamic raw, T Function(Map<String, dynamic>) parse) {
+  if (raw is! List) return const [];
+  return raw
+      .whereType<Map>()
+      .map((m) => parse(m.cast<String, dynamic>()))
+      .toList();
+}
 
-Future<AppConfig> _fetchConfig() async {
-  final raw = await Directus.items('app_config');
-  final data = (raw as Map?)?.cast<String, dynamic>() ?? const {};
+AppConfig _parseConfig(Map<String, dynamic> data) {
   return AppConfig(
     edition: (data['edition'] as String?) ?? '',
     eventStartsAt: _parseDate(data['event_starts_at']),
-    eventEndsAt: _parseDate(data['event_ends_at']),
     gameEnabledOverride: data['game_enabled_override'] as bool?,
     gameGoal: (data['game_goal'] as num?)?.toInt() ?? 0,
     rewardDescription: (data['reward_description'] as String?) ?? '',
     rewardPin: (data['reward_pin'] as String?)?.trim(),
     gameTerms: (data['game_terms'] as String?) ?? '',
     festivalPlanUrl: Directus.assetUrl(data['festival_plan'] as String?),
-    dataVersion: (data['data_version']?.toString()) ?? '',
     minAppVersionIos: (data['min_app_version_ios']?.toString()) ?? '',
     minAppVersionAndroid: (data['min_app_version_android']?.toString()) ?? '',
     minAppVersionWeb: (data['min_app_version_web']?.toString()) ?? '',
@@ -597,69 +285,149 @@ Future<AppConfig> _fetchConfig() async {
   );
 }
 
-Future<List<NewsItem>> _fetchNews(String edition) async {
-  final query = <String, String>{
-    'fields': 'id,title,content,date_created,image,edition',
-    'sort': '-date_created',
-    'limit': '100',
-    ..._stringEditionFilter(edition),
-  };
-  final raw = await Directus.items('news', query: query) as List;
-
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    return NewsItem(
-      id: j['id'].toString(),
-      title: (j['title'] as String?) ?? '',
-      body: (j['content'] as String?) ?? '',
-      category: 'general',
-      date: _parseDate(j['date_created']) ?? DateTime.now(),
-      imageUrl: Directus.assetUrl(j['image'] as String?),
-    );
-  }).toList();
+NewsItem _parseNews(Map<String, dynamic> j) {
+  return NewsItem(
+    id: j['id'].toString(),
+    title: (j['title'] as String?) ?? '',
+    body: (j['content'] as String?) ?? '',
+    category: 'general',
+    date: _parseDate(j['date_created']) ?? DateTime.now(),
+    imageUrl: Directus.assetUrl(j['image'] as String?),
+  );
 }
 
-Future<List<ImportantInfo>> _fetchImportantInfo([String edition = '']) async {
-  final query = <String, String>{
-    'fields': 'id,icon,title,body,color,url,expires_at',
-    'sort': 'sort',
-    ..._jsonEditionFilter(edition),
-  };
-  final raw = await Directus.items('important_info', query: query) as List;
-
-  // We intentionally don't drop expired rows here — the filter runs at
-  // render time so a cached payload fetched days ago still hides an
-  // announcement once its expiry passes, even with no network.
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    final url = (j['url'] as String?)?.trim();
-    return ImportantInfo(
-      id: j['id'].toString(),
-      icon: (j['icon'] as String?) ?? '',
-      title: (j['title'] as String?) ?? '',
-      body: (j['body'] as String?) ?? '',
-      color: (j['color'] as String?) ?? '',
-      url: (url == null || url.isEmpty) ? null : url,
-      expiresAt: _parseDate(j['expires_at']),
-    );
-  }).toList();
+ImportantInfo _parseImportantInfo(Map<String, dynamic> j) {
+  final url = (j['url'] as String?)?.trim();
+  return ImportantInfo(
+    id: j['id'].toString(),
+    icon: (j['icon'] as String?) ?? '',
+    title: (j['title'] as String?) ?? '',
+    body: (j['body'] as String?) ?? '',
+    color: (j['color'] as String?) ?? '',
+    url: (url == null || url.isEmpty) ? null : url,
+    expiresAt: _parseDate(j['expires_at']),
+  );
 }
 
-Future<List<ScheduleDay>> _fetchSchedule(String edition) async {
-  final query = <String, String>{
-    'fields':
-        'id,name,start_time,end_time,sort,edition,day.date,location.name,'
-        'artists.artists_id.name,artists.artists_id.image,'
-        'artists.artists_id.description,artists.artists_id.instagramUrl,'
-        'artists.artists_id.spotifyUrl,artists.artists_id.sort',
-    'sort': 'start_time,sort',
-    'limit': '200',
-    ..._stringEditionFilter(edition),
-  };
-  final raw = await Directus.items('events', query: query) as List;
+Checkpoint _parseCheckpoint(Map<String, dynamic> j) {
+  final loc = (j['location'] as Map?)?.cast<String, dynamic>();
+  final cat = (j['category'] as Map?)?.cast<String, dynamic>();
+  return Checkpoint(
+    id: (j['id'] as num).toInt(),
+    qrCode: (j['qr_code'] as String?) ?? '',
+    title: (j['title'] as String?) ?? '',
+    description: (j['description'] as String?) ?? '',
+    category: (cat?['id'] as String?) ?? '',
+    categoryLabel: (cat?['display_name'] as String?) ?? 'Inne',
+    categoryColor: (cat?['color'] as String?) ?? '',
+    image: Directus.assetUrl(j['image'] as String?),
+    location: (loc?['name'] as String?) ?? '',
+    locationId: loc?['id']?.toString(),
+  );
+}
 
-  // Group events by day.date — fall back to the date portion of start_time.
+MapPoint _parseLocation(Map<String, dynamic> j) {
+  final point = j['point'];
+  double? lat;
+  double? lng;
+  if (point is Map && point['coordinates'] is List) {
+    final coords = (point['coordinates'] as List).cast<num>();
+    if (coords.length >= 2) {
+      lng = coords[0].toDouble();
+      lat = coords[1].toDouble();
+    }
+  }
+  final iconRaw = (j['icon'] as String?)?.trim();
+  final (planX, planY) = _parsePlanPoint(j['plan_point']);
+  return MapPoint(
+    id: j['id'].toString(),
+    name: (j['name'] as String?) ?? '',
+    type: 'info',
+    description: j['description'] as String?,
+    lat: lat,
+    lng: lng,
+    color: j['color'] as String?,
+    icon: (iconRaw == null || iconRaw.isEmpty) ? null : iconRaw,
+    planX: planX,
+    planY: planY,
+    hidden: (j['hidden'] as bool?) ?? false,
+  );
+}
+
+(int?, int?) _parsePlanPoint(dynamic raw) {
+  Map? map;
+  if (raw is Map) {
+    map = raw;
+  } else if (raw is String && raw.trim().isNotEmpty) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) map = decoded;
+    } catch (_) {}
+  }
+  if (map == null) return (null, null);
+  final x = (map['x'] as num?)?.toInt();
+  final y = (map['y'] as num?)?.toInt();
+  return (x, y);
+}
+
+Partner _parsePartner(Map<String, dynamic> j) {
+  return Partner(
+    id: j['id'].toString(),
+    name: (j['name'] as String?) ?? '',
+    tier: (j['role']?.toString()) ?? '4',
+    logoUrl: Directus.assetUrl(j['logo'] as String?),
+    url: j['url'] as String?,
+    logoScale: double.tryParse((j['logoScale']?.toString()) ?? ''),
+  );
+}
+
+FaqItem _parseFaq(Map<String, dynamic> j) {
+  return FaqItem(
+    id: j['id'].toString(),
+    question: (j['question'] as String?) ?? '',
+    answer: (j['answer'] as String?) ?? '',
+  );
+}
+
+Artist _parseArtist(Map<String, dynamic> j) {
+  return Artist(
+    id: j['id'].toString(),
+    name: (j['name'] as String?) ?? '',
+    description: (j['description'] as String?) ?? '',
+    imageUrl: Directus.assetUrl(j['image'] as String?),
+    instagramUrl: (j['instagramUrl'] as String?)?.trim(),
+    spotifyUrl: (j['spotifyUrl'] as String?)?.trim(),
+    isPopular: (j['isPopular'] as bool?) ?? false,
+  );
+}
+
+List<PartnerTier> _parsePartnerTiers(dynamic raw) {
+  if (raw is! Map) return const [];
+  final meta = raw.cast<String, dynamic>();
+  final options = (meta['meta'] as Map?)?.cast<String, dynamic>()['options'];
+  final choices = (options is Map)
+      ? (options['choices'] as List?) ?? const []
+      : const [];
+  return choices
+      .whereType<Map>()
+      .map((c) => c.cast<String, dynamic>())
+      .map(
+        (c) => PartnerTier(
+          value: (c['value']?.toString()) ?? '',
+          label: (c['text'] as String?) ?? (c['value']?.toString() ?? ''),
+          icon: (c['icon'] as String?),
+        ),
+      )
+      .where((t) => t.value.isNotEmpty)
+      .toList();
+}
+
+List<ScheduleDay> _parseSchedule(List<dynamic> rawEvents) {
   final byDay = <String, List<ScheduleEvent>>{};
 
-  for (final e in raw.cast<Map<String, dynamic>>()) {
+  for (final entry in rawEvents) {
+    if (entry is! Map) continue;
+    final e = entry.cast<String, dynamic>();
     final day = (e['day'] as Map?)?.cast<String, dynamic>();
     final loc = (e['location'] as Map?)?.cast<String, dynamic>();
     final start = _parseDate(e['start_time']);
@@ -679,8 +447,6 @@ Future<List<ScheduleDay>> _fetchSchedule(String edition) async {
 
     final venue = (loc?['name'] as String?) ?? '';
 
-    // Use the first artist's image as the event cover image. Falls back to
-    // empty, which the UI renders as a text-only card.
     final headlinerImage = artists.isNotEmpty ? artists.first.imageUrl : '';
     final headlinerDescription = artists.isNotEmpty
         ? artists.first.description
@@ -778,168 +544,81 @@ String _formatDayLabel(String isoDate) {
   }
 }
 
-Future<List<Checkpoint>> _fetchCheckpoints(String edition) async {
-  final query = <String, String>{
-    'fields':
-        'id,qr_code,title,description,image,sort,'
-        'location.id,location.name,'
-        'category.id,category.display_name,category.color',
-    'sort': 'sort',
-    ..._jsonEditionFilter(edition),
-  };
-  final raw = await Directus.items('checkpoints', query: query) as List;
-
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    final loc = (j['location'] as Map?)?.cast<String, dynamic>();
-    final cat = (j['category'] as Map?)?.cast<String, dynamic>();
-    return Checkpoint(
-      id: (j['id'] as num).toInt(),
-      qrCode: (j['qr_code'] as String?) ?? '',
-      title: (j['title'] as String?) ?? '',
-      description: (j['description'] as String?) ?? '',
-      category: (cat?['id'] as String?) ?? '',
-      categoryLabel: (cat?['display_name'] as String?) ?? 'Inne',
-      categoryColor: (cat?['color'] as String?) ?? '',
-      image: Directus.assetUrl(j['image'] as String?),
-      location: (loc?['name'] as String?) ?? '',
-      locationId: loc?['id']?.toString(),
-    );
-  }).toList();
+Future<Map<String, dynamic>> _directusConfig() async {
+  final raw = await Directus.items('app_config');
+  return (raw as Map?)?.cast<String, dynamic>() ?? const {};
 }
 
-Future<List<MapPoint>> _fetchLocations(String edition) async {
-  final query = <String, String>{
-    'fields':
-        'id,name,point,polyline,isPolyline,description,color,hidden,'
-        'icon,plan_point',
-    ..._jsonEditionFilter(edition),
-  };
-  final raw = await Directus.items('locations', query: query) as List;
-
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    final point = j['point'];
-    double? lat;
-    double? lng;
-    if (point is Map && point['coordinates'] is List) {
-      final coords = (point['coordinates'] as List).cast<num>();
-      if (coords.length >= 2) {
-        lng = coords[0].toDouble();
-        lat = coords[1].toDouble();
-      }
-    }
-    final iconRaw = (j['icon'] as String?)?.trim();
-    final (planX, planY) = _parsePlanPoint(j);
-    return MapPoint(
-      id: j['id'].toString(),
-      name: (j['name'] as String?) ?? '',
-      type: 'info',
-      description: j['description'] as String?,
-      lat: lat,
-      lng: lng,
-      color: j['color'] as String?,
-      icon: (iconRaw == null || iconRaw.isEmpty) ? null : iconRaw,
-      planX: planX,
-      planY: planY,
-      hidden: (j['hidden'] as bool?) ?? false,
-    );
-  }).toList();
+Future<List<dynamic>> _directusList(
+  String collection,
+  Map<String, String> query,
+) async {
+  final raw = await Directus.items(collection, query: query);
+  return raw as List;
 }
 
-/// Reads pixel coordinates from a `locations.plan_point` JSON column
-/// (`{x, y}`, populated by the Point Picker interface).
-(int?, int?) _parsePlanPoint(Map<String, dynamic> row) {
-  final raw = row['plan_point'];
-  Map<String, dynamic>? map;
-  if (raw is Map) {
-    map = raw.cast<String, dynamic>();
-  } else if (raw is String && raw.trim().isNotEmpty) {
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map) map = decoded.cast<String, dynamic>();
-    } catch (_) {}
-  }
-  if (map == null) return (null, null);
-  final x = (map['x'] as num?)?.toInt();
-  final y = (map['y'] as num?)?.toInt();
-  return (x, y);
-}
+Map<String, String> _newsQuery(String edition) => {
+  'fields': 'id,title,content,date_created,image,edition',
+  'sort': '-date_created',
+  'limit': '100',
+  ..._stringEditionFilter(edition),
+};
 
-Future<List<Artist>> _fetchArtists(String edition) async {
-  final query = <String, String>{
-    'fields':
-        'id,name,description,image,instagramUrl,spotifyUrl,isPopular,sort',
-    'sort': '-isPopular,sort',
-    'limit': '500',
-    ..._jsonEditionFilter(edition),
-  };
-  final raw = await Directus.items('artists', query: query) as List;
+Map<String, String> _importantInfoQuery(String edition) => {
+  'fields': 'id,icon,title,body,color,url,expires_at,sort,edition',
+  'sort': 'sort',
+  ..._jsonEditionFilter(edition),
+};
 
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    return Artist(
-      id: j['id'].toString(),
-      name: (j['name'] as String?) ?? '',
-      description: (j['description'] as String?) ?? '',
-      imageUrl: Directus.assetUrl(j['image'] as String?),
-      instagramUrl: (j['instagramUrl'] as String?)?.trim(),
-      spotifyUrl: (j['spotifyUrl'] as String?)?.trim(),
-      isPopular: (j['isPopular'] as bool?) ?? false,
-    );
-  }).toList();
-}
+Map<String, String> _eventsQuery(String edition) => {
+  'fields':
+      'id,name,start_time,end_time,sort,edition,day.date,location.name,'
+      'artists.artists_id.name,artists.artists_id.image,'
+      'artists.artists_id.description,artists.artists_id.instagramUrl,'
+      'artists.artists_id.spotifyUrl,artists.artists_id.sort',
+  'sort': 'start_time,sort',
+  'limit': '200',
+  ..._stringEditionFilter(edition),
+};
 
-/// Pulls the `organisations.role` field's dropdown choices so editors can
-/// rename/reorder partner tiers without an app release. Falls back to an
-/// empty list on any error — the UI then synthesises tiers from whatever
-/// values the partners themselves carry.
-Future<List<PartnerTier>> _fetchPartnerTiers() async {
-  try {
-    final meta = await Directus.field('organisations', 'role');
-    if (meta == null) return const [];
-    final options = (meta['meta'] as Map?)?.cast<String, dynamic>()['options'];
-    final choices = (options is Map)
-        ? (options['choices'] as List?) ?? const []
-        : const [];
-    return choices
-        .whereType<Map>()
-        .map((c) => c.cast<String, dynamic>())
-        .map(
-          (c) => PartnerTier(
-            value: (c['value']?.toString()) ?? '',
-            label: (c['text'] as String?) ?? (c['value']?.toString() ?? ''),
-            icon: (c['icon'] as String?),
-          ),
-        )
-        .where((t) => t.value.isNotEmpty)
-        .toList();
-  } catch (_) {
-    return const [];
-  }
-}
+Map<String, String> _checkpointsQuery(String edition) => {
+  'fields':
+      'id,qr_code,title,description,image,sort,'
+      'location.id,location.name,'
+      'category.id,category.display_name,category.color',
+  'sort': 'sort',
+  ..._jsonEditionFilter(edition),
+};
 
-Future<List<Partner>> _fetchPartners(String edition) async {
-  final query = <String, String>{
-    'fields': 'id,name,url,logo,logoScale,role,sort,edition',
-    'sort': 'sort',
-    ..._stringEditionFilter(edition),
-  };
-  final raw = await Directus.items('organisations', query: query) as List;
+Map<String, String> _locationsQuery(String edition) => {
+  'fields':
+      'id,name,point,polyline,isPolyline,description,color,hidden,'
+      'icon,plan_point',
+  ..._jsonEditionFilter(edition),
+};
 
-  return raw.cast<Map<String, dynamic>>().map((j) {
-    return Partner(
-      id: j['id'].toString(),
-      name: (j['name'] as String?) ?? '',
-      tier: (j['role']?.toString()) ?? '4',
-      logoUrl: Directus.assetUrl(j['logo'] as String?),
-      url: j['url'] as String?,
-      logoScale: double.tryParse((j['logoScale']?.toString()) ?? ''),
-    );
-  }).toList();
-}
+Map<String, String> _partnersQuery(String edition) => {
+  'fields': 'id,name,url,logo,logoScale,role,sort,edition',
+  'sort': 'sort',
+  ..._stringEditionFilter(edition),
+};
 
-/// For collections whose `edition` column is a JSON array of values
-/// (multi-select dropdown in Directus — checkpoints, faqs, important_info,
-/// locations), match either the target edition or rows with no edition set.
-/// That way CMS editors don't have to tag every shared row.
+Map<String, String> _faqsQuery(String edition) => {
+  'sort': 'sort',
+  ..._jsonEditionFilter(edition),
+};
+
+Map<String, String> _artistsQuery(String edition) => {
+  'fields':
+      'id,name,description,image,instagramUrl,spotifyUrl,isPopular,sort,edition',
+  'sort': '-isPopular,sort',
+  'limit': '500',
+  ..._jsonEditionFilter(edition),
+};
+
+/// For collections whose `edition` is a CSV multi-select. Matches the
+/// target edition or rows with no edition set so editors don't have to
+/// tag every shared row.
 Map<String, String> _jsonEditionFilter(String edition) {
   final target = edition.trim();
   if (target.isEmpty) return const {};
@@ -960,9 +639,7 @@ Map<String, String> _jsonEditionFilter(String edition) {
   };
 }
 
-/// For collections whose `edition` column is a single-select string
-/// (events, news, organisations, artists), match either the target edition
-/// or rows with no edition set. Same motivation as [_jsonEditionFilter].
+/// Same as [_jsonEditionFilter] but for single-select string editions.
 Map<String, String> _stringEditionFilter(String edition) {
   final target = edition.trim();
   if (target.isEmpty) return const {};
@@ -983,38 +660,10 @@ Map<String, String> _stringEditionFilter(String edition) {
   };
 }
 
-Future<List<FaqItem>> _fetchFaqs(String edition) async {
-  try {
-    final query = <String, String>{
-      'sort': 'sort',
-      ..._jsonEditionFilter(edition),
-    };
-    final raw = await Directus.items('faqs', query: query) as List;
-    return raw.cast<Map<String, dynamic>>().map((j) {
-      return FaqItem(
-        id: j['id'].toString(),
-        question: (j['question'] as String?) ?? '',
-        answer: (j['answer'] as String?) ?? '',
-      );
-    }).toList();
-  } catch (_) {
-    return const [];
-  }
-}
-
-// ── Image precache (staged) ──────────────────────────────────────────────────
-
-/// Monotonic counter — each call to [precacheAppImages] claims a fresh id
-/// and workers abort as soon as a newer call supersedes them. Without this,
-/// two overlapping refreshes would race to write [_kLastFetchedImageSet].
+/// Monotonic counter so overlapping precache passes don't race to write
+/// [_kLastFetchedImageSet]; the older pass aborts when it sees a newer id.
 int _precacheGeneration = 0;
 
-/// Pre-caches every image referenced in [data]. The previous generation
-/// of images stays in the [CachedNetworkImage] disk cache until each new
-/// URL resolves, so a mid-fetch offline drop doesn't lose imagery.
-///
-/// Safe to call repeatedly: a new invocation cancels any in-flight workers
-/// from the previous call.
 Future<void> precacheAppImages(AppData data, {BuildContext? context}) async {
   final myGen = ++_precacheGeneration;
   final urls = data.allImageUrls.toSet();
@@ -1052,16 +701,12 @@ Future<void> precacheAppImages(AppData data, {BuildContext? context}) async {
             onTimeout: () {},
           );
         }
-      } catch (_) {
-        // Best-effort — skip failures silently.
-      }
+      } catch (_) {}
     }
   }
 
   await Future.wait(List.generate(concurrency, (_) => worker()));
 
-  // If a newer precache pass is already running, don't overwrite the tracked
-  // image set with this (now-stale) generation's URLs.
   if (_precacheGeneration != myGen) return;
   final prefs = await SharedPreferences.getInstance();
   await prefs.setStringList(_kLastFetchedImageSet, urls.toList());
@@ -1074,9 +719,6 @@ Future<DateTime?> lastSyncTime() async {
   return DateTime.fromMillisecondsSinceEpoch(ms);
 }
 
-/// True when the last successful fetch is older than [_kForceRefetchAfter]
-/// regardless of whether the CMS has bumped data_version. Callers use
-/// this to decide whether to show a "recently synced" badge or retry.
 Future<bool> shouldForceRefetch() async {
   final last = await lastSyncTime();
   if (last == null) return true;

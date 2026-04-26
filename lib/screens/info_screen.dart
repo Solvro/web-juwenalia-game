@@ -13,10 +13,6 @@ import '../widgets/app_network_image.dart';
 import '../widgets/brand_gradient.dart';
 import '../widgets/section_header.dart';
 
-/// Info tab — wind element. Layout:
-///   1. Aktualności nav card (expandable)
-///   2. FAQ nav card (expandable)
-///   3. Pamiętaj o (important_info)
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key, required this.data, required this.onRefresh});
 
@@ -136,11 +132,8 @@ class _InfoScreenState extends State<InfoScreen> {
     );
   }
 
-  // ── Pamiętaj o section ────────────────────────────────────────────────────
-
-  /// Announcements with an [ImportantInfo.expiresAt] in the past are
-  /// hidden here (not in the fetcher) so a cached payload still respects
-  /// the current wall clock when the device is offline.
+  /// Filter at render time so cached payloads respect the wall clock
+  /// even when offline.
   List<ImportantInfo> _activeImportantInfo() {
     final now = DateTime.now();
     return widget.data.importantInfo
@@ -181,10 +174,7 @@ class _InfoScreenState extends State<InfoScreen> {
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
-        // Center the 44px icon with the title when the body is empty so
-        // the card doesn't look bottom-heavy (icon dominates the row's
-        // height and would otherwise leave a fat blank strip below the
-        // title).
+        // Center icon with title when no body — avoids a bottom-heavy card.
         crossAxisAlignment: hasBody
             ? CrossAxisAlignment.start
             : CrossAxisAlignment.center,
@@ -248,8 +238,6 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
     );
   }
-
-  // ── News content ──────────────────────────────────────────────────────────
 
   Widget _buildNewsContent(BuildContext context, ColorScheme cs) {
     return Column(
@@ -321,8 +309,6 @@ class _InfoScreenState extends State<InfoScreen> {
     );
   }
 
-  // ── FAQ content ───────────────────────────────────────────────────────────
-
   Widget _buildFaqContent(
     BuildContext context,
     ColorScheme cs,
@@ -374,8 +360,6 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
     );
   }
-
-  // ── Shared helpers ────────────────────────────────────────────────────────
 
   Widget _sectionHeader(
     BuildContext context,
@@ -442,8 +426,6 @@ class _InfoScreenState extends State<InfoScreen> {
     }
   }
 }
-
-// ── Navigation section card ────────────────────────────────────────────────
 
 class _NavSectionCard extends StatelessWidget {
   const _NavSectionCard({

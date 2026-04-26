@@ -8,9 +8,6 @@ import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../widgets/platform_utils.dart';
 
-/// Blocking screen shown when the running app version is older than the
-/// minimum advertised in `AppConfig`. On mobile it links to the correct
-/// store; on web it offers a hard reload to pick up the latest bundle.
 class UpdateRequiredScreen extends StatelessWidget {
   const UpdateRequiredScreen({
     super.key,
@@ -49,9 +46,8 @@ class UpdateRequiredScreen extends StatelessWidget {
 
   Future<void> _onAction() async {
     if (kIsWeb) {
-      // ignore: avoid_web_libraries_in_flutter
-      // Using a dynamic import would complicate builds; fall through to
-      // a navigation hack that forces the browser to refetch the bundle.
+      // Forces the browser to refetch the bundle without pulling in
+      // dart:html (which would complicate non-web builds).
       final uri = Uri.base.replace(
         queryParameters: {
           ...Uri.base.queryParameters,
@@ -175,9 +171,7 @@ class UpdateRequiredScreen extends StatelessWidget {
   }
 }
 
-/// Compares two dotted version strings (e.g. "2.0.0"). Returns a negative
-/// value if [a] is lower than [b], zero if equal, positive if higher.
-/// Missing segments are treated as 0; non-numeric segments fall back to 0.
+/// Compares dotted version strings. Negative if [a] < [b].
 int compareVersions(String a, String b) {
   List<int> parts(String s) {
     if (s.trim().isEmpty) return const [];

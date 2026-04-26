@@ -8,9 +8,6 @@ import 'brand_gradient.dart';
 import 'download_app_panel.dart';
 import 'glass_bottom_nav.dart' show NavDestination;
 
-/// Vertical sidebar shown on desktop / tablet-wide layouts.
-/// Contains brand mark, destinations, a centered QR scan action, and a
-/// "download the app" prompt at the bottom.
 class DesktopSidebar extends StatelessWidget {
   const DesktopSidebar({
     super.key,
@@ -29,9 +26,6 @@ class DesktopSidebar extends StatelessWidget {
   final bool qrEnabled;
   final List<NavDestination> destinations;
 
-  /// CMS config — passed down to [DownloadAppPanel] so QR + store URLs
-  /// + description can be edited without an app release. Null while
-  /// the first fetch is in flight.
   final AppConfig? config;
 
   final double width;
@@ -55,7 +49,6 @@ class DesktopSidebar extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final topItems = <Widget>[
-              // Brand header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Column(
@@ -96,12 +89,9 @@ class DesktopSidebar extends StatelessWidget {
                 ),
             ];
 
-            // Approximate natural height of the full column. Header
-            // (~96) + scan button (~48) + 4 × destination (~50) +
-            // spacing (~44) + DownloadAppPanel (~360) ≈ 700 px. When
-            // the viewport is at least this tall we anchor the panel
-            // to the bottom with a Spacer; on shorter viewports we
-            // switch to a scrollable column so nothing overflows.
+            // Below this height the column overflows, so switch to
+            // a scrollable layout instead of bottom-anchoring with
+            // Spacer.
             const naturalContentHeight = 720.0;
             final fitsWithSlack = constraints.maxHeight >= naturalContentHeight;
 

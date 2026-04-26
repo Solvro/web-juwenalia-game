@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// Renders text with the Figma cyan→teal→green brand gradient as fill.
 class BrandGradientText extends StatelessWidget {
   const BrandGradientText(
     this.text, {
@@ -38,7 +37,6 @@ class BrandGradientText extends StatelessWidget {
   }
 }
 
-/// A 2px gradient bar — used as a brand accent under section labels.
 class BrandGradientBar extends StatelessWidget {
   const BrandGradientBar({
     super.key,
@@ -64,7 +62,6 @@ class BrandGradientBar extends StatelessWidget {
   }
 }
 
-/// A small gradient pill — often used for hero badges (#hashtag, NEW etc).
 class BrandGradientPill extends StatelessWidget {
   const BrandGradientPill({
     super.key,

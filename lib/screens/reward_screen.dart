@@ -10,7 +10,6 @@ import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/brand_gradient.dart';
 
-/// Reward screen with staff-confirmed redemption flow.
 class RewardScreen extends StatefulWidget {
   const RewardScreen({
     super.key,
@@ -36,10 +35,11 @@ class _RewardScreenState extends State<RewardScreen> {
       .where((qr) => widget.data.checkpoints.any((c) => c.qrCode == qr))
       .length;
 
-  bool get _canClaim => _validCompleted >= widget.data.goal && !_isLocked;
+  bool get _canClaim =>
+      _validCompleted >= widget.data.config.gameGoal && !_isLocked;
 
   String get _rewardPinDigits =>
-      (widget.data.rewardPin ?? '').replaceAll(RegExp(r'\D'), '');
+      (widget.data.config.rewardPin ?? '').replaceAll(RegExp(r'\D'), '');
 
   bool get _hasConfiguredPin => _rewardPinDigits.isNotEmpty;
 
@@ -116,7 +116,7 @@ class _RewardScreenState extends State<RewardScreen> {
                 ),
               ),
               child: Html(
-                data: widget.data.rewardDescription,
+                data: widget.data.config.rewardDescription,
                 onLinkTap: (url, _, _) {
                   if (url == null) return;
                   launchUrl(
@@ -156,13 +156,13 @@ class _RewardScreenState extends State<RewardScreen> {
   }
 
   Widget _buildProgressCircle(ColorScheme cs) {
-    final progress = (widget.data.goal > 0)
-        ? (_validCompleted / widget.data.goal).clamp(0.0, 1.0)
+    final progress = (widget.data.config.gameGoal > 0)
+        ? (_validCompleted / widget.data.config.gameGoal).clamp(0.0, 1.0)
         : 0.0;
-    final done = _validCompleted >= widget.data.goal || _isLocked;
-    final remaining = (widget.data.goal - _validCompleted).clamp(
+    final done = _validCompleted >= widget.data.config.gameGoal || _isLocked;
+    final remaining = (widget.data.config.gameGoal - _validCompleted).clamp(
       0,
-      widget.data.goal,
+      widget.data.config.gameGoal,
     );
 
     return Container(
@@ -303,7 +303,7 @@ class _RewardScreenState extends State<RewardScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '/ ${widget.data.goal} stref',
+                          '/ ${widget.data.config.gameGoal} stref',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -776,11 +776,6 @@ class _GlowOrb extends StatelessWidget {
   }
 }
 
-/// Gauge painter — replaces the stacked CircularProgressIndicator +
-/// ShaderMask approach. Renders a full-circle track and a progress arc
-/// in one pass; the gradient is applied directly via [Paint.shader] so
-/// rounded stroke caps colour correctly even at the gradient rect's
-/// edge (which is where the previous approach broke down).
 class _GaugePainter extends CustomPainter {
   _GaugePainter({
     required this.progress,

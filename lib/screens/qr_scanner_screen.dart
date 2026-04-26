@@ -5,7 +5,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../theme/app_theme.dart';
 
-/// QR Scanner screen — camera-based, always dark UI.
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
 
@@ -173,7 +172,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Scanner overlay is always dark regardless of system theme.
     const accentColor = Color(0xFF00A1E4);
 
     return Scaffold(

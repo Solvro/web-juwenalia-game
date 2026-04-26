@@ -7,10 +7,8 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import 'brand_gradient.dart';
 
-/// Hard-coded fallbacks used only when the CMS fields are blank or the
-/// payload hasn't loaded yet. Update via `app_config.app_store_url_ios`
-/// / `app_store_url_android` / `download_qr_url` / `download_panel_description`
-/// in Directus — code changes are no longer needed for these.
+/// Fallbacks used only before [fetchData] resolves or when the CMS
+/// fields are blank.
 class _DownloadDefaults {
   static const String iosUrl =
       'https://apps.apple.com/app/juwenalia-pwr/id000000000';
@@ -21,17 +19,12 @@ class _DownloadDefaults {
       'bezpośrednio na telefonie.';
 }
 
-/// Side / bottom panel suggesting users to download the mobile app.
-/// Used on desktop / web breakpoints.
 class DownloadAppPanel extends StatelessWidget {
   const DownloadAppPanel({super.key, this.config, this.compact = false});
 
-  /// CMS-sourced URLs / copy. Falls back to bundled defaults when null
-  /// (e.g. on first paint before [fetchData] resolves).
   final AppConfig? config;
 
-  /// When true, hides the QR + uses a vertically denser layout for narrow
-  /// sidebars.
+  /// When true, hides the QR for narrow sidebars.
   final bool compact;
 
   String? _trimmed(String? v) {

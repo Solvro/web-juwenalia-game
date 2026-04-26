@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Wraps a route's body so an over-scroll past the top of its inner
-/// scroll view feels like a drag-down-to-dismiss gesture.
+/// Drag-down-to-dismiss gesture for a scrollable route. Listens to
+/// [ScrollNotification]s instead of fighting the inner scrollable for
+/// pan gestures. Push via [swipeDownPageRoute] so the underlying screen
+/// shows through during the drag.
 ///
-/// Implementation note: instead of fighting the inner scrollable for
-/// gestures, we listen to its [ScrollNotification]s. While the scroll
-/// position is at the top and the user pulls further down we accumulate
-/// the overscroll into a translation+fade. When the drag ends we either
-/// pop (past [threshold]) or spring back to zero.
-///
-/// The host route should be pushed with `opaque: false` (see
-/// [swipeDownPageRoute]) so the previous screen is visible behind the
-/// translated body during the gesture; otherwise the exposed area is
-/// just black.
-/// Builds the dismissible body. [offset] is the current pull distance in
-/// logical pixels (0 when idle); [progress] is `offset/maxOffset` clamped
-/// to 0..1, useful for fades. Use [offset] to drive any visual you want
-/// — translate, scale, stretch a hero image, etc.
+/// The builder receives the current pull `offset` (px, 0 when idle) and
+/// `progress` (offset/maxOffset, clamped). Use them to translate, fade,
+/// or stretch the body.
 typedef SwipeDownBuilder =
     Widget Function(BuildContext context, double offset, double progress);
 
@@ -30,12 +21,8 @@ class SwipeDownDismissible extends StatefulWidget {
 
   final SwipeDownBuilder builder;
 
-  /// How far the user has to pull down before releasing dismisses the
-  /// route. Below this, the body springs back.
+  /// Pull distance past which release dismisses the route.
   final double threshold;
-
-  /// Caps the offset so even an aggressive fling doesn't push the body
-  /// further than the user can see.
   final double maxOffset;
 
   @override
@@ -71,9 +58,8 @@ class _SwipeDownDismissibleState extends State<SwipeDownDismissible>
     if (n is OverscrollNotification &&
         n.overscroll < 0 &&
         n.metrics.pixels <= 0) {
-      // Cancel any in-flight spring-back so the new pull starts fresh.
       _stopSpring();
-      // 0.6 dampens the pull so it feels rubber-band-y rather than 1:1.
+      // 0.6 = rubber-band damping factor.
       setState(() {
         _offset = (_offset - n.overscroll * 0.6).clamp(0.0, widget.maxOffset);
       });
@@ -125,9 +111,9 @@ class _SwipeDownDismissibleState extends State<SwipeDownDismissible>
   }
 }
 
-/// Pushes [builder] over the current route as a vertical slide-up sheet
-/// with a transparent barrier so [SwipeDownDismissible] inside the page
-/// reveals the underlying screen as the user drags.
+/// Slide-up route with a transparent barrier so a child
+/// [SwipeDownDismissible] reveals the underlying screen as the user
+/// drags.
 PageRoute<T> swipeDownPageRoute<T>(WidgetBuilder builder) {
   return PageRouteBuilder<T>(
     opaque: false,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -22,9 +23,6 @@ import '../widgets/section_header.dart';
 
 enum _EmbeddedMapMode { live, plan }
 
-/// Mapa tab — earth element. Two modes:
-/// - **plan**: bundled festival plan PNG, zoomable, pins projected onto it
-/// - **live**: OpenStreetMap via flutter_map (no Google Maps dependency)
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key, required this.data, this.onRefresh});
 
@@ -38,11 +36,8 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   static const _campus = LatLng(51.10795, 17.05887);
   static const _planAspectRatio = 16 / 11;
-  static const _planAsset = 'assets/maps/festival_plan.png';
 
-  /// Native pixel dimensions of [_planAsset]. Pin coords land in this
-  /// space; FittedBox handles screen-fit scaling.
-  static const _planNaturalSize = Size(1600, 1100);
+  static const _planNaturalFallback = Size(1600, 1100);
 
   final TransformationController _planController = TransformationController();
   final MapController _liveController = MapController();
@@ -55,9 +50,11 @@ class _MapScreenState extends State<MapScreen> {
   Size _planViewport = Size.zero;
   late _EmbeddedMapMode _preferredMode;
 
-  /// Latest device location, populated by [_locationSub] or by the
-  /// one-shot `_handleLocateMe` request. `null` until the user grants
-  /// permission and a fix arrives.
+  ImageProvider? _planImage;
+  Size _planNaturalSize = _planNaturalFallback;
+  ImageStream? _planImageStream;
+  ImageStreamListener? _planImageListener;
+
   LatLng? _myLocation;
   StreamSubscription<Position>? _locationSub;
 
@@ -74,6 +71,7 @@ class _MapScreenState extends State<MapScreen> {
     for (final p in widget.data.mapPoints) {
       _legendKeys[p.id] = GlobalKey();
     }
+    _resolvePlanImage(widget.data.config.festivalPlanUrl);
     if (_supportsLiveMap) _maybeStartLocationStream();
   }
 
@@ -83,6 +81,11 @@ class _MapScreenState extends State<MapScreen> {
     for (final p in widget.data.mapPoints) {
       _legendKeys.putIfAbsent(p.id, () => GlobalKey());
     }
+    final newUrl = widget.data.config.festivalPlanUrl;
+    if (newUrl != oldWidget.data.config.festivalPlanUrl) {
+      _planNaturalSize = _planNaturalFallback;
+      _resolvePlanImage(newUrl);
+    }
   }
 
   @override
@@ -90,13 +93,43 @@ class _MapScreenState extends State<MapScreen> {
     _planController.dispose();
     _scrollController.dispose();
     _locationSub?.cancel();
+    if (_planImageListener != null) {
+      _planImageStream?.removeListener(_planImageListener!);
+    }
     super.dispose();
   }
 
-  /// Subscribe to position updates **only if** the user has already
-  /// granted permission. We don't trigger the system prompt here —
-  /// that's reserved for the explicit "locate me" tap so the dialog
-  /// can't appear out of nowhere when the screen first opens.
+  void _resolvePlanImage(String url) {
+    if (_planImageListener != null) {
+      _planImageStream?.removeListener(_planImageListener!);
+      _planImageListener = null;
+    }
+    if (url.isEmpty) {
+      setState(() => _planImage = null);
+      return;
+    }
+    final provider = CachedNetworkImageProvider(url);
+    setState(() => _planImage = provider);
+
+    final stream = provider.resolve(const ImageConfiguration());
+    final listener = ImageStreamListener((info, _) {
+      if (!mounted) return;
+      final size = Size(
+        info.image.width.toDouble(),
+        info.image.height.toDouble(),
+      );
+      if (size != _planNaturalSize) {
+        setState(() => _planNaturalSize = size);
+      }
+    }, onError: (_, _) {});
+    stream.addListener(listener);
+    _planImageStream = stream;
+    _planImageListener = listener;
+  }
+
+  /// Only attaches if permission is already granted — we never trigger
+  /// the system prompt from here; that's reserved for the explicit
+  /// "locate me" tap.
   Future<void> _maybeStartLocationStream() async {
     try {
       final enabled = await Geolocator.isLocationServiceEnabled();
@@ -106,10 +139,7 @@ class _MapScreenState extends State<MapScreen> {
           perm == LocationPermission.whileInUse) {
         _startLocationStream();
       }
-    } catch (_) {
-      // Plugin can throw on unsupported platforms (desktop). Treat as
-      // no-op — the user just won't see the dot.
-    }
+    } catch (_) {}
   }
 
   void _startLocationStream() {
@@ -118,36 +148,18 @@ class _MapScreenState extends State<MapScreen> {
         Geolocator.getPositionStream(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
-            // Coalesce micro-movements; the dot would jitter otherwise.
             distanceFilter: 4,
           ),
-        ).listen(
-          (pos) {
-            if (!mounted) return;
-            setState(() => _myLocation = LatLng(pos.latitude, pos.longitude));
-          },
-          onError: (_) {
-            // Permission revoked mid-stream, GPS lost, etc. — keep the
-            // last known dot but stop spamming setState.
-          },
-        );
+        ).listen((pos) {
+          if (!mounted) return;
+          setState(() => _myLocation = LatLng(pos.latitude, pos.longitude));
+        }, onError: (_) {});
   }
 
-  /// Routes a location selection. We respect the user's current view
-  /// when possible — flipping plan↔live just because both have data
-  /// would be jarring. Order:
-  ///   1. Tapped pin (any view) → just highlight + scroll the legend.
-  ///   2. The active view can show the location → focus there.
-  ///   3. Otherwise switch to the other view if *it* can show the
-  ///      location, then focus.
-  ///   4. Neither can → snackbar with an "Otwórz w Mapach" action when
-  ///      we have lat/lng, otherwise a plain "no location" message.
   Future<void> _focus(MapPoint p, {bool fromPin = false}) async {
     setState(() => _selectedId = p.id);
 
     if (fromPin) {
-      // The user tapped a pin already on screen — they want to see the
-      // legend entry, not re-focus the map view they're already on.
       await _scrollLegendTo(p.id);
       return;
     }
@@ -157,7 +169,6 @@ class _MapScreenState extends State<MapScreen> {
     final isOnline = ConnectivityService.instance.isOnline.value;
     final canShowLive = _supportsLiveMap && hasGeo && isOnline;
 
-    // 1. Stay on the current view if it can render this location.
     if (_effectiveMode == _EmbeddedMapMode.plan && hasPlan) {
       _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
       return;
@@ -167,11 +178,8 @@ class _MapScreenState extends State<MapScreen> {
       return;
     }
 
-    // 2. Current view can't show it — switch to whichever can.
     if (hasPlan) {
       setState(() => _preferredMode = _EmbeddedMapMode.plan);
-      // Wait for the AnimatedSwitcher swap (and the LayoutBuilder to
-      // record the new viewport size) before driving the controller.
       await WidgetsBinding.instance.endOfFrame;
       if (!mounted) return;
       _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
@@ -185,8 +193,6 @@ class _MapScreenState extends State<MapScreen> {
       return;
     }
 
-    // 3. Neither view can show it — fall back to Google Maps if we at
-    // least have GPS coords, otherwise just inform the user.
     _showOutsidePlanSnackBar(p, hasGeo: hasGeo);
   }
 
@@ -237,11 +243,6 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _handleLocateMe() async {
     if (_locating) return;
 
-    // Instant feedback — if the position stream has already given us a
-    // fix, recenter the camera *before* firing off another fetch. The
-    // user sees the dot snap into view right away even if the refresh
-    // below times out (which getCurrentPosition is prone to do on web
-    // when called repeatedly).
     final cached = _myLocation;
     final centeredFromCache =
         cached != null && _effectiveMode == _EmbeddedMapMode.live;
@@ -271,15 +272,10 @@ class _MapScreenState extends State<MapScreen> {
         return;
       }
 
-      // Make sure the stream is running so future taps land in the
-      // fast path even if this one-shot times out.
       if (_locationSub == null) _startLocationStream();
 
-      // Geolocator's `timeLimit` isn't honoured on every platform
-      // (notably web, where the underlying browser API can hang
-      // indefinitely). Wrap in Future.timeout so the spinner always
-      // recovers; if it does time out and we already moved the
-      // camera from cache, stay quiet — the user got their feedback.
+      // Geolocator's `timeLimit` isn't honoured on web — wrap in
+      // Future.timeout so the spinner always recovers.
       LatLng? fresh;
       try {
         final position = await Geolocator.getCurrentPosition(
@@ -379,10 +375,8 @@ class _MapScreenState extends State<MapScreen> {
     _planController.value = Matrix4.identity();
   }
 
-  /// Mirrors the math FittedBox(BoxFit.contain) applies to the natural
-  /// 1600×1100 plan stack. Returns the viewport-space pixel where a
-  /// natural-space (planX, planY) lands before InteractiveViewer's own
-  /// scale/translation kicks in.
+  /// Mirrors `FittedBox(BoxFit.contain)` so we can convert a pin's
+  /// natural-space coordinate to viewport pixels.
   Offset _projectPlanPointToViewport(double planX, double planY, Size size) {
     final fitScale = (size.width / _planNaturalSize.width).clamp(
       0.0,
@@ -548,9 +542,6 @@ class _MapScreenState extends State<MapScreen> {
                   onTap: () => _focus(p, fromPin: true),
                 ),
               ),
-            // Last because Marker layer paints in order — keep the
-            // user's blue dot above the venue pins so it's never
-            // hidden behind a clustered pin.
             if (_myLocation != null)
               Marker(
                 point: _myLocation!,
@@ -595,11 +586,8 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context, constraints) {
         _planViewport = Size(constraints.maxWidth, constraints.maxHeight);
 
-        // Inner stack lives in the plan's native pixel space — pins
-        // position with raw plan_point.x / plan_point.y. FittedBox then
-        // scales the whole thing uniformly into the viewport so a pin
-        // placed at (800, 550) always lands on the same spot of the
-        // image regardless of the surface size.
+        // Inner stack is in the plan's native pixel space; FittedBox
+        // scales it uniformly into the viewport.
         final naturalStack = SizedBox(
           width: _planNaturalSize.width,
           height: _planNaturalSize.height,
@@ -615,15 +603,18 @@ class _MapScreenState extends State<MapScreen> {
                   : (_planViewport.width / _planNaturalSize.width)
                         .clamp(1e-3, double.infinity)
                         .toDouble();
-              // Counter-scale by 1/(fit*scene) so pins paint at a
-              // constant viewport size whether the user has zoomed in
-              // or the device has a small screen.
+              // Counter-scale so pins paint at a constant viewport size.
               final pinScale = 1.0 / (fitScale * sceneScale);
 
+              final planImage = _planImage;
               return Stack(
                 children: [
                   Positioned.fill(
-                    child: Image.asset(_planAsset, fit: BoxFit.fill),
+                    child: planImage == null
+                        ? ColoredBox(
+                            color: AppTheme.surfaceContainerOf(context),
+                          )
+                        : Image(image: planImage, fit: BoxFit.fill),
                   ),
                   for (final point in widget.data.mapPoints.where(
                     (p) => !p.hidden && p.hasPlanPosition,
@@ -901,9 +892,6 @@ class _MapScreenState extends State<MapScreen> {
     final partners = widget.data.partners;
     if (partners.isEmpty) return const SizedBox.shrink();
 
-    // Group partners by tier, preserving CMS-supplied tier ordering when
-    // available. Any partners whose tier value isn't in the CMS list get
-    // appended under a synthesised fallback entry so nothing is lost.
     final grouped = <String, List<Partner>>{};
     for (final p in partners) {
       grouped.putIfAbsent(p.tier, () => []).add(p);
@@ -917,9 +905,6 @@ class _MapScreenState extends State<MapScreen> {
         seen.add(t.value);
       }
     }
-    // Fallback labels for when CMS tier metadata hasn't loaded yet (e.g.
-    // first run from the bundled cache). Keeps the Partnerzy rail
-    // readable instead of showing raw role values "0"/"1"/"2".
     const fallbackLabels = <String, String>{
       '0': 'Uczelnia',
       '1': 'Samorząd',
@@ -969,8 +954,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-/// Per-tier visual weight. Derived from the tier's position in the
-/// CMS-supplied ordering so editors can rename/reorder freely.
 class _TierStyle {
   const _TierStyle({
     required this.logoHeight,
@@ -982,7 +965,6 @@ class _TierStyle {
   final double textSize;
   final bool highlight;
 
-  /// rank=0 is the most prominent tier.
   factory _TierStyle.forRank(int rank, int total) {
     switch (rank) {
       case 0:
@@ -999,15 +981,9 @@ class _TierStyle {
   }
 }
 
-/// Horizontal carousel of partner cards. Auto-scrolls forever (marquee
-/// style) and pauses while the user drags.
-///
-/// We fake infinity with a huge [itemCount] and start scrolled to the
-/// middle so both directions have effectively unlimited headroom. The
-/// earlier implementation duplicated the list and jumped back at the
-/// halfway mark — that wrap was visible when the user dragged across
-/// the boundary. Modulo-indexing with a fixed [itemExtent] avoids the
-/// jump entirely and keeps build-time constant no matter the count.
+/// Horizontal partner-card carousel that auto-scrolls forever and
+/// pauses while the user drags. Uses a virtual `itemCount` with
+/// modulo-indexing so wraparound isn't visible at the boundary.
 class _PartnerCarousel extends StatefulWidget {
   const _PartnerCarousel({
     required this.partners,
@@ -1031,10 +1007,6 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
   static const _itemExtent = _cardWidth + _cardGap;
   static const _resumeDelay = Duration(seconds: 2);
 
-  /// Huge virtual item count — ListView.builder with a fixed itemExtent
-  /// is O(viewport), so cost is independent of this number. 2 ** 20
-  /// items ≈ 186 million pixels at 178 px each, plenty of runway in
-  /// both directions before we'd ever hit an edge.
   static const _virtualCount = 1 << 20;
   static const _initialIndex = _virtualCount ~/ 2;
 
@@ -1068,10 +1040,6 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
     final dt = (elapsed - _lastTick).inMicroseconds / 1e6;
     _lastTick = elapsed;
     if (dt <= 0) return;
-    // Plain additive scroll — no wrap, no jump. The virtual count is
-    // large enough that even at max auto-scroll speed we'd run for
-    // years before reaching the end, and a user who manages to drag
-    // past it just hits the BouncingScrollPhysics edge.
     final next = _controller.offset + _pxPerSecond * dt;
     final max = _controller.position.maxScrollExtent;
     _controller.jumpTo(next.clamp(0, max));
@@ -1095,8 +1063,6 @@ class _PartnerCarouselState extends State<_PartnerCarousel>
     final partners = widget.partners;
     if (partners.isEmpty) return const SizedBox.shrink();
 
-    // Logo + 8 px gap + two lines of name text + vertical padding.
-    // Text line-height ≈ textSize * 1.35, and we allow 2 lines.
     final nameBlock = widget.style.textSize * 1.35 * 2;
     final railHeight = widget.style.logoHeight + 8 + nameBlock + 34;
 
@@ -1148,9 +1114,8 @@ class _PartnerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final hasLogo = partner.logoUrl != null && partner.logoUrl!.isNotEmpty;
-    // Scale is clamped to 1.0 in the carousel so every card in a tier
-    // row has the same vertical budget — lets editors shrink oversized
-    // logos without breaking the rail height.
+    // Clamped to 1.0 so oversized CMS logoScale values don't break
+    // the rail height.
     final logoHeight = (style.logoHeight * (partner.logoScale ?? 1.0))
         .clamp(18.0, style.logoHeight)
         .toDouble();
@@ -1355,10 +1320,6 @@ class _MapControlButton extends StatelessWidget {
   }
 }
 
-/// Standard "you are here" blue dot for the live map. A static (non-
-/// animated) version is fine here — flutter_map redraws the marker
-/// every time the position stream emits, so the dot moves with the
-/// device without us doing any tweening.
 class _MyLocationDot extends StatelessWidget {
   const _MyLocationDot();
 

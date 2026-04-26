@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Elemental palette — one color family per top-level tab.
-/// Single source of truth; change here to re-theme an entire section.
-///
-/// - wind  → Info / News tab (knowledge, ideas)
-/// - fire  → Koncerty tab (energy, stage)
-/// - earth → Mapa tab (terrain, navigation)
-/// - water → Gra tab (flow, quest)
+/// One palette per top-level tab.
 enum AppElement { wind, fire, earth, water }
 
 class ElementPalette {
@@ -16,16 +10,10 @@ class ElementPalette {
     required this.gradient,
   });
 
-  /// Dominant color — use for icons, chips, active tab underline.
   final Color base;
-
-  /// Secondary tone — use for highlights, focused state, small accents.
   final Color accent;
-
-  /// Multi-stop gradient — use for hero headers, FAB, feature cards.
   final List<Color> gradient;
 
-  /// Diagonal gradient built from [gradient] stops.
   LinearGradient get linearGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
