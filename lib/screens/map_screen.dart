@@ -9,6 +9,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -707,13 +708,13 @@ class _MapScreenState extends State<MapScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _MapControlButton(
-            icon: Icons.add_rounded,
+            icon: Symbols.add_rounded,
             tooltip: 'Przybliż',
             onTap: _zoomIn,
           ),
           const SizedBox(height: 4),
           _MapControlButton(
-            icon: Icons.remove_rounded,
+            icon: Symbols.remove_rounded,
             tooltip: 'Oddal',
             onTap: _zoomOut,
           ),
@@ -721,15 +722,15 @@ class _MapScreenState extends State<MapScreen> {
             const SizedBox(height: 4),
             _MapControlButton(
               icon: _locating
-                  ? Icons.more_horiz_rounded
-                  : Icons.my_location_rounded,
+                  ? Symbols.more_horiz_rounded
+                  : Symbols.my_location_rounded,
               tooltip: 'Moja lokalizacja',
               onTap: _handleLocateMe,
             ),
           ] else ...[
             const SizedBox(height: 4),
             _MapControlButton(
-              icon: Icons.center_focus_strong_rounded,
+              icon: Symbols.center_focus_strong_rounded,
               tooltip: 'Resetuj plan',
               onTap: _resetPlanView,
             ),
@@ -850,7 +851,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
             Icon(
-              Icons.chevron_right_rounded,
+              Symbols.chevron_right_rounded,
               color: cs.onSurfaceVariant,
               size: 20,
             ),

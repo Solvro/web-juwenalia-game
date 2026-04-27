@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../services/data_service.dart';
@@ -75,7 +76,7 @@ class _RewardScreenState extends State<RewardScreen> {
       pinned: true,
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(Symbols.arrow_back_rounded),
         color: cs.onSurface,
         onPressed: () => Navigator.pop(context),
       ),
@@ -352,7 +353,7 @@ class _RewardScreenState extends State<RewardScreen> {
       children: [
         FilledButton.icon(
           onPressed: () => _handleClaim(context, cs),
-          icon: const Icon(Icons.verified_rounded, size: 20),
+          icon: const Icon(Symbols.verified_rounded, size: 20),
           label: Text(
             _hasConfiguredPin ? 'Potwierdź odbiór nagrody' : 'Odbierz nagrodę',
           ),
@@ -398,7 +399,7 @@ class _RewardScreenState extends State<RewardScreen> {
               shape: BoxShape.circle,
               color: cs.primary.withValues(alpha: 0.14),
             ),
-            child: Icon(Icons.check_rounded, size: 34, color: cs.primary),
+            child: Icon(Symbols.check_rounded, size: 34, color: cs.primary),
           ),
           const SizedBox(height: 14),
           Text(
@@ -560,7 +561,7 @@ class _RewardPinDialogState extends State<_RewardPinDialog> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context, false),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const Icon(Symbols.close_rounded),
                     color: cs.onSurfaceVariant,
                   ),
                 ],
@@ -648,7 +649,7 @@ class _RewardPinDialogState extends State<_RewardPinDialog> {
                               ),
                               child: _PinKeypadButton(
                                 label: isBack ? null : key,
-                                icon: isBack ? Icons.backspace_outlined : null,
+                                icon: isBack ? Symbols.backspace_rounded : null,
                                 onTap: () {
                                   if (isBack) {
                                     if (_value.isEmpty) return;

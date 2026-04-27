@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../theme/app_theme.dart';
@@ -80,7 +81,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                         color: cs.primary.withValues(alpha: 0.14),
                       ),
                       child: Icon(
-                        Icons.keyboard_rounded,
+                        Symbols.keyboard_rounded,
                         color: cs.primary,
                         size: 22,
                       ),
@@ -98,7 +99,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded),
+                      icon: const Icon(Symbols.close_rounded),
                       color: cs.onSurfaceVariant,
                     ),
                   ],
@@ -152,7 +153,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
                 const SizedBox(height: 18),
                 FilledButton.icon(
                   onPressed: submit,
-                  icon: const Icon(Icons.check_rounded, size: 20),
+                  icon: const Icon(Symbols.check_rounded, size: 20),
                   label: const Text('Zatwierdź'),
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
@@ -181,7 +182,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Symbols.arrow_back_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -194,7 +195,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         actions: [
           IconButton(
             icon: Icon(
-              _flashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+              _flashOn ? Symbols.flash_on_rounded : Symbols.flash_off_rounded,
               color: Colors.white,
             ),
             onPressed: () {
@@ -363,7 +364,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             OutlinedButton.icon(
               onPressed: _enterManual,
               icon: const Icon(
-                Icons.keyboard_rounded,
+                Symbols.keyboard_rounded,
                 size: 18,
                 color: Colors.white,
               ),

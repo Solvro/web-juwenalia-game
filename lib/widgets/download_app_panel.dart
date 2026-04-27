@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -129,13 +130,13 @@ class DownloadAppPanel extends StatelessWidget {
           ],
           const SizedBox(height: 12),
           _StoreButton(
-            icon: Icons.apple_rounded,
+            icon: Symbols.phone_iphone_rounded,
             label: 'App Store',
             url: _iosUrl,
           ),
           const SizedBox(height: 8),
           _StoreButton(
-            icon: Icons.shop_rounded,
+            icon: Symbols.shop_rounded,
             label: 'Google Play',
             url: _androidUrl,
           ),

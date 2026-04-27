@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../checkpoint.dart';
@@ -88,7 +89,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
         child: CircleAvatar(
           backgroundColor: surfaceHigh.withValues(alpha: 0.85),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, size: 20),
+            icon: const Icon(Symbols.arrow_back_rounded, size: 20),
             color: cs.onSurface,
             onPressed: () => Navigator.pop(context),
           ),
@@ -113,7 +114,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
                 errorWidget: Container(
                   color: AppTheme.surfaceContainerHighestOf(context),
                   child: Icon(
-                    Icons.image_not_supported_outlined,
+                    Symbols.image_not_supported,
                     size: 40,
                     color: cs.onSurfaceVariant,
                   ),
@@ -151,7 +152,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
-                        Icons.check_circle_rounded,
+                        Symbols.check_circle_rounded,
                         color: Colors.white,
                         size: 16,
                       ),
@@ -349,7 +350,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
       children: [
         if (checkpoint.location.isNotEmpty)
           _metaChip(
-            icon: Icons.location_on_rounded,
+            icon: Symbols.location_on_rounded,
             label: checkpoint.location,
             iconColor: cs.primary,
             context: context,
@@ -357,7 +358,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
           ),
         if (checkpoint.time.trim().isNotEmpty)
           _metaChip(
-            icon: Icons.schedule_rounded,
+            icon: Symbols.schedule_rounded,
             label: checkpoint.time.trim(),
             iconColor: cs.secondary,
             context: context,

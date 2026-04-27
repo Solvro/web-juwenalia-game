@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,26 +41,26 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   static const _destinations = <NavDestination>[
     NavDestination(
-      icon: Icons.info_outline_rounded,
-      selectedIcon: Icons.info_rounded,
+      icon: Symbols.info_rounded,
+      selectedIcon: Symbols.info_rounded,
       label: 'Info',
       element: AppElement.wind,
     ),
     NavDestination(
-      icon: Icons.music_note_outlined,
-      selectedIcon: Icons.music_note_rounded,
+      icon: Symbols.music_note_rounded,
+      selectedIcon: Symbols.music_note_rounded,
       label: 'Koncerty',
       element: AppElement.fire,
     ),
     NavDestination(
-      icon: Icons.map_outlined,
-      selectedIcon: Icons.map_rounded,
+      icon: Symbols.map_rounded,
+      selectedIcon: Symbols.map_rounded,
       label: 'Mapa',
       element: AppElement.earth,
     ),
     NavDestination(
-      icon: Icons.sports_esports_outlined,
-      selectedIcon: Icons.sports_esports_rounded,
+      icon: Symbols.sports_esports_rounded,
+      selectedIcon: Symbols.sports_esports_rounded,
       label: 'Gra',
       element: AppElement.water,
     ),
@@ -127,25 +128,42 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _refresh({bool force = false}) async {
-    final future = fetchData(http.Client(), forceNetwork: force);
+    // For pull-to-refresh (force), don't swap the future until we know the
+    // fetch succeeded — that way a failure leaves the previous data on screen
+    // and we can surface a toast instead of the full-page error state.
+    if (force) {
+      try {
+        final fresh = await fetchData(http.Client(), forceNetwork: true);
+        if (!mounted) return;
+        setState(() {
+          _imagesPrecached = false;
+          _dataFuture = Future.value(fresh);
+        });
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Nie udało się odświeżyć danych. Pokazujemy ostatnio pobraną wersję.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+      }
+      return;
+    }
+
+    final future = fetchData(http.Client(), forceNetwork: false);
     if (!mounted) return;
     setState(() {
       _imagesPrecached = false;
       _dataFuture = future;
     });
+    // The FutureBuilder watches _dataFuture and surfaces the error itself;
+    // we just await here to keep callers' awaits meaningful.
     try {
       await future;
-    } catch (e) {
-      if (!force || !mounted) return;
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('Nie udało się pobrać najnowszych danych.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-    }
+    } catch (_) {}
   }
 
   Future<void> _pullToRefresh() => _refresh(force: true);
@@ -316,7 +334,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.wifi_off_rounded, size: 52, color: cs.onSurfaceVariant),
+            Icon(Symbols.wifi_off_rounded, size: 52, color: cs.onSurfaceVariant),
             const SizedBox(height: 16),
             Text(
               'Brak połączenia',
@@ -331,7 +349,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _refresh,
-              icon: const Icon(Icons.refresh_rounded, size: 18),
+              icon: const Icon(Symbols.refresh_rounded, size: 18),
               label: const Text('Spróbuj ponownie'),
             ),
           ],
@@ -411,6 +429,71 @@ class _OfflinePill extends StatelessWidget {
 
   final Alignment alignment;
 
+  Future<void> _showOfflineDetails(BuildContext context) async {
+    final cs = Theme.of(context).colorScheme;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          icon: Icon(
+            Symbols.wifi_off_rounded,
+            size: 36,
+            color: cs.onSurfaceVariant,
+          ),
+          title: const Text('Brak połączenia z internetem'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Korzystasz z ostatnio pobranych danych. Część funkcji może nie działać poprawnie:',
+                style: Theme.of(ctx).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              const _OfflineFeatureRow(
+                icon: Symbols.refresh_rounded,
+                text: 'Odświeżanie danych (program, mapa, gra)',
+              ),
+              const _OfflineFeatureRow(
+                icon: Symbols.map_rounded,
+                text: 'Ładowanie nowych fragmentów mapy',
+              ),
+              const _OfflineFeatureRow(
+                icon: Symbols.image_rounded,
+                text: 'Pobieranie nowych zdjęć i grafik',
+              ),
+              const _OfflineFeatureRow(
+                icon: Symbols.qr_code_scanner_rounded,
+                text: 'Weryfikacja nagrody (QR działa lokalnie)',
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Sprawdź sieć Wi-Fi lub dane mobilne i spróbuj ponownie.',
+                style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Zamknij'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                ConnectivityService.instance.refresh();
+              },
+              icon: const Icon(Symbols.refresh_rounded, size: 18),
+              label: const Text('Spróbuj ponownie'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -440,7 +523,7 @@ class _OfflinePill extends StatelessWidget {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(999),
-                          onTap: ConnectivityService.instance.refresh,
+                          onTap: () => _showOfflineDetails(context),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
@@ -454,7 +537,7 @@ class _OfflinePill extends StatelessWidget {
                                   color: const Color(
                                     0xFFF59E0B,
                                   ).withValues(alpha: 0.35),
-                                  blurRadius: 18,
+                                  blurRadius: 8,
                                   offset: const Offset(0, 6),
                                 ),
                               ],
@@ -463,7 +546,7 @@ class _OfflinePill extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  Icons.wifi_off_rounded,
+                                  Symbols.wifi_off_rounded,
                                   size: 16,
                                   color: Colors.white,
                                 ),
@@ -486,6 +569,31 @@ class _OfflinePill extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _OfflineFeatureRow extends StatelessWidget {
+  const _OfflineFeatureRow({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: cs.onSurfaceVariant),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../models/models.dart';
 import '../theme/app_theme.dart';
@@ -164,6 +165,7 @@ class _SidebarItem extends StatelessWidget {
                   selected ? destination.selectedIcon : destination.icon,
                   size: 22,
                   color: color,
+                  fill: selected ? 1 : 0,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -233,7 +235,7 @@ class _ScanCallToAction extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                Icons.qr_code_scanner_rounded,
+                Symbols.qr_code_scanner_rounded,
                 color: Colors.white.withValues(alpha: enabled ? 1 : 0.78),
                 size: 22,
               ),
@@ -249,7 +251,7 @@ class _ScanCallToAction extends StatelessWidget {
                 ),
               ),
               Icon(
-                Icons.chevron_right_rounded,
+                Symbols.chevron_right_rounded,
                 color: Colors.white.withValues(alpha: enabled ? 1 : 0.8),
                 size: 20,
               ),

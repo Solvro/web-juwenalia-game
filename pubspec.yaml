@@ -35,6 +35,7 @@ dependencies:
   latlong2: ^0.9.1
   package_info_plus: ^9.0.0
   material_symbols_icons: ^4.2928.1
+  flutter_svg: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -66,3 +67,4 @@ flutter:
     - assets/data/
     - assets/data/photos/
     - assets/icon/
+    - assets/icons/

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -40,8 +41,8 @@ class UpdateRequiredScreen extends StatelessWidget {
   }
 
   IconData get _actionIcon {
-    if (kIsWeb) return Icons.refresh_rounded;
-    return Icons.cloud_download_rounded;
+    if (kIsWeb) return Symbols.refresh_rounded;
+    return Symbols.cloud_download_rounded;
   }
 
   Future<void> _onAction() async {
@@ -92,7 +93,7 @@ class UpdateRequiredScreen extends StatelessWidget {
                     ],
                   ),
                   child: const Icon(
-                    Icons.system_update_rounded,
+                    Symbols.system_update_rounded,
                     color: Colors.white,
                     size: 56,
                   ),

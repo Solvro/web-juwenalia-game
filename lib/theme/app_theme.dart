@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 /// Stitch "Kinetic Pulse" design system — both dark and light variants.
 /// Brand: primary blue #00A1E4 / amber #F9A01B.
@@ -362,21 +363,21 @@ extension MapPointDisplay on String {
   IconData get mapPointIcon {
     switch (this) {
       case 'stage':
-        return Icons.music_note_rounded;
+        return Symbols.music_note_rounded;
       case 'food':
-        return Icons.restaurant_rounded;
+        return Symbols.restaurant_rounded;
       case 'medical':
-        return Icons.local_hospital_rounded;
+        return Symbols.local_hospital_rounded;
       case 'wc':
-        return Icons.wc_rounded;
+        return Symbols.wc_rounded;
       case 'vip':
-        return Icons.star_rounded;
+        return Symbols.star_rounded;
       case 'chill':
-        return Icons.self_improvement_rounded;
+        return Symbols.self_improvement_rounded;
       case 'info':
-        return Icons.info_outline_rounded;
+        return Symbols.info_rounded;
       default:
-        return Icons.place_rounded;
+        return Symbols.place_rounded;
     }
   }
 

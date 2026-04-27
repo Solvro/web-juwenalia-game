@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../services/image_loader.dart';
 
@@ -70,7 +71,7 @@ class _DefaultPlaceholder extends StatelessWidget {
       color: cs.surfaceContainerHighest,
       alignment: Alignment.center,
       child: Icon(
-        Icons.hide_image_outlined,
+        Symbols.hide_image,
         size: _iconSize(width, height),
         color: cs.onSurfaceVariant.withValues(alpha: 0.6),
       ),

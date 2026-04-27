@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -48,7 +49,7 @@ class _InfoScreenState extends State<InfoScreen> {
                 children: [
                   if (widget.data.news.isNotEmpty) ...[
                     _NavSectionCard(
-                      icon: Icons.newspaper_rounded,
+                      icon: Symbols.newspaper_rounded,
                       label: 'Aktualności',
                       color: palette.base,
                       count: widget.data.news.length,
@@ -74,7 +75,7 @@ class _InfoScreenState extends State<InfoScreen> {
                   ],
                   if (widget.data.faqs.isNotEmpty) ...[
                     _NavSectionCard(
-                      icon: Icons.help_outline_rounded,
+                      icon: Symbols.help_rounded,
                       label: 'FAQ',
                       color: palette.accent,
                       count: widget.data.faqs.length,
@@ -209,7 +210,7 @@ class _InfoScreenState extends State<InfoScreen> {
                     ),
                     if (hasUrl) ...[
                       const SizedBox(width: 8),
-                      Icon(Icons.open_in_new, size: 16, color: color),
+                      Icon(Symbols.open_in_new, size: 16, color: color),
                     ],
                   ],
                 ),
@@ -500,7 +501,7 @@ class _NavSectionCard extends StatelessWidget {
                 turns: isExpanded ? 0.25 : 0,
                 duration: const Duration(milliseconds: 200),
                 child: Icon(
-                  Icons.chevron_right_rounded,
+                  Symbols.chevron_right_rounded,
                   color: cs.onSurfaceVariant,
                   size: 22,
                 ),

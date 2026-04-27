@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../theme/app_theme.dart';
 
@@ -137,7 +138,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
+          icon: const Icon(Symbols.close_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -203,11 +204,12 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
               return Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: Icon(
-                  on ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  Symbols.favorite_rounded,
                   color: on
                       ? const Color(0xFFE91E63)
                       : cs.onSurfaceVariant.withValues(alpha: 0.4),
                   size: 22,
+                  fill: on ? 1 :0,
                 ),
               );
             }),
@@ -336,7 +338,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
               const SizedBox(height: 18),
               FilledButton.icon(
                 onPressed: _restart,
-                icon: const Icon(Icons.replay_rounded),
+                icon: const Icon(Symbols.replay_rounded),
                 label: const Text('Zagraj jeszcze raz'),
               ),
             ],

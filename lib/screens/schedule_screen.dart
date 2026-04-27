@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -322,7 +324,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
                   Row(
                     children: [
                       Icon(
-                        Icons.location_on_outlined,
+                        Symbols.location_on,
                         size: 13,
                         color: cs.onSurfaceVariant,
                       ),
@@ -532,14 +534,14 @@ class _ArtistCard extends StatelessWidget {
                     children: [
                       if (hasInsta)
                         _ArtistLinkButton(
-                          icon: Icons.camera_alt_outlined,
+                          assetIcon: 'assets/icons/instagram_logo.svg',
                           label: 'Instagram',
                           onTap: () => _open(artist.instagramUrl),
                         ),
                       if (hasInsta && hasSpotify) const SizedBox(width: 8),
                       if (hasSpotify)
                         _ArtistLinkButton(
-                          icon: Icons.music_note_rounded,
+                          assetIcon: 'assets/icons/spotify_logo.svg',
                           label: 'Spotify',
                           onTap: () => _open(artist.spotifyUrl),
                         ),
@@ -557,12 +559,17 @@ class _ArtistCard extends StatelessWidget {
 
 class _ArtistLinkButton extends StatelessWidget {
   const _ArtistLinkButton({
-    required this.icon,
     required this.label,
     required this.onTap,
-  });
+    this.icon,
+    this.assetIcon,
+  }) : assert(
+          icon != null || assetIcon != null,
+          'Provide either an icon or an assetIcon',
+        );
 
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final String label;
   final VoidCallback onTap;
 
@@ -581,7 +588,15 @@ class _ArtistLinkButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: cs.onSurfaceVariant),
+            if (assetIcon != null)
+              SvgPicture.asset(
+                assetIcon!,
+                width: 14,
+                height: 14,
+                fit: BoxFit.contain,
+              )
+            else
+              Icon(icon, size: 14, color: cs.onSurfaceVariant),
             const SizedBox(width: 6),
             Text(
               label,

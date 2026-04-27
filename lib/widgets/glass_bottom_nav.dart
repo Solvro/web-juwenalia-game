@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
@@ -162,6 +163,7 @@ class _NavItem extends StatelessWidget {
                   selected ? destination.selectedIcon : destination.icon,
                   size: 22,
                   color: color,
+                  fill: selected ? 1 : 0,
                 ),
                 const SizedBox(height: 2),
                 Padding(
@@ -234,7 +236,7 @@ class _ScanButton extends StatelessWidget {
               ),
             ),
             child: Icon(
-              Icons.qr_code_scanner_rounded,
+              Symbols.qr_code_scanner_rounded,
               color: Colors.white.withValues(alpha: enabled ? 1 : 0.78),
               size: 26,
             ),

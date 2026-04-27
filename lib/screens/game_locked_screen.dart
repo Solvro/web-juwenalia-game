@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../models/models.dart';
 import '../theme/elements.dart';
@@ -46,7 +47,7 @@ class GameLockedScreen extends StatelessWidget {
                     ],
                   ),
                   child: const Icon(
-                    Icons.lock_clock_rounded,
+                    Symbols.lock_clock_rounded,
                     color: Colors.white,
                     size: 44,
                   ),

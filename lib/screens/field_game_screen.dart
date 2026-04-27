@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../checkpoint.dart';
@@ -79,7 +80,7 @@ class FieldGameScreen extends StatelessWidget {
           ),
           if (hasTerms)
             IconButton(
-              icon: const Icon(Icons.info_outline_rounded, size: 22),
+              icon: const Icon(Symbols.info_rounded, size: 22),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               color: palette.base,
@@ -116,7 +117,7 @@ class FieldGameScreen extends StatelessWidget {
                         gradient: palette.linearGradient,
                       ),
                       child: const Icon(
-                        Icons.sports_esports_rounded,
+                        Symbols.sports_esports_rounded,
                         color: Colors.white,
                         size: 22,
                       ),
@@ -134,7 +135,7 @@ class FieldGameScreen extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(dialogCtx),
-                      icon: const Icon(Icons.close_rounded),
+                      icon: const Icon(Symbols.close_rounded),
                       color: cs.onSurfaceVariant,
                     ),
                   ],
@@ -261,10 +262,10 @@ class FieldGameScreen extends StatelessWidget {
                             const Spacer(),
                             Icon(
                               isLocked
-                                  ? Icons.verified_rounded
+                                  ? Symbols.verified_rounded
                                   : done
-                                  ? Icons.emoji_events_rounded
-                                  : Icons.chevron_right_rounded,
+                                  ? Symbols.emoji_events_rounded
+                                  : Symbols.chevron_right_rounded,
                               size: 16,
                               color: done ? cs.secondary : cs.onSurfaceVariant,
                             ),
@@ -422,7 +423,7 @@ class FieldGameScreen extends StatelessWidget {
                       errorWidget: Container(
                         color: surfHighest,
                         child: Icon(
-                          Icons.image_not_supported_outlined,
+                          Symbols.image_not_supported,
                           size: 32,
                           color: cs.onSurfaceVariant,
                         ),
@@ -488,7 +489,7 @@ class FieldGameScreen extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
-                              Icons.check_rounded,
+                              Symbols.check_rounded,
                               color: Colors.white,
                               size: 16,
                             ),
@@ -551,7 +552,7 @@ class FieldGameScreen extends StatelessWidget {
                       children: [
                         if (cp.location.trim().isNotEmpty) ...[
                           Icon(
-                            Icons.location_on_outlined,
+                            Symbols.location_on,
                             size: 13,
                             color: cs.onSurfaceVariant,
                           ),
@@ -571,7 +572,7 @@ class FieldGameScreen extends StatelessWidget {
                           if (cp.location.trim().isNotEmpty)
                             const SizedBox(width: 10),
                           Icon(
-                            Icons.schedule_outlined,
+                            Symbols.schedule,
                             size: 13,
                             color: cs.onSurfaceVariant,
                           ),
