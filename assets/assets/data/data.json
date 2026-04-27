@@ -4,7 +4,7 @@
     "edition": "2026",
     "event_starts_at": "2026-05-20T13:00:00.000Z",
     "game_enabled_override": true,
-    "game_goal": 7,
+    "game_goal": 10,
     "reward_description": "<p>Odwiedź wszystkie strefy żeby odebrać super gadżety!</p>",
     "reward_pin": "2026",
     "game_terms": "<h3>Regulamin Gry Terenowej</h3>\n<p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p>\n<p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
@@ -229,6 +229,21 @@
       "plan_point": {
         "x": 948,
         "y": 573
+      }
+    },
+    {
+      "id": 13,
+      "name": "Strefa beauty",
+      "point": null,
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Strefa beauty organizowana wraz z marką L",
+      "color": "#FFA439",
+      "hidden": false,
+      "icon": "stream",
+      "plan_point": {
+        "x": 1054,
+        "y": 392
       }
     }
   ],
