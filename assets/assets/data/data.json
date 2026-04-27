@@ -68,17 +68,21 @@
       "qr_code": "JUWE-CP-04-CHILL",
       "title": "Strefa Chillout",
       "description": "<p>Hamaki, leżaki i cisza — idealne miejsce na przerwę między koncertami. Pieczątka czeka przy wejściu.</p>",
-      "image": null,
+      "image": "ee97ff7f-e818-4e1b-bdc3-ddb9e1967c2d",
       "sort": 4,
       "location": null,
-      "category": null
+      "category": {
+        "id": "chill",
+        "display_name": "Chillout",
+        "color": "#9DDFB0"
+      }
     },
     {
       "id": 5,
       "qr_code": "JUWE-CP-05-INFO",
       "title": "Punkt Informacyjny",
       "description": "<p>Wszystkie pytania? Idealne miejsce, żeby zacząć. Tu też odbierzesz nagrodę za ukończenie gry.</p>",
-      "image": null,
+      "image": "64acd920-da40-412f-8198-faccf6683a66",
       "sort": 5,
       "location": null,
       "category": null
