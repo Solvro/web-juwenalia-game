@@ -50,3 +50,6 @@ app.*.map.json
 /assets/data/photos_manifest.json
 /assets/data/photos/*
 !/assets/data/photos/.gitkeep
+
+# FVM Version Cache
+.fvm/
