@@ -113621,7 +113621,7 @@ if(m==null){m=p.v
 if(m==null)m=p.k3}m=A.fI(m.aJ(0.4),1)
 s=A.b5(14)
 r=p.rx
-return A.b_H(A.b0(q,A.eD(!1,B.S,!0,q,A.iv(!1,s,!0,A.cz(A.fv(A.MF(B.H,-this.c*3.141592653589793/180,A.cz(A.fJ(q,q,q,new A.a4A(B.xE,r==null?p.k3:r,q),B.G),22,22)),q,q),42,42),q,!0,q,q,q,q,q,q,q,q,this.d,q,q,q,q),B.n,B.I,0,q,q,q,q,q,B.bM),B.n,q,q,new A.aW(o,q,m,n,q,q,B.L),q,q,q,q,B.m0,q,q,q),"Skieruj na p\xf3\u0142noc")}}
+return A.b_H(A.b0(q,A.eD(!1,B.S,!0,q,A.iv(!1,s,!0,A.cz(A.fv(A.MF(B.H,this.c*3.141592653589793/180,A.cz(A.fJ(q,q,q,new A.a4A(B.xE,r==null?p.k3:r,q),B.G),22,22)),q,q),42,42),q,!0,q,q,q,q,q,q,q,q,this.d,q,q,q,q),B.n,B.I,0,q,q,q,q,q,B.bM),B.n,q,q,new A.aW(o,q,m,n,q,q,B.L),q,q,q,q,B.m0,q,q,q),"Skieruj na p\xf3\u0142noc")}}
 A.a4A.prototype={
 aE(a,b){var s,r,q,p,o=b.a,n=o/2,m=b.b,l=m/2,k=o*0.22,j=m*0.5
 m=$.a7().r
