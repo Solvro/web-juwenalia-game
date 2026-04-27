@@ -1437,7 +1437,7 @@ class _CompassButton extends StatelessWidget {
               height: 42,
               child: Center(
                 child: Transform.rotate(
-                  angle: -rotationDeg * math.pi / 180.0,
+                  angle: rotationDeg * math.pi / 180.0,
                   child: SizedBox(
                     width: 22,
                     height: 22,
