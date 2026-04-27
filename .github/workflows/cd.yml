@@ -6,35 +6,47 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  check-version:
+  release:
     runs-on: ubuntu-latest
     outputs:
-      version_bumped: ${{ steps.bump.outputs.bumped }}
+      released: ${{ steps.release.outputs.released }}
+      tag: ${{ steps.check.outputs.tag }}
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
-      - name: Check if pubspec version was bumped
-        id: bump
+      - name: Compare pubspec version with latest tag
+        id: check
         run: |
-          PREV=$(git show HEAD^:pubspec.yaml 2>/dev/null | grep '^version:' | sed 's/version:[[:space:]]*//' | tr -d '\r\n ' || echo "0.0.0+0")
           CURR=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | tr -d '\r\n ')
-          echo "Previous version: $PREV"
-          echo "Current version: $CURR"
-          if [ "$PREV" = "0.0.0+0" ] || [ -z "$PREV" ]; then
-            echo "bumped=true" >> "$GITHUB_OUTPUT"
-          elif [ "$CURR" != "$PREV" ] && [ "$(printf '%s\n%s' "$PREV" "$CURR" | sort -V | tail -1)" = "$CURR" ]; then
-            echo "bumped=true" >> "$GITHUB_OUTPUT"
+          TAG="v$CURR"
+          echo "current=$CURR" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists; skipping release."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
           else
-            echo "bumped=false" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG does not exist; will release."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Create and push tag
+        id: release
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          TAG="${{ steps.check.outputs.tag }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "released=true" >> "$GITHUB_OUTPUT"
+
   deploy-ios-beta:
-    needs: check-version
-    if: needs.check-version.outputs.version_bumped == 'true'
+    needs: release
+    if: needs.release.outputs.released == 'true'
     uses: ./.github/workflows/deploy-ios.yml
+    with:
+      ref: ${{ needs.release.outputs.tag }}
     secrets: inherit

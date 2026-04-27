@@ -2,7 +2,21 @@ name: CD - iOS
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ''
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref (tag, branch, or SHA) to build. Leave blank for default."
+        type: string
+        required: false
+        default: ''
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
@@ -13,6 +27,8 @@ jobs:
     environment: apple-app-store
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
