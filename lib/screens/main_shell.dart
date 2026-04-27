@@ -145,7 +145,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           ..removeCurrentSnackBar()
           ..showSnackBar(
             const SnackBar(
-              content: Text('Nie udało się odświeżyć danych. Pokazujemy ostatnio pobraną wersję.'),
+              content: Text(
+                'Nie udało się odświeżyć danych. Pokazujemy ostatnio pobraną wersję.',
+              ),
               duration: Duration(seconds: 3),
             ),
           );
@@ -226,12 +228,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       extendBody: true,
-      body: Stack(
-        children: [
-          Positioned.fill(child: _buildBody(snapshot)),
-          const _OfflinePill(alignment: Alignment.topCenter),
-        ],
-      ),
+      body: _buildBody(snapshot),
       bottomNavigationBar: GlassBottomNav(
         selectedIndex: _tabIndex,
         onSelect: (i) => setState(() => _tabIndex = i),
@@ -248,31 +245,24 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
-      body: Stack(
+      body: Row(
         children: [
-          Positioned.fill(
-            child: Row(
-              children: [
-                DesktopSidebar(
-                  selectedIndex: _tabIndex,
-                  onSelect: (i) => setState(() => _tabIndex = i),
-                  onScanQr: data == null ? () {} : () => _scanQr(data),
-                  qrEnabled: qrEnabled,
-                  destinations: _destinations,
-                  config: data?.config,
-                ),
-                Expanded(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 880),
-                      child: _buildBody(snapshot),
-                    ),
-                  ),
-                ),
-              ],
+          DesktopSidebar(
+            selectedIndex: _tabIndex,
+            onSelect: (i) => setState(() => _tabIndex = i),
+            onScanQr: data == null ? () {} : () => _scanQr(data),
+            qrEnabled: qrEnabled,
+            destinations: _destinations,
+            config: data?.config,
+          ),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 880),
+                child: _buildBody(snapshot),
+              ),
             ),
           ),
-          const _OfflinePill(alignment: Alignment.topRight),
         ],
       ),
     );
@@ -334,7 +324,11 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Symbols.wifi_off_rounded, size: 52, color: cs.onSurfaceVariant),
+            Icon(
+              Symbols.wifi_off_rounded,
+              size: 52,
+              color: cs.onSurfaceVariant,
+            ),
             const SizedBox(height: 16),
             Text(
               'Brak połączenia',
@@ -419,180 +413,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _OfflinePill extends StatelessWidget {
-  const _OfflinePill({required this.alignment});
-
-  final Alignment alignment;
-
-  Future<void> _showOfflineDetails(BuildContext context) async {
-    final cs = Theme.of(context).colorScheme;
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          icon: Icon(
-            Symbols.wifi_off_rounded,
-            size: 36,
-            color: cs.onSurfaceVariant,
-          ),
-          title: const Text('Brak połączenia z internetem'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Korzystasz z ostatnio pobranych danych. Część funkcji może nie działać poprawnie:',
-                style: Theme.of(ctx).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              const _OfflineFeatureRow(
-                icon: Symbols.refresh_rounded,
-                text: 'Odświeżanie danych (program, mapa, gra)',
-              ),
-              const _OfflineFeatureRow(
-                icon: Symbols.map_rounded,
-                text: 'Ładowanie nowych fragmentów mapy',
-              ),
-              const _OfflineFeatureRow(
-                icon: Symbols.image_rounded,
-                text: 'Pobieranie nowych zdjęć i grafik',
-              ),
-              const _OfflineFeatureRow(
-                icon: Symbols.qr_code_scanner_rounded,
-                text: 'Weryfikacja nagrody (QR działa lokalnie)',
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Sprawdź sieć Wi-Fi lub dane mobilne i spróbuj ponownie.',
-                style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Zamknij'),
-            ),
-            FilledButton.icon(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                ConnectivityService.instance.refresh();
-              },
-              icon: const Icon(Symbols.refresh_rounded, size: 18),
-              label: const Text('Spróbuj ponownie'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: ConnectivityService.instance.isOnline,
-      builder: (context, online, _) {
-        return SafeArea(
-          child: Align(
-            alignment: alignment,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              transitionBuilder: (child, anim) => FadeTransition(
-                opacity: anim,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, -0.3),
-                    end: Offset.zero,
-                  ).animate(anim),
-                  child: child,
-                ),
-              ),
-              child: online
-                  ? const SizedBox.shrink(key: ValueKey('online'))
-                  : Padding(
-                      key: const ValueKey('offline'),
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(999),
-                          onTap: () => _showOfflineDetails(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 9,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF59E0B),
-                              borderRadius: BorderRadius.circular(999),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFFF59E0B,
-                                  ).withValues(alpha: 0.35),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Symbols.wifi_off_rounded,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Brak internetu',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _OfflineFeatureRow extends StatelessWidget {
-  const _OfflineFeatureRow({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: cs.onSurfaceVariant),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
-          ),
-        ],
       ),
     );
   }

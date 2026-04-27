@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
+import 'offline_indicator.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
@@ -75,6 +76,14 @@ class SectionHeader extends StatelessWidget {
       ],
     );
 
+    final hasUserActions = actions != null && actions!.isNotEmpty;
+    final effectiveActions = hasUserActions
+        ? <Widget>[
+            const Center(child: OfflinePill(mode: OfflinePillMode.corner)),
+            ...actions!,
+          ]
+        : actions;
+
     return SliverAppBar(
       pinned: true,
       stretch: true,
@@ -82,7 +91,7 @@ class SectionHeader extends StatelessWidget {
       centerTitle: false,
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       bottom: bottom,
-      actions: actions,
+      actions: effectiveActions,
       flexibleSpace: LayoutBuilder(
         builder: (context, constraints) {
           // t = 1 fully expanded, 0 fully collapsed.
@@ -95,17 +104,11 @@ class SectionHeader extends StatelessWidget {
               ? 1.0
               : ((h - minH) / (maxH - minH)).clamp(0.0, 1.0);
 
-          // Logo lives outside FlexibleSpaceBar.background so it
-          // doesn't fade with the rest of the background as the bar
-          // collapses.
           return Stack(
             fit: StackFit.expand,
             children: [
               FlexibleSpaceBar(
                 centerTitle: false,
-                // Title goes in `title:` so FlexibleSpaceBar pins it
-                // into the toolbar slot on collapse; the placeholder
-                // copy below mirrors its padding pixel-for-pixel.
                 titlePadding: EdgeInsets.only(
                   left: 20,
                   right: 16,
@@ -134,9 +137,6 @@ class SectionHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Invisible title copy reserves the same vertical
-                    // space FlexibleSpaceBar.title uses, so a wrapping
-                    // title pushes the supertitle upward.
                     Padding(
                       padding: EdgeInsets.only(
                         left: 20,
@@ -164,10 +164,61 @@ class SectionHeader extends StatelessWidget {
                   topPad: topPad,
                   bottomH: bottomH,
                 ),
+              _HeaderOfflineSlot(
+                progress: t,
+                topPad: topPad,
+                hasTrailingLogo: trailingLogoAsset != null,
+                renderCornerInFlexibleSpace: !hasUserActions,
+              ),
             ],
           );
         },
       ),
+    );
+  }
+}
+
+class _HeaderOfflineSlot extends StatelessWidget {
+  const _HeaderOfflineSlot({
+    required this.progress,
+    required this.topPad,
+    required this.hasTrailingLogo,
+    required this.renderCornerInFlexibleSpace,
+  });
+
+  final double progress;
+  final double topPad;
+  final bool hasTrailingLogo;
+  final bool renderCornerInFlexibleSpace;
+
+  @override
+  Widget build(BuildContext context) {
+    const cornerGap = 8.0;
+    final logoSize = hasTrailingLogo ? _lerp(42.0, 96.0, progress) : 0.0;
+    final logoRight = hasTrailingLogo ? _lerp(12.0, 20.0, progress) : 0.0;
+    final cornerRight = hasTrailingLogo
+        ? logoRight + logoSize + cornerGap
+        : 12.0;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned(
+          top: topPad + 10,
+          left: 0,
+          right: 0,
+          child: const Align(
+            alignment: Alignment.topCenter,
+            child: OfflinePill(mode: OfflinePillMode.inline),
+          ),
+        ),
+        if (renderCornerInFlexibleSpace)
+          Positioned(
+            top: topPad + 12,
+            right: cornerRight,
+            child: const OfflinePill(mode: OfflinePillMode.corner),
+          ),
+      ],
     );
   }
 }

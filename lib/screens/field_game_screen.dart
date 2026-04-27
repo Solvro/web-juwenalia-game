@@ -61,34 +61,18 @@ class FieldGameScreen extends StatelessWidget {
 
     return SectionHeader(
       supertitle: 'GRA TERENOWA',
-      title: null,
+      title: 'Spróbuj wszystkiego',
       palette: palette,
-      titleWidget: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Text(
-              'Spróbuj wszystkiego',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: cs.onSurface,
-                letterSpacing: -0.5,
-                height: 1.1,
+      actions: hasTerms
+          ? [
+              IconButton(
+                icon: const Icon(Symbols.info_rounded, size: 22),
+                color: palette.base,
+                tooltip: 'Zasady gry',
+                onPressed: () => _showGameTerms(context, palette),
               ),
-            ),
-          ),
-          if (hasTerms)
-            IconButton(
-              icon: const Icon(Symbols.info_rounded, size: 22),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              color: palette.base,
-              tooltip: 'Zasady gry',
-              onPressed: () => _showGameTerms(context, palette),
-            ),
-        ],
-      ),
+            ]
+          : null,
     );
   }
 

@@ -209,7 +209,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
                       ? const Color(0xFFE91E63)
                       : cs.onSurfaceVariant.withValues(alpha: 0.4),
                   size: 22,
-                  fill: on ? 1 :0,
+                  fill: on ? 1 : 0,
                 ),
               );
             }),

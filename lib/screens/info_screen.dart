@@ -107,8 +107,26 @@ class _InfoScreenState extends State<InfoScreen> {
               ),
             ),
           ),
+          SliverToBoxAdapter(child: _buildCredit(context, cs)),
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCredit(BuildContext context, ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+      child: Center(
+        child: Text(
+          'by Antoni Czaplicki | KN Solvro',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: cs.onSurfaceVariant.withValues(alpha: 0.7),
+            letterSpacing: 0.4,
+          ),
+        ),
       ),
     );
   }

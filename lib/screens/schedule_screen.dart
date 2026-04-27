@@ -564,9 +564,9 @@ class _ArtistLinkButton extends StatelessWidget {
     this.icon,
     this.assetIcon,
   }) : assert(
-          icon != null || assetIcon != null,
-          'Provide either an icon or an assetIcon',
-        );
+         icon != null || assetIcon != null,
+         'Provide either an icon or an assetIcon',
+       );
 
   final IconData? icon;
   final String? assetIcon;
