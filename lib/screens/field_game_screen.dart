@@ -336,7 +336,7 @@ class FieldGameScreen extends StatelessWidget {
     final checkpoints = data.checkpoints;
 
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 120),
       sliver: SliverList.separated(
         itemCount: checkpoints.length,
         separatorBuilder: (_, _) => const SizedBox(height: 10),

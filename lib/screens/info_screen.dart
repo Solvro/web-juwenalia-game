@@ -108,7 +108,7 @@ class _InfoScreenState extends State<InfoScreen> {
             ),
           ),
           SliverToBoxAdapter(child: _buildCredit(context, cs)),
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
     );

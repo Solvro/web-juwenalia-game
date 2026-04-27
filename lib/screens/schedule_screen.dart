@@ -184,7 +184,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               ...day.events.map((e) {
@@ -397,7 +397,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, i) => Padding(

@@ -33,8 +33,9 @@ class GlassBottomNav extends StatelessWidget {
 
     return SafeArea(
       top: false,
+      minimum: const EdgeInsets.only(bottom: 8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: surface.withValues(alpha: 0.96),

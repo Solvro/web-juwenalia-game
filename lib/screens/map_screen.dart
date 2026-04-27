@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -44,6 +46,7 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _liveController = MapController();
   final ScrollController _scrollController = ScrollController();
   final Map<String, GlobalKey> _legendKeys = {};
+  final GlobalKey _mapPanelKey = GlobalKey();
 
   String? _selectedId;
   bool _locating = false;
@@ -59,6 +62,9 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? _myLocation;
   StreamSubscription<Position>? _locationSub;
 
+  double _liveRotationDeg = 0;
+  StreamSubscription<MapEvent>? _mapEventSub;
+
   bool get _supportsLiveMap =>
       kIsWeb || PlatformUtils.isAndroid || PlatformUtils.isIOS;
 
@@ -73,7 +79,22 @@ class _MapScreenState extends State<MapScreen> {
       _legendKeys[p.id] = GlobalKey();
     }
     _resolvePlanImage(widget.data.config.festivalPlanUrl);
-    if (_supportsLiveMap) _maybeStartLocationStream();
+    if (_supportsLiveMap) {
+      _maybeStartLocationStream();
+      _mapEventSub = _liveController.mapEventStream.listen((event) {
+        final next = _normalizeDeg(event.camera.rotation);
+        if ((next - _liveRotationDeg).abs() < 0.05) return;
+        if (!mounted) return;
+        setState(() => _liveRotationDeg = next);
+      });
+    }
+  }
+
+  static double _normalizeDeg(double deg) {
+    var d = deg % 360;
+    if (d > 180) d -= 360;
+    if (d <= -180) d += 360;
+    return d;
   }
 
   @override
@@ -94,6 +115,7 @@ class _MapScreenState extends State<MapScreen> {
     _planController.dispose();
     _scrollController.dispose();
     _locationSub?.cancel();
+    _mapEventSub?.cancel();
     if (_planImageListener != null) {
       _planImageStream?.removeListener(_planImageListener!);
     }
@@ -165,6 +187,8 @@ class _MapScreenState extends State<MapScreen> {
       return;
     }
 
+    unawaited(_scrollMapIntoView());
+
     final hasPlan = p.hasPlanPosition;
     final hasGeo = p.lat != null && p.lng != null;
     final isOnline = ConnectivityService.instance.isOnline.value;
@@ -195,6 +219,32 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     _showOutsidePlanSnackBar(p, hasGeo: hasGeo);
+  }
+
+  Future<void> _scrollMapIntoView() async {
+    final ctx = _mapPanelKey.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+
+    final renderBox = ctx.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.hasSize) return;
+
+    final topLeft = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+    final screenHeight = MediaQuery.of(ctx).size.height;
+    final visibleTop = math.max(topLeft.dy, 0.0);
+    final visibleBottom = math.min(topLeft.dy + size.height, screenHeight);
+    final visibleFraction = size.height <= 0
+        ? 1.0
+        : math.max(0.0, visibleBottom - visibleTop) / size.height;
+
+    if (visibleFraction >= 0.5) return;
+
+    await Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOutCubic,
+      alignment: 0,
+    );
   }
 
   Future<void> _scrollLegendTo(String id) async {
@@ -376,6 +426,10 @@ class _MapScreenState extends State<MapScreen> {
     _planController.value = Matrix4.identity();
   }
 
+  void _resetLiveRotation() {
+    _liveController.rotate(0);
+  }
+
   /// Mirrors `FittedBox(BoxFit.contain)` so we can convert a pin's
   /// natural-space coordinate to viewport pixels.
   Offset _projectPlanPointToViewport(double planX, double planY, Size size) {
@@ -406,7 +460,7 @@ class _MapScreenState extends State<MapScreen> {
           SliverToBoxAdapter(child: _buildPartnersHeader(cs, palette)),
           SliverToBoxAdapter(child: _buildPartnersList(context, cs)),
         ],
-        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+        const SliverToBoxAdapter(child: SizedBox(height: 120)),
       ],
     );
 
@@ -441,6 +495,7 @@ class _MapScreenState extends State<MapScreen> {
     final isPlanMode = _effectiveMode == _EmbeddedMapMode.plan;
 
     return Padding(
+      key: _mapPanelKey,
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,7 +544,31 @@ class _MapScreenState extends State<MapScreen> {
                           if (_supportsLiveMap)
                             _buildModeToggle(context, palette),
                           const Spacer(),
-                          _buildMapControls(context),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              _buildMapControls(context),
+                              const SizedBox(height: 8),
+                              AnimatedOpacity(
+                                duration: const Duration(milliseconds: 220),
+                                opacity:
+                                    _effectiveMode == _EmbeddedMapMode.live &&
+                                        _liveRotationDeg.abs() > 0.5
+                                    ? 1
+                                    : 0,
+                                child: IgnorePointer(
+                                  ignoring:
+                                      _effectiveMode != _EmbeddedMapMode.live ||
+                                      _liveRotationDeg.abs() <= 0.5,
+                                  child: _CompassButton(
+                                    rotationDeg: _liveRotationDeg,
+                                    onTap: _resetLiveRotation,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -537,7 +616,9 @@ class _MapScreenState extends State<MapScreen> {
                 point: LatLng(p.lat!, p.lng!),
                 width: 44,
                 height: 44,
+                rotate: true,
                 child: _MapPin(
+                  key: ValueKey('live-pin-inner-${p.id}'),
                   point: p,
                   selected: p.id == _selectedId,
                   onTap: () => _focus(p, fromPin: true),
@@ -548,6 +629,7 @@ class _MapScreenState extends State<MapScreen> {
                 point: _myLocation!,
                 width: 26,
                 height: 26,
+                rotate: true,
                 child: const _MyLocationDot(),
               ),
           ],
@@ -621,6 +703,7 @@ class _MapScreenState extends State<MapScreen> {
                     (p) => !p.hidden && p.hasPlanPosition,
                   ))
                     Positioned(
+                      key: ValueKey('plan-pin-${point.id}'),
                       left: point.planX! - 22,
                       top: point.planY! - 22,
                       width: 44,
@@ -629,6 +712,7 @@ class _MapScreenState extends State<MapScreen> {
                         child: Transform.scale(
                           scale: pinScale,
                           child: _MapPin(
+                            key: ValueKey('plan-pin-inner-${point.id}'),
                             point: point,
                             selected: point.id == _selectedId,
                             onTap: () => _focus(point, fromPin: true),
@@ -1201,6 +1285,7 @@ class _PartnerLogo extends StatelessWidget {
 
 class _MapPin extends StatelessWidget {
   const _MapPin({
+    super.key,
     required this.point,
     required this.selected,
     required this.onTap,
@@ -1320,6 +1405,90 @@ class _MapControlButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CompassButton extends StatelessWidget {
+  const _CompassButton({required this.rotationDeg, required this.onTap});
+
+  final double rotationDeg;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Tooltip(
+      message: 'Skieruj na północ',
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainerHighOf(
+            context,
+          ).withValues(alpha: 0.94),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: onTap,
+            child: SizedBox(
+              width: 42,
+              height: 42,
+              child: Center(
+                child: Transform.rotate(
+                  angle: -rotationDeg * math.pi / 180.0,
+                  child: SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CustomPaint(
+                      painter: _CompassNeedlePainter(
+                        northColor: const Color(0xFFE53935),
+                        southColor: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CompassNeedlePainter extends CustomPainter {
+  _CompassNeedlePainter({required this.northColor, required this.southColor});
+
+  final Color northColor;
+  final Color southColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final halfBase = size.width * 0.22;
+    final tip = size.height * 0.5;
+
+    final north = ui.Path()
+      ..moveTo(cx, cy - tip)
+      ..lineTo(cx - halfBase, cy)
+      ..lineTo(cx + halfBase, cy)
+      ..close();
+    canvas.drawPath(north, Paint()..color = northColor);
+
+    final south = ui.Path()
+      ..moveTo(cx, cy + tip)
+      ..lineTo(cx - halfBase, cy)
+      ..lineTo(cx + halfBase, cy)
+      ..close();
+    canvas.drawPath(south, Paint()..color = southColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CompassNeedlePainter old) =>
+      old.northColor != northColor || old.southColor != southColor;
 }
 
 class _MyLocationDot extends StatelessWidget {

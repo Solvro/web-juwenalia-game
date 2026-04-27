@@ -33,9 +33,9 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Skaner QR używa aparatu do odczytywania kodów QR stref i odblokowywania postępów w grze terenowej.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Mapa festiwalu pokazuje Twoją lokalizację na terenie Juwenaliów.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Mapa festiwalu pokazuje Twoją lokalizację na terenie Juwenaliów.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mapa festiwalu pokazuje Twoją lokalizację na terenie Juwenaliów.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
