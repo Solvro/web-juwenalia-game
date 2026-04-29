@@ -185,13 +185,8 @@ class _InfoScreenState extends State<InfoScreen> {
     final hasUrl = info.url != null && info.url!.isNotEmpty;
     final hasBody = info.body.isNotEmpty;
 
-    final card = Container(
+    final cardBody = Padding(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: surfHigh,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
-      ),
       child: Row(
         // Center icon with title when no body — avoids a bottom-heavy card.
         crossAxisAlignment: hasBody
@@ -243,9 +238,17 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
     );
 
-    if (!hasUrl) return card;
+    final decoration = BoxDecoration(
+      color: surfHigh,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+    );
+
+    if (!hasUrl) {
+      return DecoratedBox(decoration: decoration, child: cardBody);
+    }
     return Material(
-      color: Colors.transparent,
+      color: surfHigh,
       borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -253,7 +256,14 @@ class _InfoScreenState extends State<InfoScreen> {
           Uri.parse(info.url!),
           mode: LaunchMode.externalApplication,
         ),
-        child: card,
+        borderRadius: BorderRadius.circular(14),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+          ),
+          child: cardBody,
+        ),
       ),
     );
   }
@@ -333,11 +343,10 @@ class _InfoScreenState extends State<InfoScreen> {
     ColorScheme cs,
     ElementPalette palette,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerHighOf(context),
-        borderRadius: BorderRadius.circular(14),
-      ),
+    return Material(
+      color: AppTheme.surfaceContainerHighOf(context),
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           for (var i = 0; i < widget.data.faqs.length; i++) ...[
@@ -357,26 +366,9 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 
   Widget _faqTile(BuildContext context, ColorScheme cs, FaqItem faq) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        dividerColor: Colors.transparent,
-        splashColor: Colors.transparent,
-      ),
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-        iconColor: cs.onSurfaceVariant,
-        collapsedIconColor: cs.onSurfaceVariant,
-        title: Text(
-          faq.question,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: cs.onSurface,
-          ),
-        ),
-        children: [_html(faq.answer, cs, baseSize: 13)],
-      ),
+    return _FaqTile(
+      question: faq.question,
+      answer: _html(faq.answer, cs, baseSize: 13),
     );
   }
 
@@ -443,6 +435,72 @@ class _InfoScreenState extends State<InfoScreen> {
     } catch (_) {
       return DateFormat('d MMM yyyy').format(dt);
     }
+  }
+}
+
+class _FaqTile extends StatefulWidget {
+  const _FaqTile({required this.question, required this.answer});
+
+  final String question;
+  final Widget answer;
+
+  @override
+  State<_FaqTile> createState() => _FaqTileState();
+}
+
+class _FaqTileState extends State<_FaqTile> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: () => setState(() => _expanded = !_expanded),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.question,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AnimatedRotation(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  turns: _expanded ? 0.5 : 0,
+                  child: Icon(
+                    Symbols.expand_more_rounded,
+                    color: cs.onSurfaceVariant,
+                    size: 22,
+                  ),
+                ),
+              ],
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _expanded
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: widget.answer,
+                    )
+                  : const SizedBox(width: double.infinity),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

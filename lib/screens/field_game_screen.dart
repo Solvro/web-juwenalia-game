@@ -198,133 +198,139 @@ class FieldGameScreen extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-        child: GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => RewardScreen(
-                data: data,
-                completed: completed,
-                isLocked: isLocked,
-                onLock: onLockReward,
-              ),
-            ),
-          ),
-          child:
-              Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceContainerHighOf(context),
-                      borderRadius: BorderRadius.circular(16),
-                      border: done
-                          ? Border.all(
-                              color: cs.secondary.withValues(alpha: 0.4),
-                              width: 1.5,
-                              strokeAlign: BorderSide.strokeAlignOutside,
+        child:
+            Material(
+                  color: AppTheme.surfaceContainerHighOf(context),
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RewardScreen(
+                          data: data,
+                          completed: completed,
+                          isLocked: isLocked,
+                          onLock: onLockReward,
+                        ),
+                      ),
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: done
+                          ? BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: cs.secondary.withValues(alpha: 0.4),
+                                width: 1.5,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                              ),
                             )
                           : null,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              isLocked
-                                  ? '🏆 Nagroda odebrana'
-                                  : done
-                                  ? '🎉 Cel osiągnięty!'
-                                  : 'Twój postęp',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                isLocked
+                                    ? '🏆 Nagroda odebrana'
+                                    : done
+                                    ? '🎉 Cel osiągnięty!'
+                                    : 'Twój postęp',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: done
+                                      ? cs.secondary
+                                      : cs.onSurfaceVariant,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const Spacer(),
+                              Icon(
+                                isLocked
+                                    ? Symbols.verified_rounded
+                                    : done
+                                    ? Symbols.emoji_events_rounded
+                                    : Symbols.chevron_right_rounded,
+                                size: 16,
                                 color: done
                                     ? cs.secondary
                                     : cs.onSurfaceVariant,
-                                letterSpacing: 0.3,
                               ),
-                            ),
-                            const Spacer(),
-                            Icon(
-                              isLocked
-                                  ? Symbols.verified_rounded
-                                  : done
-                                  ? Symbols.emoji_events_rounded
-                                  : Symbols.chevron_right_rounded,
-                              size: 16,
-                              color: done ? cs.secondary : cs.onSurfaceVariant,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '$validCount',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w800,
-                                color: done ? cs.secondary : cs.primary,
-                                height: 1,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 3,
-                                left: 2,
-                              ),
-                              child: Text(
-                                ' / ${data.config.gameGoal} stref',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: cs.onSurfaceVariant,
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '$validCount',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                  color: done ? cs.secondary : cs.primary,
+                                  height: 1,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: TweenAnimationBuilder<double>(
-                            tween: Tween(begin: 0, end: progress),
-                            duration: const Duration(milliseconds: 800),
-                            curve: Curves.easeOutCubic,
-                            builder: (_, v, _) => Stack(
-                              children: [
-                                Container(
-                                  height: 6,
-                                  color: cs.outlineVariant.withValues(
-                                    alpha: 0.4,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 3,
+                                  left: 2,
+                                ),
+                                child: Text(
+                                  ' / ${data.config.gameGoal} stref',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: cs.onSurfaceVariant,
                                   ),
                                 ),
-                                FractionallySizedBox(
-                                  widthFactor: v,
-                                  child: Container(
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0, end: progress),
+                              duration: const Duration(milliseconds: 800),
+                              curve: Curves.easeOutCubic,
+                              builder: (_, v, _) => Stack(
+                                children: [
+                                  Container(
                                     height: 6,
-                                    decoration: BoxDecoration(
-                                      gradient: palette.linearGradient,
+                                    color: cs.outlineVariant.withValues(
+                                      alpha: 0.4,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  FractionallySizedBox(
+                                    widthFactor: v,
+                                    child: Container(
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        gradient: palette.linearGradient,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 450.ms)
-                  .slideY(
-                    begin: 0.08,
-                    end: 0,
-                    duration: 450.ms,
-                    curve: Curves.easeOutCubic,
                   ),
-        ),
+                )
+                .animate()
+                .fadeIn(duration: 450.ms)
+                .slideY(
+                  begin: 0.08,
+                  end: 0,
+                  duration: 450.ms,
+                  curve: Curves.easeOutCubic,
+                ),
       ),
     );
   }
@@ -358,231 +364,241 @@ class FieldGameScreen extends StatelessWidget {
     final surfHighest = AppTheme.surfaceContainerHighestOf(context);
     final surfLowest = AppTheme.surfaceContainerLowestOf(context);
 
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        swipeDownPageRoute(
-          (_) => CheckpointDetailsScreen(
-            checkpoint: cp,
-            isCompleted: isCompleted,
-            data: data,
+    return Stack(
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          decoration: BoxDecoration(
+            color: surfHigh,
+            borderRadius: BorderRadius.circular(16),
+            border: isCompleted
+                ? Border.all(
+                    color: palette.base.withValues(alpha: 0.5),
+                    width: 1.5,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                  )
+                : null,
           ),
-        ),
-      ),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          color: surfHigh,
-          borderRadius: BorderRadius.circular(16),
-          border: isCompleted
-              ? Border.all(
-                  color: palette.base.withValues(alpha: 0.5),
-                  width: 1.5,
-                  strokeAlign: BorderSide.strokeAlignOutside,
-                )
-              : null,
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: 150,
-                  width: double.infinity,
-                  child: Hero(
-                    tag: 'cp_image_${cp.id}',
-                    child: AppNetworkImage(
-                      url: cp.image,
-                      fit: BoxFit.cover,
-                      placeholder: Container(
-                        color: surfHighest,
-                        child: const Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      ),
-                      errorWidget: Container(
-                        color: surfHighest,
-                        child: Icon(
-                          Symbols.image_not_supported,
-                          size: 32,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: 60,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          surfHigh.withValues(alpha: 0.85),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  left: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: surfLowest.withValues(alpha: 0.88),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      cp.categoryLabel,
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color:
-                            parseHexColor(cp.categoryColor) ??
-                            cs.onSurfaceVariant,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 12,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: isCompleted
-                        ? Container(
-                            key: const ValueKey('done'),
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: palette.base,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Symbols.check_rounded,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          )
-                        : Container(
-                            key: const ValueKey('todo'),
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: surfLowest.withValues(alpha: 0.75),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: cs.outlineVariant,
-                                width: 1,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 13),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Stack(
                 children: [
-                  Hero(
-                    tag: 'cp_title_${cp.id}',
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: Text(
-                        cp.title,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: isCompleted ? palette.base : cs.onSurface,
-                          letterSpacing: -0.2,
+                  SizedBox(
+                    height: 150,
+                    width: double.infinity,
+                    child: Hero(
+                      tag: 'cp_image_${cp.id}',
+                      child: AppNetworkImage(
+                        url: cp.image,
+                        fit: BoxFit.cover,
+                        placeholder: Container(
+                          color: surfHighest,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        errorWidget: Container(
+                          color: surfHighest,
+                          child: Icon(
+                            Symbols.image_not_supported,
+                            size: 32,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  if (cp.subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      cp.subtitle,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: cs.onSurfaceVariant,
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 60,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            surfHigh.withValues(alpha: 0.85),
+                          ],
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                  if (cp.location.trim().isNotEmpty ||
-                      cp.time.trim().isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        if (cp.location.trim().isNotEmpty) ...[
-                          Icon(
-                            Symbols.location_on,
-                            size: 13,
-                            color: cs.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 3),
-                          Flexible(
-                            child: Text(
-                              cp.location,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: cs.onSurfaceVariant,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                        if (cp.time.trim().isNotEmpty) ...[
-                          if (cp.location.trim().isNotEmpty)
-                            const SizedBox(width: 10),
-                          Icon(
-                            Symbols.schedule,
-                            size: 13,
-                            color: cs.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 3),
-                          Flexible(
-                            child: Text(
-                              cp.time.trim(),
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: cs.onSurfaceVariant,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ],
+                  ),
+                  Positioned(
+                    top: 10,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: surfLowest.withValues(alpha: 0.88),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        cp.categoryLabel,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color:
+                              parseHexColor(cp.categoryColor) ??
+                              cs.onSurfaceVariant,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                     ),
-                  ],
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 12,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: isCompleted
+                          ? Container(
+                              key: const ValueKey('done'),
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: palette.base,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Symbols.check_rounded,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            )
+                          : Container(
+                              key: const ValueKey('todo'),
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: surfLowest.withValues(alpha: 0.75),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: cs.outlineVariant,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 13),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: 'cp_title_${cp.id}',
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Text(
+                          cp.title,
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: isCompleted ? palette.base : cs.onSurface,
+                            letterSpacing: -0.2,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    if (cp.subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        cp.subtitle,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: cs.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    if (cp.location.trim().isNotEmpty ||
+                        cp.time.trim().isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          if (cp.location.trim().isNotEmpty) ...[
+                            Icon(
+                              Symbols.location_on,
+                              size: 13,
+                              color: cs.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 3),
+                            Flexible(
+                              child: Text(
+                                cp.location,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                          if (cp.time.trim().isNotEmpty) ...[
+                            if (cp.location.trim().isNotEmpty)
+                              const SizedBox(width: 10),
+                            Icon(
+                              Symbols.schedule,
+                              size: 13,
+                              color: cs.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 3),
+                            Flexible(
+                              child: Text(
+                                cp.time.trim(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => Navigator.push(
+                context,
+                swipeDownPageRoute(
+                  (_) => CheckpointDetailsScreen(
+                    checkpoint: cp,
+                    isCompleted: isCompleted,
+                    data: data,
+                  ),
+                ),
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

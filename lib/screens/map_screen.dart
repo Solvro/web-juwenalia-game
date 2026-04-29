@@ -880,67 +880,83 @@ class _MapScreenState extends State<MapScreen> {
     final selected = _selectedId == point.id;
     final key = _legendKeys.putIfAbsent(point.id, () => GlobalKey());
 
-    return GestureDetector(
+    return Padding(
       key: key,
-      onTap: () => _focus(point),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.12) : surfHigh,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: selected ? color : cs.outlineVariant.withValues(alpha: 0.3),
-            width: selected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(11),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Stack(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: selected ? color.withValues(alpha: 0.12) : surfHigh,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: selected
+                    ? color
+                    : cs.outlineVariant.withValues(alpha: 0.3),
+                width: selected ? 1.5 : 1,
               ),
-              child: Icon(icon, size: 18, color: color),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    point.name,
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: cs.onSurface,
-                    ),
+            child: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(11),
                   ),
-                  if (point.description != null) ...[
-                    const SizedBox(height: 1),
-                    Text(
-                      point.description!,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: cs.onSurfaceVariant,
+                  child: Icon(icon, size: 18, color: color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        point.name,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                        ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
+                      if (point.description != null) ...[
+                        const SizedBox(height: 1),
+                        Text(
+                          point.description!,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Icon(
+                  Symbols.chevron_right_rounded,
+                  color: cs.onSurfaceVariant,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _focus(point),
+                borderRadius: BorderRadius.circular(14),
+                splashColor: color.withValues(alpha: 0.1),
+                highlightColor: color.withValues(alpha: 0.05),
               ),
             ),
-            Icon(
-              Symbols.chevron_right_rounded,
-              color: cs.onSurfaceVariant,
-              size: 20,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -1211,14 +1227,15 @@ class _PartnerCard extends StatelessWidget {
     return SizedBox(
       width: 168,
       child: Material(
-        color: Colors.transparent,
+        color: surfHigh,
+        borderRadius: BorderRadius.circular(14),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: partner.url == null || partner.url!.isEmpty ? null : onTap,
           child: Container(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             decoration: BoxDecoration(
-              color: surfHigh,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: borderColor,

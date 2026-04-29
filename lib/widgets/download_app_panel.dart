@@ -11,7 +11,7 @@ import 'brand_gradient.dart';
 /// Fallbacks used only before [fetchData] resolves or when the CMS
 /// fields are blank.
 class _DownloadDefaults {
-  static const String iosUrl = 'https://apps.apple.com/';
+  static const String iosUrl = 'https://apps.apple.com/pl/app/juwenalia-wroc%C5%82awrazem/id6763130512';
   static const String androidUrl =
       'https://play.google.com/store/apps/details?id=pl.solvro.juwenalia';
   static const String qrUrl = 'https://juwenalia.wroc.pl/app';
