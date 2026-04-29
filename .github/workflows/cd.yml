@@ -50,3 +50,11 @@ jobs:
     with:
       ref: ${{ needs.release.outputs.tag }}
     secrets: inherit
+
+  deploy-android-internal:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    uses: ./.github/workflows/deploy-android.yml
+    with:
+      ref: ${{ needs.release.outputs.tag }}
+    secrets: inherit
