@@ -4,7 +4,7 @@
     "edition": "2026",
     "event_starts_at": "2026-05-20T13:00:00.000Z",
     "game_enabled_override": true,
-    "game_goal": 10,
+    "game_goal": 3,
     "reward_description": "<p>Odwiedź wszystkie strefy żeby odebrać super gadżety!</p>",
     "reward_pin": "2026",
     "game_terms": "<h3>Regulamin Gry Terenowej</h3>\n<p>Udział w grze jest dobrowolny i bezpłatny. Zbierz wszystkie pieczątki skanując kody QR rozmieszczone na terenie festiwalu, aby odebrać nagrodę. Jedna nagroda na osobę.</p>\n<p>Organizator nie ponosi odpowiedzialności za szkody wynikające z udziału w grze.</p>",
@@ -12,8 +12,8 @@
     "min_app_version_ios": "1",
     "min_app_version_android": "1",
     "min_app_version_web": "1",
-    "app_store_url_ios": null,
-    "app_store_url_android": null,
+    "app_store_url_ios": "https://apps.apple.com/pl/app/juwenalia-wroc%C5%82awrazem/id6763130512",
+    "app_store_url_android": "https://play.google.com/store/apps/details?id=pl.solvro.juwenalia",
     "download_qr_url": null,
     "download_panel_description": null
   },
@@ -89,6 +89,16 @@
     }
   ],
   "news": [
+    {
+      "id": 9,
+      "title": "Before Juwenaliów",
+      "content": "<div class=\"xdj266r x14z9mp xat24cr x1lziwak x1vvkbs x126k92a\">\n<div dir=\"auto\">BEFORE JUWENALI&Oacute;W 2026 <span class=\"html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 x1ypdohk xt0psk2 x3ct3a4 xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__cft__[0]=AZbZnGDI5InLBFGLjmXi6m4fnsxReDGihTqbq-3xLiwqXLMwSgDqeYaBBK2HeRLCkgRlrkysRWGjgsJNoUm_rcOBnWQt0mFG8nZAI-AFrjIWsYarEcA97gnumYzuRwt2kO2sHcd63IJTpQKddcYwtVaO9Blv6xqK7R-PKqO2PUi8ZAABjLH5sY8mxiuKlygPrFhW-sw8kqu15szq5wr3Rcqs&amp;__tn__=*NK-R\">#WrocławRazem!</a></span></div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Zanim Wrocław wybuchnie studencką energią podczas Juwenali&oacute;w zaczynamy od wydarzenia, kt&oacute;re ustawi tempo na resztę maja&nbsp;</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Data: 15 maja</div>\n<div dir=\"auto\">Start godz. 20:00</div>\n<div dir=\"auto\">Miejsce: Strefa Kultury Studenckiej Politechniki Wrocławskiej</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Tej nocy SKS zmieni się w wielowymiarowe centrum imprezowe od gł&oacute;wnej sali, przez klub, aż po klimatyczne tarasy, wszystko z profesjonalnym nagłośnieniem i multimediami&nbsp;</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Przygotuj się na dresscode inspirowany żywiołami. Wyciągnij z szafy zwiewne materiały, dodatki inspirowane naturą i (obowiązkowo) kolory rozświetlające noc!</div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Wstęp jest darmowy dla student&oacute;w lub za okazaniem biletu na Juwenalia <span class=\"html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs\"><a class=\"x1i10hfl xjbqb8w x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 x1ypdohk xt0psk2 x3ct3a4 xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xkrqix3 x1sur9pj x1fey0fg x1s688f\" tabindex=\"0\" role=\"link\" href=\"https://www.facebook.com/hashtag/wroc%C5%82awrazem?__cft__[0]=AZbZnGDI5InLBFGLjmXi6m4fnsxReDGihTqbq-3xLiwqXLMwSgDqeYaBBK2HeRLCkgRlrkysRWGjgsJNoUm_rcOBnWQt0mFG8nZAI-AFrjIWsYarEcA97gnumYzuRwt2kO2sHcd63IJTpQKddcYwtVaO9Blv6xqK7R-PKqO2PUi8ZAABjLH5sY8mxiuKlygPrFhW-sw8kqu15szq5wr3Rcqs&amp;__tn__=*NK-R\">#WrocławRazem</a></span></div>\n</div>\n<div class=\"x14z9mp xat24cr x1lziwak x1vvkbs xtlvy1s x126k92a\">\n<div dir=\"auto\">Dołącz do wydarzenia i bądź na bieżąco!</div>\n</div>",
+      "date_created": "2026-04-29T15:15:38.793Z",
+      "image": null,
+      "edition": [
+        "2026"
+      ]
+    },
     {
       "id": 7,
       "title": "TESLA naszym partnerem ",
@@ -291,6 +301,19 @@
   ],
   "important_info": [
     {
+      "id": 6,
+      "icon": "bug_report",
+      "title": "Aplikacja w trybie testów",
+      "body": "<p>Aplikacja jest obecnie w trybie test&oacute;w &beta;eta, informacje w niej zawarte nie są prawdziwe.</p>",
+      "color": "#E35169",
+      "url": null,
+      "expires_at": null,
+      "sort": 1,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
       "id": 5,
       "icon": "local_activity",
       "title": "Kup bilet na Juwenalia!",
@@ -298,7 +321,7 @@
       "color": "#024DDF",
       "url": "https://www.ticketmaster.pl/artist/juwenalia-wroclawrazem-bilety/1277573",
       "expires_at": null,
-      "sort": 1,
+      "sort": 2,
       "edition": [
         "2026"
       ]
@@ -311,7 +334,7 @@
       "color": "#4DA1FF",
       "url": null,
       "expires_at": null,
-      "sort": 2,
+      "sort": 3,
       "edition": [
         "2026"
       ]
@@ -324,7 +347,7 @@
       "color": "#FF6B6B",
       "url": null,
       "expires_at": null,
-      "sort": 3,
+      "sort": 4,
       "edition": [
         "2026"
       ]
@@ -337,7 +360,7 @@
       "color": "#F5A524",
       "url": null,
       "expires_at": null,
-      "sort": 4,
+      "sort": 5,
       "edition": [
         "2026"
       ]
@@ -350,7 +373,7 @@
       "color": "#A2B5CD",
       "url": "https://juwenalia.wroc.pl/Regulamin_Juwenalia2026_WroclawRazem2026.pdf",
       "expires_at": null,
-      "sort": 5,
+      "sort": 6,
       "edition": [
         "2026"
       ]
@@ -435,6 +458,18 @@
       "image": "24521b02-3f55-4cef-81ed-b15ae737795a",
       "instagramUrl": "https://www.instagram.com/lemonband/",
       "spotifyUrl": "https://open.spotify.com/artist/3B4XG3HanBgkVOybc89Q3T",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Pull The Wire",
+      "description": "„Ponad wszystkim” uniesie się nad tłumem, „Twarze ludzi” zamigoczą w światłach sceny, a gdzieś w tym wszystkim wybrzmiewać będzie hasło, że ,,Życie to western” Bez zbędnych opisów - po prostu muzyka, która robi swoje. Widzimy się pod sceną! ",
+      "image": "6e1760bf-6295-4059-9d58-6b9b5856281f",
+      "instagramUrl": "https://www.instagram.com/pullthewireband/",
+      "spotifyUrl": "https://open.spotify.com/artist/0jNyGycjZJJUipcQCrYLOf",
       "sort": null,
       "edition": [
         "2026"
