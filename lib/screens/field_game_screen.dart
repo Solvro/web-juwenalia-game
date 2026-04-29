@@ -220,6 +220,7 @@ class FieldGameScreen extends StatelessWidget {
                           ? Border.all(
                               color: cs.secondary.withValues(alpha: 0.4),
                               width: 1.5,
+                              strokeAlign: BorderSide.strokeAlignOutside,
                             )
                           : null,
                     ),
@@ -377,6 +378,7 @@ class FieldGameScreen extends StatelessWidget {
               ? Border.all(
                   color: palette.base.withValues(alpha: 0.5),
                   width: 1.5,
+                  strokeAlign: BorderSide.strokeAlignOutside,
                 )
               : null,
         ),

@@ -248,7 +248,13 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       decoration: BoxDecoration(
         color: surfHigh,
         borderRadius: BorderRadius.circular(14),
-        border: live ? Border.all(color: palette.base, width: 1.5) : null,
+        border: live
+            ? Border.all(
+                color: palette.base,
+                width: 1.5,
+                strokeAlign: BorderSide.strokeAlignOutside,
+              )
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

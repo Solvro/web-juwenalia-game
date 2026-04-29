@@ -179,7 +179,7 @@ class CheckpointDetailsScreen extends StatelessWidget {
     final catColor =
         parseHexColor(checkpoint.categoryColor) ?? cs.onSurfaceVariant;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
