@@ -42,6 +42,9 @@ class _MapScreenState extends State<MapScreen> {
 
   static const _planNaturalFallback = Size(1600, 1100);
 
+  static const double _planMinScale = 1.0;
+  static const double _planMaxScale = 8.0;
+
   final TransformationController _planController = TransformationController();
   final MapController _liveController = MapController();
   final ScrollController _scrollController = ScrollController();
@@ -221,6 +224,33 @@ class _MapScreenState extends State<MapScreen> {
     _showOutsidePlanSnackBar(p, hasGeo: hasGeo);
   }
 
+  Future<void> _setMode(_EmbeddedMapMode mode) async {
+    if (_preferredMode == mode) return;
+    setState(() => _preferredMode = mode);
+
+    final id = _selectedId;
+    if (id == null) return;
+    MapPoint? selected;
+    for (final p in widget.data.mapPoints) {
+      if (p.id == id) {
+        selected = p;
+        break;
+      }
+    }
+    if (selected == null) return;
+
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+
+    if (mode == _EmbeddedMapMode.plan && selected.hasPlanPosition) {
+      _focusPlanPosition(selected.planX!, selected.planY!, scale: 2.2);
+    } else if (mode == _EmbeddedMapMode.live &&
+        selected.lat != null &&
+        selected.lng != null) {
+      _liveController.move(LatLng(selected.lat!, selected.lng!), 18);
+    }
+  }
+
   Future<void> _scrollMapIntoView() async {
     final ctx = _mapPanelKey.currentContext;
     if (ctx == null || !ctx.mounted) return;
@@ -394,7 +424,10 @@ class _MapScreenState extends State<MapScreen> {
     if (_planViewport == Size.zero) return;
 
     final currentScale = _planController.value.getMaxScaleOnAxis();
-    final targetScale = (currentScale * factor).clamp(1.0, 4.0);
+    final targetScale = (currentScale * factor).clamp(
+      _planMinScale,
+      _planMaxScale,
+    );
     final currentCenterScene = _scenePointForViewportCenter();
     final dx = _planViewport.width / 2 - currentCenterScene.dx * targetScale;
     final dy = _planViewport.height / 2 - currentCenterScene.dy * targetScale;
@@ -592,6 +625,11 @@ class _MapScreenState extends State<MapScreen> {
     final points = widget.data.mapPoints
         .where((p) => !p.hidden && p.lat != null && p.lng != null)
         .toList();
+    points.sort((a, b) {
+      if (a.id == _selectedId) return 1;
+      if (b.id == _selectedId) return -1;
+      return 0;
+    });
 
     return FlutterMap(
       key: const ValueKey('live-map'),
@@ -679,7 +717,7 @@ class _MapScreenState extends State<MapScreen> {
             builder: (context, _) {
               final sceneScale = _planController.value
                   .getMaxScaleOnAxis()
-                  .clamp(1.0, 4.0)
+                  .clamp(_planMinScale, _planMaxScale)
                   .toDouble();
               final fitScale = _planViewport == Size.zero
                   ? 1.0
@@ -690,6 +728,14 @@ class _MapScreenState extends State<MapScreen> {
               final pinScale = 1.0 / (fitScale * sceneScale);
 
               final planImage = _planImage;
+              final planPoints = widget.data.mapPoints
+                  .where((p) => !p.hidden && p.hasPlanPosition)
+                  .toList();
+              planPoints.sort((a, b) {
+                if (a.id == _selectedId) return 1;
+                if (b.id == _selectedId) return -1;
+                return 0;
+              });
               return Stack(
                 children: [
                   Positioned.fill(
@@ -699,9 +745,7 @@ class _MapScreenState extends State<MapScreen> {
                           )
                         : Image(image: planImage, fit: BoxFit.fill),
                   ),
-                  for (final point in widget.data.mapPoints.where(
-                    (p) => !p.hidden && p.hasPlanPosition,
-                  ))
+                  for (final point in planPoints)
                     Positioned(
                       key: ValueKey('plan-pin-${point.id}'),
                       left: point.planX! - 22,
@@ -728,8 +772,8 @@ class _MapScreenState extends State<MapScreen> {
 
         return InteractiveViewer(
           transformationController: _planController,
-          minScale: 1,
-          maxScale: 4,
+          minScale: _planMinScale,
+          maxScale: _planMaxScale,
           boundaryMargin: const EdgeInsets.all(120),
           child: SizedBox(
             width: constraints.maxWidth,
@@ -760,7 +804,7 @@ class _MapScreenState extends State<MapScreen> {
             label: 'Plan',
             selected: _effectiveMode == _EmbeddedMapMode.plan,
             color: palette.base,
-            onTap: () => setState(() => _preferredMode = _EmbeddedMapMode.plan),
+            onTap: () => _setMode(_EmbeddedMapMode.plan),
           ),
           const SizedBox(width: 4),
           _ModeChip(
@@ -768,7 +812,7 @@ class _MapScreenState extends State<MapScreen> {
             selected: _effectiveMode == _EmbeddedMapMode.live,
             color: palette.base,
             onTap: _supportsLiveMap
-                ? () => setState(() => _preferredMode = _EmbeddedMapMode.live)
+                ? () => _setMode(_EmbeddedMapMode.live)
                 : null,
           ),
         ],
