@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants/juwenalia_socials.dart';
 import '../models/models.dart';
 import '../services/data_service.dart';
 import '../theme/app_theme.dart';
@@ -107,6 +109,7 @@ class _InfoScreenState extends State<InfoScreen> {
               ),
             ),
           ),
+          SliverToBoxAdapter(child: _buildSocials(context, cs)),
           SliverToBoxAdapter(child: _buildCredit(context, cs)),
           const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
@@ -116,7 +119,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
   Widget _buildCredit(BuildContext context, ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Center(
         child: Text(
           'by Antoni Czaplicki | KN Solvro',
@@ -127,6 +130,57 @@ class _InfoScreenState extends State<InfoScreen> {
             letterSpacing: 0.4,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocials(BuildContext context, ColorScheme cs) {
+    final entries = <(String, String, String)>[
+      if (JuwenaliaSocials.facebook != null)
+        (
+          'Facebook',
+          'assets/icons/facebook_logo.svg',
+          JuwenaliaSocials.facebook!,
+        ),
+      if (JuwenaliaSocials.instagram != null)
+        (
+          'Instagram',
+          'assets/icons/instagram_logo.svg',
+          JuwenaliaSocials.instagram!,
+        ),
+      if (JuwenaliaSocials.tiktok != null)
+        ('TikTok', 'assets/icons/tiktok_logo.svg', JuwenaliaSocials.tiktok!),
+    ];
+    if (entries.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Column(
+        children: [
+          Text(
+            'OBSERWUJ JUWENALIA',
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: cs.onSurfaceVariant.withValues(alpha: 0.85),
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var i = 0; i < entries.length; i++) ...[
+                if (i > 0) const SizedBox(width: 12),
+                _SocialButton(
+                  label: entries[i].$1,
+                  assetPath: entries[i].$2,
+                  url: entries[i].$3,
+                ),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -498,6 +552,50 @@ class _FaqTileState extends State<_FaqTile> {
                   : const SizedBox(width: double.infinity),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  const _SocialButton({
+    required this.label,
+    required this.assetPath,
+    required this.url,
+  });
+
+  final String label;
+  final String assetPath;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    final surfHigh = AppTheme.surfaceContainerHighOf(context);
+    final cs = Theme.of(context).colorScheme;
+    return Tooltip(
+      message: label,
+      child: Material(
+        color: surfHigh,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () =>
+              launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: SvgPicture.asset(
+              assetPath,
+              width: 22,
+              height: 22,
+              colorFilter: ColorFilter.mode(
+                cs.onSurface.withValues(alpha: 0.92),
+                BlendMode.srcIn,
+              ),
+              semanticsLabel: label,
+            ),
+          ),
         ),
       ),
     );
