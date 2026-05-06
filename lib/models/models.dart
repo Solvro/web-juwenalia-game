@@ -77,6 +77,10 @@ class MapPoint {
   /// via checkpoint mini-maps.
   final bool hidden;
 
+  /// After this moment the point is filtered out of every map view
+  /// (main map, plan, legend, checkpoint mini-maps).
+  final DateTime? expiresAt;
+
   const MapPoint({
     required this.id,
     required this.name,
@@ -89,9 +93,15 @@ class MapPoint {
     this.planX,
     this.planY,
     this.hidden = false,
+    this.expiresAt,
   });
 
   bool get hasPlanPosition => planX != null && planY != null;
+
+  bool isExpiredAt(DateTime now) {
+    final ex = expiresAt;
+    return ex != null && !ex.isAfter(now);
+  }
 }
 
 class Artist {

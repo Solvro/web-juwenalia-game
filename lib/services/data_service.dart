@@ -343,6 +343,7 @@ MapPoint _parseLocation(Map<String, dynamic> j) {
     planX: planX,
     planY: planY,
     hidden: (j['hidden'] as bool?) ?? false,
+    expiresAt: _parseDate(j['expires_at']),
   );
 }
 
@@ -572,7 +573,7 @@ Map<String, String> _checkpointsQuery(String edition) => {
 Map<String, String> _locationsQuery(String edition) => {
   'fields':
       'id,name,point,polyline,isPolyline,description,color,hidden,'
-      'icon,plan_point',
+      'icon,plan_point,expires_at',
   ..._jsonEditionFilter(edition),
 };
 

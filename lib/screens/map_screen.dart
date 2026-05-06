@@ -622,8 +622,15 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildLiveMap(BuildContext context) {
+    final now = DateTime.now();
     final points = widget.data.mapPoints
-        .where((p) => !p.hidden && p.lat != null && p.lng != null)
+        .where(
+          (p) =>
+              !p.hidden &&
+              !p.isExpiredAt(now) &&
+              p.lat != null &&
+              p.lng != null,
+        )
         .toList();
     points.sort((a, b) {
       if (a.id == _selectedId) return 1;
@@ -728,8 +735,12 @@ class _MapScreenState extends State<MapScreen> {
               final pinScale = 1.0 / (fitScale * sceneScale);
 
               final planImage = _planImage;
+              final now = DateTime.now();
               final planPoints = widget.data.mapPoints
-                  .where((p) => !p.hidden && p.hasPlanPosition)
+                  .where(
+                    (p) =>
+                        !p.hidden && !p.isExpiredAt(now) && p.hasPlanPosition,
+                  )
                   .toList();
               planPoints.sort((a, b) {
                 if (a.id == _selectedId) return 1;
@@ -873,7 +884,10 @@ class _MapScreenState extends State<MapScreen> {
     ColorScheme cs,
     ElementPalette palette,
   ) {
-    final visible = widget.data.mapPoints.where((p) => !p.hidden).toList();
+    final now = DateTime.now();
+    final visible = widget.data.mapPoints
+        .where((p) => !p.hidden && !p.isExpiredAt(now))
+        .toList();
     if (visible.isEmpty) return const SizedBox.shrink();
 
     return Padding(

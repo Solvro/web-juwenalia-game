@@ -33,8 +33,11 @@ class CheckpointDetailsScreen extends StatelessWidget {
     final d = data;
     final locId = checkpoint.locationId;
     if (d == null || locId == null) return null;
+    final now = DateTime.now();
     for (final p in d.mapPoints) {
-      if (p.id == locId && p.hasPlanPosition) return p;
+      if (p.id == locId && p.hasPlanPosition && !p.isExpiredAt(now)) {
+        return p;
+      }
     }
     return null;
   }
