@@ -273,6 +273,7 @@ AppConfig _parseConfig(Map<String, dynamic> data) {
     downloadQrUrl: (data['download_qr_url'] as String?)?.trim(),
     downloadPanelDescription: (data['download_panel_description'] as String?)
         ?.trim(),
+    mapDisabled: (data['map_disabled'] as bool?) ?? false,
   );
 }
 
@@ -368,7 +369,6 @@ Partner _parsePartner(Map<String, dynamic> j) {
     tier: (j['role']?.toString()) ?? '4',
     logoUrl: Directus.assetUrl(j['logo'] as String?),
     url: j['url'] as String?,
-    logoScale: double.tryParse((j['logoScale']?.toString()) ?? ''),
   );
 }
 
@@ -577,7 +577,7 @@ Map<String, String> _locationsQuery(String edition) => {
 };
 
 Map<String, String> _partnersQuery(String edition) => {
-  'fields': 'id,name,url,logo,logoScale,role,sort,edition',
+  'fields': 'id,name,url,logo,role,sort,edition',
   'sort': 'sort',
   ..._jsonEditionFilter(edition),
 };

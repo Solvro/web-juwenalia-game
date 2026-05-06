@@ -18,11 +18,14 @@ import 'checkpoint_details_screen.dart';
 import 'field_game_screen.dart';
 import 'game_locked_screen.dart';
 import 'info_screen.dart';
+import 'map_coming_soon_screen.dart';
 import 'map_screen.dart';
 import 'qr_scanner_screen.dart';
 import 'schedule_screen.dart';
 import 'solvro_easter_egg_screen.dart';
 import 'update_required_screen.dart';
+
+enum _Tab { info, schedule, map, game }
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -32,39 +35,48 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
-  int _tabIndex = 0;
+  _Tab _selectedTab = _Tab.info;
   late Future<AppData> _dataFuture;
   List<String> _completed = [];
   bool _isLocked = false;
   bool _imagesPrecached = false;
   String _appVersion = '';
 
-  static const _destinations = <NavDestination>[
-    NavDestination(
+  static const Map<_Tab, NavDestination> _tabDestinations = {
+    _Tab.info: NavDestination(
       icon: Symbols.info_rounded,
       selectedIcon: Symbols.info_rounded,
       label: 'Info',
       element: AppElement.wind,
     ),
-    NavDestination(
+    _Tab.schedule: NavDestination(
       icon: Symbols.music_note_rounded,
       selectedIcon: Symbols.music_note_rounded,
       label: 'Koncerty',
       element: AppElement.fire,
     ),
-    NavDestination(
+    _Tab.map: NavDestination(
       icon: Symbols.map_rounded,
       selectedIcon: Symbols.map_rounded,
       label: 'Mapa',
       element: AppElement.earth,
     ),
-    NavDestination(
+    _Tab.game: NavDestination(
       icon: Symbols.sports_esports_rounded,
       selectedIcon: Symbols.sports_esports_rounded,
       label: 'Gra',
       element: AppElement.water,
     ),
-  ];
+  };
+
+  static const List<_Tab> _allTabs = _Tab.values;
+
+  /// Index of [_selectedTab] within [_allTabs]. Falls back to 0 (Info)
+  /// if somehow out of range.
+  int _selectedTabIndex() {
+    final i = _allTabs.indexOf(_selectedTab);
+    return i < 0 ? 0 : i;
+  }
 
   @override
   void initState() {
@@ -224,17 +236,18 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   Widget _buildMobileShell(AsyncSnapshot<AppData> snapshot) {
     final data = snapshot.data;
     final qrEnabled = data != null && _gameEnabled(data);
+    final destinations = [for (final t in _allTabs) _tabDestinations[t]!];
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       extendBody: true,
       body: _buildBody(snapshot),
       bottomNavigationBar: GlassBottomNav(
-        selectedIndex: _tabIndex,
-        onSelect: (i) => setState(() => _tabIndex = i),
+        selectedIndex: _selectedTabIndex(),
+        onSelect: (i) => setState(() => _selectedTab = _allTabs[i]),
         onScanQr: data == null ? () {} : () => _scanQr(data),
         qrEnabled: qrEnabled,
-        destinations: _destinations,
+        destinations: destinations,
       ),
     );
   }
@@ -242,17 +255,18 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   Widget _buildDesktopShell(AsyncSnapshot<AppData> snapshot) {
     final data = snapshot.data;
     final qrEnabled = data != null && _gameEnabled(data);
+    final destinations = [for (final t in _allTabs) _tabDestinations[t]!];
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
       body: Row(
         children: [
           DesktopSidebar(
-            selectedIndex: _tabIndex,
-            onSelect: (i) => setState(() => _tabIndex = i),
+            selectedIndex: _selectedTabIndex(),
+            onSelect: (i) => setState(() => _selectedTab = _allTabs[i]),
             onScanQr: data == null ? () {} : () => _scanQr(data),
             qrEnabled: qrEnabled,
-            destinations: _destinations,
+            destinations: destinations,
             config: data?.config,
           ),
           Expanded(
@@ -285,14 +299,17 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     final data = snapshot.data;
     if (data == null) return _buildError();
 
-    switch (_tabIndex) {
-      case 0:
+    switch (_selectedTab) {
+      case _Tab.info:
         return InfoScreen(data: data, onRefresh: _pullToRefresh);
-      case 1:
+      case _Tab.schedule:
         return ScheduleScreen(data: data, onRefresh: _pullToRefresh);
-      case 2:
+      case _Tab.map:
+        if (data.config.mapDisabled) {
+          return MapComingSoonScreen(onRefresh: _pullToRefresh);
+        }
         return MapScreen(data: data, onRefresh: _pullToRefresh);
-      case 3:
+      case _Tab.game:
         if (!_gameEnabled(data)) {
           return GameLockedScreen(config: data.config);
         }
@@ -303,8 +320,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           onLockReward: _lockReward,
           onRefresh: _pullToRefresh,
         );
-      default:
-        return const SizedBox.shrink();
     }
   }
 
@@ -354,7 +369,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   Future<void> _scanQr(AppData data) async {
     if (!_gameEnabled(data)) {
-      setState(() => _tabIndex = 3);
+      setState(() => _selectedTab = _Tab.game);
       return;
     }
 

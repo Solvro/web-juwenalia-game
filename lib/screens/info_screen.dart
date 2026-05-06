@@ -13,6 +13,7 @@ import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../theme/icon_names.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/app_refresh_indicator.dart';
 import '../widgets/brand_gradient.dart';
 import '../widgets/section_header.dart';
 
@@ -35,10 +36,9 @@ class _InfoScreenState extends State<InfoScreen> {
     final cs = Theme.of(context).colorScheme;
     final palette = AppElements.wind;
 
-    return RefreshIndicator(
+    return AppRefreshIndicator(
       onRefresh: widget.onRefresh,
-      color: palette.base,
-      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      palette: palette,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [

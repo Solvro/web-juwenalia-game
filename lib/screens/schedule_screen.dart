@@ -11,6 +11,7 @@ import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/app_refresh_indicator.dart';
 import '../widgets/section_header.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -207,10 +208,9 @@ class _ScheduleScreenState extends State<ScheduleScreen>
     final onRefresh = widget.onRefresh;
     if (onRefresh == null) return list;
 
-    return RefreshIndicator(
+    return AppRefreshIndicator(
       onRefresh: onRefresh,
-      color: palette.base,
-      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      palette: palette,
       child: list,
     );
   }
@@ -419,10 +419,9 @@ class _ScheduleScreenState extends State<ScheduleScreen>
 
     final onRefresh = widget.onRefresh;
     if (onRefresh == null) return list;
-    return RefreshIndicator(
+    return AppRefreshIndicator(
       onRefresh: onRefresh,
-      color: palette.base,
-      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      palette: palette,
       child: list,
     );
   }

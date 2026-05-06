@@ -73,7 +73,7 @@ Future<void> main(List<String> args) async {
         client,
         base,
         'organisations',
-        fields: 'id,name,url,logo,logoScale,role,sort,edition',
+        fields: 'id,name,url,logo,role,sort,edition',
         sort: 'sort',
         filter: _jsonEditionFilter(edition),
       ),

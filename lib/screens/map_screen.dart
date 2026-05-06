@@ -21,6 +21,7 @@ import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../theme/icon_names.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/app_refresh_indicator.dart';
 import '../widgets/platform_utils.dart';
 import '../widgets/section_header.dart';
 
@@ -500,10 +501,9 @@ class _MapScreenState extends State<MapScreen> {
     final onRefresh = widget.onRefresh;
     if (onRefresh == null) return scrollView;
 
-    return RefreshIndicator(
+    return AppRefreshIndicator(
       onRefresh: onRefresh,
-      color: palette.base,
-      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      palette: palette,
       child: scrollView,
     );
   }
@@ -1259,9 +1259,8 @@ class _PartnerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final surfHigh = AppTheme.surfaceContainerHighOf(context);
     final hasLogo = partner.logoUrl != null && partner.logoUrl!.isNotEmpty;
-    // Clamped to 1.0 so oversized CMS logoScale values don't break
-    // the rail height.
-    final logoHeight = (style.logoHeight * (partner.logoScale ?? 1.0))
+
+    final logoHeight = (style.logoHeight)
         .clamp(18.0, style.logoHeight)
         .toDouble();
     final borderColor = style.highlight
@@ -1333,13 +1332,20 @@ class _PartnerLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppNetworkImage(
-      url: url,
-      height: height,
-      fit: BoxFit.contain,
-      cap: 50,
-      placeholder: SizedBox(width: height, height: height),
-      errorWidget: SizedBox(width: height, height: height),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: AppNetworkImage(
+        url: url,
+        height: height,
+        fit: BoxFit.contain,
+        cap: 200,
+        placeholder: SizedBox(width: height, height: height),
+        errorWidget: SizedBox(width: height, height: height),
+      ),
     );
   }
 }

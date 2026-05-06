@@ -10,6 +10,7 @@ import '../services/data_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/elements.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/app_refresh_indicator.dart';
 import '../widgets/section_header.dart';
 import '../widgets/swipe_down_dismissible.dart';
 import 'checkpoint_details_screen.dart';
@@ -36,10 +37,9 @@ class FieldGameScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final palette = AppElements.water;
 
-    return RefreshIndicator(
+    return AppRefreshIndicator(
       onRefresh: onRefresh,
-      color: palette.base,
-      backgroundColor: AppTheme.surfaceContainerHighOf(context),
+      palette: palette,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [

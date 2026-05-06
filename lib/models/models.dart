@@ -118,7 +118,6 @@ class Partner {
   final String tier;
   final String? logoUrl;
   final String? url;
-  final double? logoScale;
 
   const Partner({
     required this.id,
@@ -126,7 +125,6 @@ class Partner {
     required this.tier,
     this.logoUrl,
     this.url,
-    this.logoScale,
   });
 }
 
@@ -185,6 +183,7 @@ class AppConfig {
   final String minAppVersionWeb;
   final String? appStoreUrlIos;
   final String? appStoreUrlAndroid;
+  final bool mapDisabled;
 
   /// URL encoded into the desktop sidebar QR. Empty falls back to
   /// [appStoreUrlAndroid].
@@ -207,5 +206,6 @@ class AppConfig {
     this.appStoreUrlAndroid,
     this.downloadQrUrl,
     this.downloadPanelDescription,
+    this.mapDisabled = false,
   });
 }
