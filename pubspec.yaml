@@ -3,7 +3,7 @@ description: Juwenalia #WrocławRazem
 
 publish_to: "none"
 
-version: 2.0.7+8
+version: 2.0.0+9
 
 environment:
   sdk: ^3.8.0

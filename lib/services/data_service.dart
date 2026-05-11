@@ -5,11 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../checkpoint.dart';
 import '../models/models.dart';
+import '../utils/warsaw_time.dart';
 import '../widgets/app_network_image.dart';
 import 'connectivity_service.dart';
 import 'directus.dart';
@@ -72,16 +72,23 @@ DateTime? _parseDate(dynamic raw) {
 }
 
 /// Combines a Directus `time` field (e.g. `"16:30:00"`) with a `date`
-/// field (e.g. `"2026-05-13"`) into a single [DateTime]. Falls back to
-/// [DateTime.tryParse] if [raw] is already a full ISO timestamp.
+/// field (e.g. `"2026-05-13"`) into a single absolute [DateTime].
+///
+/// Directus `date` + `time` fields come in naive (no offset), and we
+/// always interpret them as Europe/Warsaw — the festival's timezone —
+/// so users in other timezones still see the right "is this happening
+/// now?" answer. If [raw] already includes timezone info (`T...Z` or
+/// `+HH:MM`), it's parsed as-is.
 DateTime? _parseEventTime(String? dayDate, dynamic raw) {
   if (raw == null) return null;
   final s = raw.toString().trim();
   if (s.isEmpty) return null;
+  final hasOffset = s.endsWith('Z') || s.contains(RegExp(r'[+\-]\d\d:?\d\d$'));
+  if (hasOffset) return DateTime.tryParse(s);
   if (dayDate != null && dayDate.isNotEmpty && !s.contains('T')) {
-    return DateTime.tryParse('${dayDate}T$s');
+    return WarsawTime.parseNaiveAsWarsaw('${dayDate}T$s');
   }
-  return DateTime.tryParse(s);
+  return WarsawTime.parseNaiveAsWarsaw(s) ?? DateTime.tryParse(s);
 }
 
 /// Three-tier fallback: network → SharedPreferences cache → bundled
@@ -429,13 +436,13 @@ List<ScheduleDay> _parseSchedule(List<dynamic> rawEvents) {
 
     final dayKey =
         dayDate ??
-        (start != null ? DateFormat('yyyy-MM-dd').format(start) : 'unknown');
+        (start != null ? WarsawTime.format(start, 'yyyy-MM-dd') : 'unknown');
 
     final time = start == null
         ? ''
         : end == null
-        ? DateFormat('HH:mm').format(start)
-        : '${DateFormat('HH:mm').format(start)}–${DateFormat('HH:mm').format(end)}';
+        ? WarsawTime.format(start, 'HH:mm')
+        : '${WarsawTime.format(start, 'HH:mm')}–${WarsawTime.format(end, 'HH:mm')}';
     final fallbackName = (e['name'] as String?)?.trim() ?? '';
     final displayArtist = artistNames.isNotEmpty
         ? artistNames.join(' • ')

@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/app_theme.dart';
 
@@ -18,18 +19,22 @@ class SolvroEasterEggScreen extends StatefulWidget {
 class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
     with SingleTickerProviderStateMixin {
   static const _duration = Duration(seconds: 30);
-  static const _initialDotLifetime = Duration(milliseconds: 1400);
-  static const _minDotLifetime = Duration(milliseconds: 500);
-  static const _initialSpawnInterval = Duration(milliseconds: 650);
-  static const _minSpawnInterval = Duration(milliseconds: 220);
+  static const _initialDotLifetime = Duration(milliseconds: 1800);
+  static const _minDotLifetime = Duration(milliseconds: 750);
+  static const _initialSpawnInterval = Duration(milliseconds: 800);
+  static const _minSpawnInterval = Duration(milliseconds: 320);
+  static const _initialLives = 3;
+  static const _bestScorePrefsKey = 'solvro_easter_egg_best_score';
 
   final _rng = Random();
   final _dots = <_Dot>[];
   int _score = 0;
-  int _lives = 3;
+  int _lives = _initialLives;
+  int _bestScore = 0;
   bool _running = true;
   late DateTime _startedAt;
   late DateTime _endsAt;
+  int? _frozenSeconds;
   Timer? _spawner;
   Timer? _ticker;
 
@@ -53,11 +58,13 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
     super.initState();
     _startedAt = DateTime.now();
     _endsAt = _startedAt.add(_duration);
+    _loadBestScore();
     _scheduleSpawn(_initialSpawnInterval);
     _ticker = Timer.periodic(const Duration(milliseconds: 80), (_) {
       if (!mounted) return;
       final now = DateTime.now();
       final lifetime = _dotLifetime;
+      final wasRunning = _running;
       setState(() {
         _dots.removeWhere((d) {
           if (now.isAfter(d.bornAt.add(lifetime))) {
@@ -66,9 +73,37 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
           }
           return false;
         });
-        if (_lives <= 0 || now.isAfter(_endsAt)) _running = false;
+        if (_running && (_lives <= 0 || now.isAfter(_endsAt))) {
+          _running = false;
+          _frozenSeconds = _endsAt
+              .difference(now)
+              .inSeconds
+              .clamp(0, _duration.inSeconds);
+        }
       });
+      if (wasRunning && !_running) {
+        _spawner?.cancel();
+        _maybePersistBestScore();
+      }
     });
+  }
+
+  Future<void> _loadBestScore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted) return;
+      setState(() => _bestScore = prefs.getInt(_bestScorePrefsKey) ?? 0);
+    } catch (_) {}
+  }
+
+  Future<void> _maybePersistBestScore() async {
+    if (_score <= _bestScore) return;
+    final newBest = _score;
+    setState(() => _bestScore = newBest);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_bestScorePrefsKey, newBest);
+    } catch (_) {}
   }
 
   void _scheduleSpawn(Duration delay) {
@@ -115,9 +150,10 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
   void _restart() {
     setState(() {
       _score = 0;
-      _lives = 3;
+      _lives = _initialLives;
       _dots.clear();
       _running = true;
+      _frozenSeconds = null;
       _startedAt = DateTime.now();
       _endsAt = _startedAt.add(_duration);
     });
@@ -128,8 +164,9 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final now = DateTime.now();
-    final remaining = _endsAt.difference(now);
-    final seconds = remaining.inSeconds.clamp(0, _duration.inSeconds);
+    final seconds = _running
+        ? _endsAt.difference(now).inSeconds.clamp(0, _duration.inSeconds)
+        : (_frozenSeconds ?? 0);
 
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLowestOf(context),
@@ -173,6 +210,15 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
                           children: [
                             for (final dot in _dots)
                               _buildDot(dot, constraints),
+                            // Lives stay parked in the bottom-right
+                            // corner so the top score row stays clean
+                            // and players track their remaining hearts
+                            // near where their thumb already is.
+                            Positioned(
+                              right: 20,
+                              bottom: 16,
+                              child: IgnorePointer(child: _livesIndicator(cs)),
+                            ),
                             if (!_running) _buildGameOver(cs),
                           ],
                         ),
@@ -192,30 +238,36 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
   Widget _scoreBar(ColorScheme cs, int seconds) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-      child: Row(
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 6,
         children: [
           _chip('WYNIK', _score.toString(), cs),
-          const SizedBox(width: 10),
+          _chip('REKORD', _bestScore.toString(), cs),
           _chip('CZAS', '${seconds}s', cs),
-          const Spacer(),
-          Row(
-            children: List.generate(3, (i) {
-              final on = i < _lives;
-              return Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Icon(
-                  Symbols.favorite_rounded,
-                  color: on
-                      ? const Color(0xFFE91E63)
-                      : cs.onSurfaceVariant.withValues(alpha: 0.4),
-                  size: 22,
-                  fill: on ? 1 : 0,
-                ),
-              );
-            }),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _livesIndicator(ColorScheme cs) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(_initialLives, (i) {
+        final on = i < _lives;
+        return Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Icon(
+            Symbols.favorite_rounded,
+            color: on
+                ? const Color(0xFFE91E63)
+                : cs.onSurfaceVariant.withValues(alpha: 0.4),
+            size: 22,
+            fill: on ? 1 : 0,
+          ),
+        );
+      }),
     );
   }
 
@@ -309,6 +361,7 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
   }
 
   Widget _buildGameOver(ColorScheme cs) {
+    final isNewBest = _score > 0 && _score >= _bestScore;
     return Positioned.fill(
       child: Container(
         color: Colors.black.withValues(alpha: 0.55),
@@ -333,6 +386,20 @@ class _SolvroEasterEggScreenState extends State<SolvroEasterEggScreen>
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                isNewBest && _score > 0
+                    ? '🏆 Nowy rekord!'
+                    : 'Rekord: $_bestScore',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isNewBest
+                      ? const Color(0xFFFFC857)
+                      : Colors.white.withValues(alpha: 0.75),
+                  letterSpacing: 0.4,
                 ),
               ),
               const SizedBox(height: 18),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -35,12 +37,17 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
+  static const _periodicRefreshInterval = Duration(minutes: 5);
+
   _Tab _selectedTab = _Tab.info;
   late Future<AppData> _dataFuture;
   List<String> _completed = [];
   bool _isLocked = false;
   bool _imagesPrecached = false;
   String _appVersion = '';
+  Timer? _periodicRefreshTimer;
+  Timer? _gameUnlockTimer;
+  DateTime? _scheduledUnlockAt;
 
   static const Map<_Tab, NavDestination> _tabDestinations = {
     _Tab.info: NavDestination(
@@ -86,10 +93,13 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     _loadProgress();
     _loadVersion();
     ConnectivityService.instance.start();
+    _startPeriodicRefresh();
   }
 
   @override
   void dispose() {
+    _periodicRefreshTimer?.cancel();
+    _gameUnlockTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -98,6 +108,12 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _maybeRefreshOnResume();
+      _startPeriodicRefresh();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.hidden) {
+      _periodicRefreshTimer?.cancel();
+      _periodicRefreshTimer = null;
     }
   }
 
@@ -106,6 +122,40 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     if (await shouldForceRefetch() && mounted) {
       _refresh();
     }
+  }
+
+  void _startPeriodicRefresh() {
+    _periodicRefreshTimer?.cancel();
+    _periodicRefreshTimer = Timer.periodic(_periodicRefreshInterval, (_) {
+      if (!mounted) return;
+      _refresh();
+    });
+  }
+
+  /// Schedules a one-shot rebuild for the exact moment the game
+  /// becomes unlocked so users sitting on the locked screen flip over
+  /// to the live game without having to pull-to-refresh.
+  void _scheduleGameUnlock(AppConfig config) {
+    final start = config.eventStartsAt;
+    if (start == null || config.gameEnabledOverride == true) {
+      _gameUnlockTimer?.cancel();
+      _gameUnlockTimer = null;
+      _scheduledUnlockAt = null;
+      return;
+    }
+    if (_scheduledUnlockAt == start && _gameUnlockTimer?.isActive == true) {
+      return; // Already scheduled for this moment.
+    }
+    final delay = start.difference(DateTime.now());
+    _gameUnlockTimer?.cancel();
+    if (!delay.isNegative) {
+      _gameUnlockTimer = Timer(delay, () {
+        if (!mounted) return;
+        setState(() {});
+        _refresh();
+      });
+    }
+    _scheduledUnlockAt = start;
   }
 
   Future<void> _loadVersion() async {
@@ -211,6 +261,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           _maybePrecacheImages(snapshot.data!);
+          _scheduleGameUnlock(snapshot.data!.config);
         }
 
         final data = snapshot.data;
@@ -311,7 +362,10 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         return MapScreen(data: data, onRefresh: _pullToRefresh);
       case _Tab.game:
         if (!_gameEnabled(data)) {
-          return GameLockedScreen(config: data.config);
+          return GameLockedScreen(
+            config: data.config,
+            onRefresh: _pullToRefresh,
+          );
         }
         return FieldGameScreen(
           data: data,
@@ -324,8 +378,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   bool _gameEnabled(AppData data) {
-    final override = data.config.gameEnabledOverride;
-    if (override != null) return override;
+    if (data.config.gameEnabledOverride == true) return true;
     final start = data.config.eventStartsAt;
     if (start == null) return true;
     return DateTime.now().isAfter(start);

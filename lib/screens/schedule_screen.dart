@@ -581,37 +581,38 @@ class _ArtistLinkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return InkWell(
+    return Material(
+      color: AppTheme.surfaceContainerHighestOf(context),
       borderRadius: BorderRadius.circular(10),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(
-          color: AppTheme.surfaceContainerHighestOf(context),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (assetIcon != null)
-              SvgPicture.asset(
-                assetIcon!,
-                width: 14,
-                height: 14,
-                fit: BoxFit.contain,
-              )
-            else
-              Icon(icon, size: 14, color: cs.onSurfaceVariant),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: cs.onSurface,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (assetIcon != null)
+                SvgPicture.asset(
+                  assetIcon!,
+                  width: 14,
+                  height: 14,
+                  fit: BoxFit.contain,
+                )
+              else
+                Icon(icon, size: 14, color: cs.onSurfaceVariant),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurface,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -122,7 +122,7 @@ class _InfoScreenState extends State<InfoScreen> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Center(
         child: Text(
-          'by Antoni Czaplicki | KN Solvro',
+          'by Antoni Czaplicki from KN Solvro',
           style: GoogleFonts.spaceGrotesk(
             fontSize: 11,
             fontWeight: FontWeight.w500,
