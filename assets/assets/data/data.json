@@ -2,12 +2,12 @@
   "app_config": {
     "id": 1,
     "edition": "2026",
-    "event_starts_at": "2026-05-20T13:00:00.000Z",
-    "game_enabled_override": true,
-    "game_goal": 10,
+    "event_starts_at": "2026-05-20T14:00:00.000Z",
+    "game_enabled_override": false,
+    "game_goal": 12,
     "reward_description": "<p>Odwiedź wszystkie strefy, wykonaj r&oacute;żne wyzwania i zadania, a na końcu odbierz gadżety przygotowane we wsp&oacute;łpracy z Partnerami wydarzenia!</p>",
     "reward_pin": "2026",
-    "game_terms": "<h2 dir=\"ltr\">REGULAMIN GRY TERENOWEJ</h2>\n<p dir=\"ltr\">Juwenalia 2026 #WrocławRazem</p>\n<h3 dir=\"ltr\">&sect; 1 Postanowienia og&oacute;lne</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizatorem Gry Terenowej (zwanej dalej &bdquo;Grą&rdquo;) jest Politechnika Wrocławska / Samorząd Studencki Politechniki Wrocławskiej w ramach wydarzenia Juwenalia 2026 #WrocławRazem.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Gra odbywa się na terenie wydarzenia w dniach:</p>\n</li>\n<ul>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">20 maja 2026 r. (środa): w godzinach 16:00 &ndash; 23:00,</p>\n</li>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">21 maja 2026 r. (czwartek): w godzinach 16:00 &ndash; 19:00.</p>\n</li>\n</ul>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Wiek uczestnik&oacute;w oraz og&oacute;lne zasady bezpieczeństwa reguluje Gł&oacute;wny Regulamin wydarzenia Juwenalia #Wrocławrazem. Udział w Grze oznacza akceptację zar&oacute;wno niniejszego dokumentu, jak i Regulaminu Gł&oacute;wnego.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Udział w Grze jest całkowicie bezpłatny i dobrowolny.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 2 Zasady i mechanika Gry</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Gra ma charakter wyłącznie indywidualny. Nie przewiduje się start&oacute;w drużynowych.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Narzędziem niezbędnym do wzięcia udziału w Grze jest oficjalna aplikacja mobilna Juwenali&oacute;w (działająca w trybie offline), posiadająca dedykowaną zakładkę Gry Terenowej.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">W aplikacji znajduje się lista stacji/zadań (maksymalnie 13) rozmieszczonych w r&oacute;żnych strefach na terenie imprezy, w tym w strefach Partner&oacute;w wydarzenia.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Zadaniem Uczestnika jest dotarcie do wyznaczonych stref i poprawne wykonanie określonych nań zadań.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Poprawność wykonania zadania jest oceniana subiektywnie przez obsługę danej strefy lub przedstawicieli Partnera.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po pozytywnym zaliczeniu zadania, Uczestnik otrzymuje od obsługi możliwość zeskanowania unikalnego kodu QR. Zeskanowanie kodu powoduje odznaczenie zadania jako \"zaliczone\" w systemie aplikacji na urządzeniu Uczestnika.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnik może podchodzić do danego zadania wielokrotnie w przypadku niepowodzenia, jednakże częstotliwość i możliwość powtarzania pr&oacute;b uzależniona jest od bieżącej decyzji obsługi strefy (np. w przypadku dużych kolejek).</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 3 Finał Gry</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Warunkiem koniecznym do ukończenia etapu terenowego jest zaliczenie wszystkich dostępnych zadań widocznych w aplikacji (komplet zeskanowanych kod&oacute;w QR).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po zaliczeniu ostatniego zadania, w aplikacji automatycznie odblokuje się unikalny ekran końcowy (zawierać będzie słowo klucz: \"Wygrałeś/aś\") opatrzony dynamiczną animacją (znakiem wodnym).</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 4 Nagrody i weryfikacja</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnicy, kt&oacute;rzy ukończyli Grę (posiadają aktywny ekran zwycięzcy w aplikacji), są uprawnieni do odbioru nagrody (gadżetu juwenaliowego).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Odbi&oacute;r nagr&oacute;d odbywa się wyłącznie w Punkcie Informacyjnym &ndash; namiocie Samorządu Studenckiego, w godzinach trwania Gry.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Weryfikacja wygranej następuje dwuetapowo poprzez:</p>\n</li>\n<ul>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">okazanie wolontariuszowi aktywnego ekranu zwycięzcy w aplikacji,</p>\n</li>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">wpisanie przez wolontariusza niejawnego kodu odbioru do aplikacji &ndash; ma to na celu ostateczną weryfikację udziału Uczestnika w Grze.</p>\n</li>\n</ul>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po wydaniu nagrody status zwycięzcy w aplikacji Uczestnika zostaje oznaczony przez wolontariusza jako odebrany (ekran ulega \"wyszarzeniu\", z zachowaniem widoczności animacji weryfikacyjnej).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Jeden Uczestnik (jedno konto/urządzenie) może otrzymać nagrodę tylko jeden raz.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Pula nagr&oacute;d na każdy dzień wydarzenia jest ograniczona. Nagrody wydawane są w poszczeg&oacute;lnych dniach zgodnie z zasadą &bdquo;kto pierwszy, ten lepszy&rdquo;, aż do wyczerpania zapas&oacute;w przewidzianych na dany dzień. Organizator nie gwarantuje nagrody każdemu Uczestnikowi, kt&oacute;ry ukończy Grę.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 5 Odpowiedzialność i reklamacje</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Z uwagi na rozrywkowy charakter Gry ocena zadań przez Partner&oacute;w i wolontariuszy jest ostateczna. Organizator nie uwzględnia roszczeń, odwołań ani reklamacji z tytułu niezaliczenia zadania przez obsługę strefy.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizator nie ponosi odpowiedzialności za problemy techniczne wynikające z działania sprzętu Uczestnika (np. rozładowana bateria, uszkodzony aparat, brak pamięci urządzenia), kt&oacute;re uniemożliwią zeskanowanie kodu QR lub ukończenie Gry.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnik ponosi pełną odpowiedzialność materialną za ewentualne szkody wyrządzone na stanowiskach Partner&oacute;w podczas pr&oacute;b wykonania zadań.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Wszelkie pr&oacute;by oszustwa, w tym fałszowania ekranu końcowego aplikacji lub omijania zasad weryfikacji, skutkują natychmiastową dyskwalifikacją z Gry i odmową wydania nagrody.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 6 Postanowienia końcowe</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizator zastrzega sobie prawo do wniesienia zmian w Regulaminie, wcześniejszego zakończenia Gry lub jej przerwania z przyczyn niezależnych (np. kwestie bezpieczeństwa, warunki pogodowe, wyczerpanie puli nagr&oacute;d).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Ostateczna interpretacja niniejszego Regulaminu należy do Organizatora.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Kwestie związane z przetwarzaniem danych osobowych Uczestnik&oacute;w, w tym utrwalaniem wizerunku oraz realizacją obowiązku informacyjnego RODO, regulują odpowiednie zapisy Regulaminu Gł&oacute;wnego wydarzenia Juwenalia 2026 #WrocławRazem. Przystąpienie do Gry oznacza ich akceptację.</p>\n</li>\n</ol>\n<h2 dir=\"ltr\"><strong id=\"docs-internal-guid-2ce2442a-7fff-2ace-1df9-6b00e576f3f5\"><br><br></strong></h2>",
+    "game_terms": "<h2 dir=\"ltr\">REGULAMIN GRY TERENOWEJ</h2>\n<p dir=\"ltr\">Juwenalia 2026 #WrocławRazem</p>\n<h3 dir=\"ltr\">&sect; 1 Postanowienia og&oacute;lne</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizatorem Gry Terenowej (zwanej dalej &bdquo;Grą&rdquo;) jest Politechnika Wrocławska / Samorząd Studencki Politechniki Wrocławskiej w ramach wydarzenia Juwenalia 2026 #WrocławRazem.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Gra odbywa się na terenie wydarzenia w dniach:</p>\n</li>\n<ul>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">20 maja 2026 r. (środa): w godzinach 16:00 &ndash; 23:00,</p>\n</li>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">21 maja 2026 r. (czwartek): w godzinach 16:00 &ndash; 19:00.</p>\n</li>\n</ul>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Wiek uczestnik&oacute;w oraz og&oacute;lne zasady bezpieczeństwa reguluje Gł&oacute;wny Regulamin wydarzenia Juwenalia #Wrocławrazem. Udział w Grze oznacza akceptację zar&oacute;wno niniejszego dokumentu, jak i Regulaminu Gł&oacute;wnego.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Udział w Grze jest całkowicie bezpłatny i dobrowolny.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 2 Zasady i mechanika Gry</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Gra ma charakter wyłącznie indywidualny. Nie przewiduje się start&oacute;w drużynowych.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Narzędziem niezbędnym do wzięcia udziału w Grze jest oficjalna aplikacja mobilna Juwenali&oacute;w (działająca w trybie offline), posiadająca dedykowaną zakładkę Gry Terenowej.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">W aplikacji znajduje się lista stacji/zadań (maksymalnie 15) rozmieszczonych w r&oacute;żnych strefach na terenie imprezy, w tym w strefach Partner&oacute;w wydarzenia.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Zadaniem Uczestnika jest dotarcie do wyznaczonych stref i poprawne wykonanie określonych tam zadań.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Poprawność wykonania zadania jest oceniana subiektywnie przez obsługę danej strefy (Wolontariuszy) lub przedstawicieli Partnera.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po pozytywnym zaliczeniu zadania Uczestnik otrzymuje od obsługi możliwość zeskanowania unikalnego kodu QR. Zeskanowanie kodu powoduje odznaczenie zadania jako \"zaliczone\" w systemie aplikacji na urządzeniu Uczestnika. W razie niemożności zeskanowania kodu QR obsługa podaje kod do wpisania wewnątrz aplikacji.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnik może podchodzić do zaliczenia pojedynczej stacji wielokrotnie w przypadku niepowodzenia, jednakże częstotliwość i możliwość powtarzania pr&oacute;b uzależnione są od bieżącej decyzji obsługi strefy (np. w przypadku dużych kolejek).</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 3 Finał Gry</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Warunkiem koniecznym do ukończenia etapu terenowego jest zaliczenie określonej liczby zadań nieprzekraczającej ilościowo wszystkich dostępnych stacji. Liczba zaliczonych stacji jest uwidoczniona i aktualizowana w aplikacji.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po zaliczeniu ostatniego zadania, w aplikacji automatycznie odblokuje się unikalny ekran końcowy (zawierać będzie słowo klucz: \"Wygrałeś/aś\") opatrzony znakiem handlowym.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 4 Nagrody i weryfikacja</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnicy, kt&oacute;rzy ukończyli Grę (posiadają aktywny ekran zwycięzcy w aplikacji), są uprawnieni do odbioru nagrody (gadżetu juwenaliowego).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Odbi&oacute;r nagr&oacute;d odbywa się wyłącznie w Punkcie Informacyjnym &ndash; namiocie Samorządu Studenckiego, w godzinach trwania Gry.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Weryfikacja wygranej następuje jednoetapowo poprzez:</p>\n</li>\n<ul>\n<li dir=\"ltr\" aria-level=\"2\">\n<p dir=\"ltr\" role=\"presentation\">okazanie Wolontariuszowi aktywnego ekranu zwycięzcy w aplikacji,</p>\n</li>\n</ul>\n</ol>\n<ol start=\"4\">\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Po wydaniu nagrody status zwycięzcy w aplikacji Uczestnika zostaje oznaczony przez Wolontariusza (bądź przez Uczestnika) jako odebrany (ekran ulega \"wyszarzeniu\", z zachowaniem widoczności animacji weryfikacyjnej).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Jeden Uczestnik (jedno konto/urządzenie) może otrzymać nagrodę tylko jeden raz.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Pula nagr&oacute;d na każdy dzień wydarzenia jest ograniczona. Nagrody wydawane są w poszczeg&oacute;lnych dniach zgodnie z zasadą &bdquo;kto pierwszy, ten lepszy&rdquo;, aż do wyczerpania zapas&oacute;w przewidzianych na dany dzień. Organizator nie gwarantuje nagrody każdemu Uczestnikowi, kt&oacute;ry ukończy Grę.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 5 Odpowiedzialność i reklamacje</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Z uwagi na rozrywkowy charakter Gry ocena zadań przez Partner&oacute;w i Wolontariuszy jest ostateczna. Organizator nie uwzględnia roszczeń, odwołań ani reklamacji z tytułu niezaliczenia zadania przez obsługę strefy.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizator nie ponosi odpowiedzialności za problemy techniczne wynikające z działania sprzętu Uczestnika (np. rozładowana bateria, uszkodzony aparat, brak pamięci urządzenia), kt&oacute;re uniemożliwią zeskanowanie kodu QR lub ukończenie Gry.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Uczestnik ponosi pełną odpowiedzialność materialną za ewentualne szkody wyrządzone na stanowiskach Partner&oacute;w podczas pr&oacute;b wykonania zadań.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Wszelkie pr&oacute;by oszustwa, w tym fałszowanie ekranu końcowego aplikacji lub omijanie zasad weryfikacji, skutkują natychmiastową dyskwalifikacją z Gry i odmową wydania nagrody.</p>\n</li>\n</ol>\n<h3 dir=\"ltr\">&sect; 6 Postanowienia końcowe</h3>\n<ol>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Organizator zastrzega sobie prawo do wniesienia zmian w Regulaminie, wcześniejszego zakończenia Gry lub jej przerwania z przyczyn niezależnych (np. kwestie bezpieczeństwa, warunki pogodowe, wyczerpanie puli nagr&oacute;d).</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Ostateczna interpretacja niniejszego Regulaminu należy do Organizatora.</p>\n</li>\n<li dir=\"ltr\" aria-level=\"1\">\n<p dir=\"ltr\" role=\"presentation\">Kwestie związane z przetwarzaniem danych osobowych Uczestnik&oacute;w, w tym utrwalaniem wizerunku oraz realizacją obowiązku informacyjnego RODO, regulują odpowiednie zapisy Regulaminu Gł&oacute;wnego wydarzenia Juwenalia 2026 #WrocławRazem. Przystąpienie do Gry oznacza ich akceptację.</p>\n</li>\n</ol>",
     "festival_plan": "d751e1e3-834d-405a-8ff0-80a1583a4ea6",
     "min_app_version_ios": "1",
     "min_app_version_android": "1",
@@ -584,7 +584,7 @@
       "name": "Patronat Honorowy Marszałka Województwa Dolnośląskiego",
       "url": "https://umwd.dolnyslask.pl/urzad-marszalkowski/zarzad-wojewodztwa/marszalek-wojewodztwa-dolnoslaskiego/",
       "logo": "7f14301a-023a-4eca-8e6a-c5b69243c620",
-      "role": "4",
+      "role": "6",
       "sort": 12,
       "edition": [
         "2025",
@@ -596,8 +596,20 @@
       "name": "Patronat Honorowy Prezydenta Wrocławia",
       "url": "https://bip.um.wroc.pl/artykul/3/36327/prezydent",
       "logo": "f01815c8-5f0b-4d12-b4a2-15f6e44cdcf9",
-      "role": "4",
+      "role": "6",
       "sort": 14,
+      "edition": [
+        "2025",
+        "2026"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Wrocławskie Centrum Akademickie",
+      "url": "https://www.wroclaw.pl/akademicki-wroclaw/wroclawskie-centrum-akademickie",
+      "logo": "b22e8415-2ca8-4969-a917-30827c7f2147",
+      "role": "4",
+      "sort": 18,
       "edition": [
         "2025",
         "2026"
@@ -669,27 +681,36 @@
         "false",
         "2026"
       ]
-    }
-  ],
-  "important_info": [
+    },
     {
-      "id": 6,
-      "icon": "bug_report",
-      "title": "Aplikacja w trybie testów",
-      "body": "<p>Aplikacja jest obecnie w trybie test&oacute;w &beta;eta, informacje w niej zawarte nie są prawdziwe.</p>",
-      "color": "#E35169",
-      "url": null,
-      "expires_at": null,
-      "sort": 1,
+      "id": 38,
+      "name": "Miasto Wrocław",
+      "url": "wroclaw.pl",
+      "logo": "c6668ce4-4819-4d56-a25f-52b6dbb475d6",
+      "role": "4",
+      "sort": null,
       "edition": [
         "2026"
       ]
     },
     {
+      "id": 37,
+      "name": "Urząd Marszałkowski we Wrocławiu",
+      "url": "dolnyslask.pl",
+      "logo": "e5184512-5e97-4a87-9d96-7f9b76cfd78b",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    }
+  ],
+  "important_info": [
+    {
       "id": 5,
       "icon": "local_activity",
       "title": "Kup bilet na Juwenalia!",
-      "body": "<p>Bilety <span class=\"text-4xl sm:text-6xl md:text-7xl lg:text-[5rem]\">są już dostępne</span></p>",
+      "body": "<p>Bilety <span class=\"text-4xl sm:text-6xl md:text-7xl lg:text-[5rem]\">są już dostępne!</span></p>",
       "color": "#024DDF",
       "url": "https://www.ticketmaster.pl/artist/juwenalia-wroclawrazem-bilety/1277573",
       "expires_at": null,
@@ -715,7 +736,7 @@
       "id": 2,
       "icon": "dangerous",
       "title": "Nie bierz ostrych przedmiotów",
-      "body": "<p>Na bramce obowiązują standardowe zasady bezpieczeństwa — noże, szklło i inne niebezpieczne przedmioty zostaną zabrane przez ochronę.</p>",
+      "body": "<p>Na bramce obowiązują standardowe zasady bezpieczeństwa &mdash; noże, szkło i inne niebezpieczne przedmioty zostaną zabrane przez ochronę.</p>",
       "color": "#FF6B6B",
       "url": null,
       "expires_at": null,
@@ -728,7 +749,7 @@
       "id": 3,
       "icon": "badge",
       "title": "Pamiętaj o legitymacji",
-      "body": "<p>Legitymacja studencka przyspiesza wejście na teren festiwalu i daje zniżki u partnerów gastronomicznych.</p>",
+      "body": "<p>Legitymacja studencka przyspiesza wejście na teren festiwalu i daje zniżki u partner&oacute;w gastronomicznych.</p>",
       "color": "#F5A524",
       "url": null,
       "expires_at": null,
@@ -755,8 +776,179 @@
     {
       "id": 23,
       "sort": 1,
-      "question": "Kiedy i gdzie odbywają się Juwenalia?",
-      "answer": "Zapraszamy na Tereny Zielone przy Stadionie Tarczyński Arena we Wrocławiu - dni 20-21 maja 2026.",
+      "question": "Kiedy odbywają się juwenalia?",
+      "answer": "Juwenalia odbędą się w dniach 20-21 maja (środa, czwartek)",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 41,
+      "sort": null,
+      "question": "Gdzie odbywa się wydarzenie?",
+      "answer": "Wydarzenie odbędzie się na terenie przy Tarczyński Arena Wrocław",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 42,
+      "sort": null,
+      "question": "Czy wydarzenie jest darmowe?",
+      "answer": "Nie - wstęp na naszą imprezę jest biletowany. \nBilety do kupna na stronie Ticketmaster! Link w nagłówku",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 43,
+      "sort": null,
+      "question": "Czy studenci mają zniżki?",
+      "answer": "Tak, przy kupnie biletów jest opcja przeznaczona dla studentów - z odpowiednią zniżką",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 44,
+      "sort": null,
+      "question": "Czy można wejść ponownie po opuszczeniu terenu wydarzenia?",
+      "answer": "Nie, bilet wstępu jest jednorazowy na dany dzień - po wyjściu z terenu imprezy nie ma możliwości ponownego wejścia na ten sam bilet.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 45,
+      "sort": null,
+      "question": "Czy trzeba mieć przy sobie dokument tożsamości?",
+      "answer": "Tak, organizator może poprosić o okazanie dokumentu przy wejściu.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 46,
+      "sort": null,
+      "question": "Czy osoby niepełnoletnie mogą wejść na wydarzenie?",
+      "answer": "Tak, jeżeli mają aktywny status studenta. W innym wypadku wstęp na imprezę mają jedynie osoby pełnoletnie",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 47,
+      "sort": null,
+      "question": "Czy będzie dostępny harmonogram koncertów?",
+      "answer": "Tak, harmonogram zostanie opublikowany przed wydarzeniem na stronie oraz w mediach społecznościowych.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 48,
+      "sort": null,
+      "question": "Czy na miejscu będzie gastronomia?",
+      "answer": "Tak, na terenie wydarzenia będą dostępne food trucki i strefa gastronomiczna.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 49,
+      "sort": null,
+      "question": "Czy można wnosić własne jedzenie i napoje?",
+      "answer": "Nie, ze względów bezpieczeństwa obowiązuje zakaz wnoszenia własnego alkoholu i napojów w szkle. Choć możesz przynieść swoją plastikową butelkę aby ją napełnić!",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 51,
+      "sort": null,
+      "question": "Jakie przedmioty są zabronione?",
+      "answer": "Nie można wnosić m.in.:\nniebezpiecznych narzędzi, materiałów pirotechnicznych, alkoholu, szklanych butelek, substancji niedozwolonych",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 52,
+      "sort": null,
+      "question": "Czy na miejscu będzie pomoc medyczna?",
+      "answer": "Tak, podczas wydarzenia obecne będą służby medyczne i ochrona.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 53,
+      "sort": null,
+      "question": "Co zrobić w przypadku zgubienia rzeczy?",
+      "answer": "Należy zgłosić się do punktu informacji lub po zakończeniu wydarzenia, ogłoszonego przez organizatora biura rzeczy znalezionych",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 54,
+      "sort": null,
+      "question": "Jak najlepiej dojechać na juwenalia?",
+      "answer": "Zalecamy korzystanie z komunikacji miejskiej lub transportu zbiorowego.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 55,
+      "sort": null,
+      "question": "Czy będą dodatkowe kursy komunikacji miejskiej?",
+      "answer": "Informacje o dodatkowych kursach zostaną podane przed wydarzeniem.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 56,
+      "sort": null,
+      "question": "Gdzie będą publikowane aktualne informacje?",
+      "answer": "Na oficjalnych profilach wydarzenia oraz stronie internetowej.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 57,
+      "sort": null,
+      "question": "Jak skontaktować się z organizatorami?",
+      "answer": "Przez wiadomość prywatną w mediach społecznościowych lub mailowo na adres: kontakt@juwenalia.wroc.pl",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 58,
+      "sort": null,
+      "question": "Czy podczas wydarzenia będą robione zdjęcia i nagrania?",
+      "answer": "Tak, uczestnictwo w wydarzeniu oznacza zgodę na wykorzystanie wizerunku w materiałach promocyjnych organizatora.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 50,
+      "sort": null,
+      "question": "Czy wydarzenie odbędzie się mimo złej pogody?",
+      "answer": "Tak, juwenalia są wydarzeniem plenerowym i odbywają się niezależnie od pogody, chyba że organizator poinformuje inaczej.",
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 59,
+      "sort": null,
+      "question": "Czy na terenie juwenaliów będzie dostęp do darmowej wody?",
+      "answer": "Tak, na miejscu będzie dostępne darmowe stanowisko „Pij Kranówkę”, gdzie uczestnicy będą mogli bezpłatnie napić się wody i uzupełnić swoje bidony lub butelki.",
       "edition": [
         "2026"
       ]
@@ -914,6 +1106,10 @@
             "text": "Sponsor Główny",
             "value": "5",
             "icon": "attach_money"
+          },
+          {
+            "text": "Patronat",
+            "value": "6"
           }
         ]
       },
