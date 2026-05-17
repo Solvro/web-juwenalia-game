@@ -38,7 +38,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  static const _campus = LatLng(51.10795, 17.05887);
+  static const _campus = LatLng(51.1412, 16.9438);
   static const _planAspectRatio = 16 / 11;
 
   static const _planNaturalFallback = Size(1600, 1100);
@@ -646,6 +646,9 @@ class _MapScreenState extends State<MapScreen> {
         initialZoom: 16.5,
         minZoom: 12,
         maxZoom: 19,
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.all,
+        ),
         onTap: (_, _) => setState(() => _selectedId = null),
       ),
       children: [
