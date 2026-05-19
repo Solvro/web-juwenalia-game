@@ -62,20 +62,6 @@
       }
     },
     {
-      "id": 11,
-      "qr_code": "JUWE-CP-12-LYKO",
-      "title": "Lyko Beauty Bar",
-      "description": "<p data-path-to-node=\"8\">Strefa dla miłośnik&oacute;w nowinek ze świata urody, gdzie liczy się zmysł estetyczny i znajomość produkt&oacute;w. Będziesz musiał wykazać się refleksem, odgadując ceny, dopasowując nietypowe nazwy do odcieni lakier&oacute;w czy rozpoznając zastosowanie nietypowych kosmetyk&oacute;w.</p>",
-      "image": null,
-      "sort": 4,
-      "location": null,
-      "category": {
-        "id": "campus",
-        "display_name": "Styl życia",
-        "color": "#FFA439"
-      }
-    },
-    {
       "id": 4,
       "qr_code": "JUWE-CP-04-TESLA",
       "title": "Elektromobilny Garaż Tesli",
@@ -152,20 +138,6 @@
       "description": "<p data-path-to-node=\"18\">Sprawdź, czy naprawdę wiesz, jak dbać o naszą planetę w codziennym, studenckim życiu. Zmierzysz się tu z ekokoszyk&oacute;wką, zadaniami na szybkość z prawidłowej segregacji śmieci oraz trudnymi pytaniami demaskującymi ekościemę i greenwashing.</p>",
       "image": null,
       "sort": 10,
-      "location": null,
-      "category": {
-        "id": "eco",
-        "display_name": "Ekologia",
-        "color": "#2ECDA7"
-      }
-    },
-    {
-      "id": 10,
-      "qr_code": "JUWE-CP-11-MPWIK",
-      "title": "Źródło Wiedzy o Kranówce",
-      "description": "<p data-path-to-node=\"12\">Ugaś pragnienie i obal mity na temat wrocławskiej kran&oacute;wki oraz odpowiedniego nawodnienia organizmu (zwłaszcza po imprezie!). Czekają tu na Ciebie ciekawostki fizyczne o wodzie, quizy o elektrolitach i kreatywne zadania z napełnianiem bidon&oacute;w.</p>",
-      "image": null,
-      "sort": 11,
       "location": null,
       "category": {
         "id": "eco",
@@ -661,7 +633,7 @@
     },
     {
       "id": 29,
-      "name": "Punkt Energii",
+      "name": "Punkt Energii | Njord",
       "point": {
         "type": "Point",
         "coordinates": [
@@ -784,6 +756,216 @@
         "x": 1140,
         "y": 570
       }
+    },
+    {
+      "id": 35,
+      "name": "Strefa Atrakcji | Gry Studenckie",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945789202725905,
+          51.141738874862966
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Miejsce zdrowej rywalizacji i integracji, w którym zmierzysz się ze znajomymi w kultowych grach barowych.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 838,
+        "y": 832
+      }
+    },
+    {
+      "id": 36,
+      "name": "Strefa Partnera | CityFit",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945846786080807,
+          51.141720867816446
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Sportowy kąt pełen wyzwań, w którym sprawdzisz swoją formę i zgarniesz przeróżne gadżety.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 912,
+        "y": 913
+      }
+    },
+    {
+      "id": 37,
+      "name": "Strefa Partnera | Tesla",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945847368223582,
+          51.14145738188358
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Nowoczesna przestrzeń motoryzacyjna, w której możesz z bliska obejrzeć innowacyjne samochody przyszłości.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 908,
+        "y": 984
+      }
+    },
+    {
+      "id": 38,
+      "name": "Strefa Partnera | #PijKranówkę",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.94605051276676,
+          51.14146310172717
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Ekologiczny punkt hydratacji, w którym całkowicie za darmo ugasisz pragnienie świeżą, chłodną wrocławską kranówką.",
+      "color": "#35A7DF",
+      "hidden": false,
+      "icon": "water_drop",
+      "plan_point": {
+        "x": 996,
+        "y": 974
+      }
+    },
+    {
+      "id": 39,
+      "name": "Strefa Atrakcji | Eko",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945910313065156,
+          51.140981059746395
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Zakątek pełen edukacyjnych zabaw i warsztatów, pokazujący jak świetnie imprezować w całkowitej zgodzie z planetą.",
+      "color": "#00A545",
+      "hidden": false,
+      "icon": "recycling",
+      "plan_point": {
+        "x": 1077,
+        "y": 1341
+      }
+    },
+    {
+      "id": 40,
+      "name": "Strefa Partnera | Uniperks",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.946417519518945,
+          51.14089736479099
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Miejsce pełne zniżek i studenckich okazji, w którym dowiesz się, jak sprytnie oszczędzać i zyskiwać na codziennych wydatkach.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 1340,
+        "y": 1282
+      }
+    },
+    {
+      "id": 41,
+      "name": "Strefa Partnera | Lyko",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.94645524917729,
+          51.14086626535544
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Festiwalowa strefa piękna, gdzie poznasz najciekawsze kosmetyki, poprawisz makijaż i zadbasz o swój imprezowy look.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 1385,
+        "y": 1289
+      }
+    },
+    {
+      "id": 42,
+      "name": "Strefa Partnera | Ticketmaster",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.946554927640477,
+          51.140835801465215
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Punkt rozrywkowy, w którym wygrasz festiwalowe pamiątki i upolujesz zniżki na najgorętsze nadchodzące wydarzenia kulturalne.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 1427,
+        "y": 1284
+      }
+    },
+    {
+      "id": 43,
+      "name": "Strefa Partnera | Erste",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945822893909195,
+          51.140869332811604
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Przyjazna strefa finansowa, w której przy dobrej zabawie i konkursach dowiesz się, jak z głową zarządzać swoim studenckim budżetem.",
+      "color": "#803589",
+      "hidden": true,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 1073,
+        "y": 1390
+      }
+    },
+    {
+      "id": 44,
+      "name": "Strefa Atrakcji | Beauty",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.94663035885722,
+          51.140765196898826
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Kreatywna przestrzeń, stworzona do eksperymentowania ze stylem i robienia idealnych zdjęć na socialki.",
+      "color": "#803589",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 1483,
+        "y": 1327
+      }
     }
   ],
   "organisations": [
@@ -845,12 +1027,36 @@
       ]
     },
     {
+      "id": 18,
+      "name": "Instytucja Kultury Samorządu Województwa Dolnośląskiego",
+      "url": "https://bip.dolnyslask.pl/m,1663,instytucje-kultury.html",
+      "logo": "91ff198d-fa68-4f4f-9f25-2f1034fa90f1",
+      "role": "4",
+      "sort": 13,
+      "edition": [
+        "2025",
+        "2026"
+      ]
+    },
+    {
       "id": 19,
       "name": "Patronat Honorowy Prezydenta Wrocławia",
       "url": "https://bip.um.wroc.pl/artykul/3/36327/prezydent",
       "logo": "f01815c8-5f0b-4d12-b4a2-15f6e44cdcf9",
       "role": "6",
       "sort": 14,
+      "edition": [
+        "2025",
+        "2026"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Ośrodek Kultury i Sztuki we Wrocławiu",
+      "url": "https://okis.pl/",
+      "logo": "f9fe4350-3dab-4f77-bd94-e0a8d52d6b9c",
+      "role": "4",
+      "sort": 15,
       "edition": [
         "2025",
         "2026"
@@ -869,21 +1075,10 @@
       ]
     },
     {
-      "id": 32,
-      "name": "Ticketmaster",
-      "url": "https://www.ticketmaster.pl/",
-      "logo": "d2568011-84c4-4f4d-ae0a-696b4d822063",
-      "role": "4",
-      "sort": null,
-      "edition": [
-        "2026"
-      ]
-    },
-    {
-      "id": 33,
-      "name": "Tyskie",
-      "url": "https://tyskie.pl/",
-      "logo": "c1ca3025-c07d-45c3-950c-ecb1b0f7c77b",
+      "id": 42,
+      "name": "Muzeum Motoryzacji Wena w Oławie",
+      "url": "https://www.muzeummotoryzacjiwena.pl/",
+      "logo": "9a67563e-6fd8-4817-bb93-46415b6acf86",
       "role": "4",
       "sort": null,
       "edition": [
@@ -898,18 +1093,6 @@
       "role": "4",
       "sort": null,
       "edition": [
-        "2026"
-      ]
-    },
-    {
-      "id": 29,
-      "name": "DuoFest",
-      "url": "https://www.duofest.pl/",
-      "logo": "77f438bf-1127-4f19-b16b-b0d93d4b9c29",
-      "role": "5",
-      "sort": null,
-      "edition": [
-        "false",
         "2026"
       ]
     },
@@ -936,10 +1119,43 @@
       ]
     },
     {
-      "id": 39,
-      "name": "Erste Bank Polska",
-      "url": "erste.pl",
-      "logo": "57c836d8-4e38-4716-a0dd-c1d53cab5503",
+      "id": 43,
+      "name": "Uniperks",
+      "url": "https://uniperks.pl/",
+      "logo": "a3cd7593-72fa-4d3f-ab1b-4d50404ca8cb",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 44,
+      "name": "CityFit",
+      "url": "cityfit.pl",
+      "logo": "7aeaaefc-9685-4c6d-98ab-9b2e1ae0d075",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Lyko",
+      "url": "https://lyko.com/pl",
+      "logo": "6a5b8d50-693c-4216-80f4-f5cd10dd9764",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 37,
+      "name": "Urząd Marszałkowski we Wrocławiu",
+      "url": "dolnyslask.pl",
+      "logo": "e5184512-5e97-4a87-9d96-7f9b76cfd78b",
       "role": "4",
       "sort": null,
       "edition": [
@@ -958,10 +1174,66 @@
       ]
     },
     {
-      "id": 37,
-      "name": "Urząd Marszałkowski we Wrocławiu",
-      "url": "dolnyslask.pl",
-      "logo": "e5184512-5e97-4a87-9d96-7f9b76cfd78b",
+      "id": 39,
+      "name": "Erste Bank Polska",
+      "url": "erste.pl",
+      "logo": "57c836d8-4e38-4716-a0dd-c1d53cab5503",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 40,
+      "name": "FANUC",
+      "url": "https://www.fanuc.eu/pl-pl",
+      "logo": "b0b901fe-edc3-4c85-85f0-31629807e19e",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 41,
+      "name": "Al-Pączino",
+      "url": "https://www.facebook.com/p/Al-P%C4%85czino-61561118035517/",
+      "logo": "7bee923f-87a4-4e58-98ad-2b57b1fb2657",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "DuoFest",
+      "url": "https://www.duofest.pl/",
+      "logo": "77f438bf-1127-4f19-b16b-b0d93d4b9c29",
+      "role": "5",
+      "sort": null,
+      "edition": [
+        "false",
+        "2026"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Ticketmaster",
+      "url": "https://www.ticketmaster.pl/",
+      "logo": "d2568011-84c4-4f4d-ae0a-696b4d822063",
+      "role": "4",
+      "sort": null,
+      "edition": [
+        "2026"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Tyskie",
+      "url": "https://tyskie.pl/",
+      "logo": "c1ca3025-c07d-45c3-950c-ecb1b0f7c77b",
       "role": "4",
       "sort": null,
       "edition": [
