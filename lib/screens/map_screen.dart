@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -22,10 +21,10 @@ import '../theme/elements.dart';
 import '../theme/icon_names.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/app_refresh_indicator.dart';
+import '../widgets/map_common.dart';
 import '../widgets/platform_utils.dart';
 import '../widgets/section_header.dart';
-
-enum _EmbeddedMapMode { live, plan }
+import 'fullscreen_map_page.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key, required this.data, this.onRefresh});
@@ -38,7 +37,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  static const _campus = LatLng(51.1412, 16.9438);
+  static const _campus = LatLng(51.141441, 16.946014);
   static const _planAspectRatio = 16 / 11;
 
   static const _planNaturalFallback = Size(1600, 1100);
@@ -56,7 +55,7 @@ class _MapScreenState extends State<MapScreen> {
   bool _locating = false;
   bool _interactingWithMap = false;
   Size _planViewport = Size.zero;
-  late _EmbeddedMapMode _preferredMode;
+  late EmbeddedMapMode _preferredMode;
 
   ImageProvider? _planImage;
   Size _planNaturalSize = _planNaturalFallback;
@@ -72,13 +71,13 @@ class _MapScreenState extends State<MapScreen> {
   bool get _supportsLiveMap =>
       kIsWeb || PlatformUtils.isAndroid || PlatformUtils.isIOS;
 
-  _EmbeddedMapMode get _effectiveMode =>
-      _supportsLiveMap ? _preferredMode : _EmbeddedMapMode.plan;
+  EmbeddedMapMode get _effectiveMode =>
+      _supportsLiveMap ? _preferredMode : EmbeddedMapMode.plan;
 
   @override
   void initState() {
     super.initState();
-    _preferredMode = _EmbeddedMapMode.plan;
+    _preferredMode = EmbeddedMapMode.plan;
     for (final p in widget.data.mapPoints) {
       _legendKeys[p.id] = GlobalKey();
     }
@@ -198,24 +197,24 @@ class _MapScreenState extends State<MapScreen> {
     final isOnline = ConnectivityService.instance.isOnline.value;
     final canShowLive = _supportsLiveMap && hasGeo && isOnline;
 
-    if (_effectiveMode == _EmbeddedMapMode.plan && hasPlan) {
+    if (_effectiveMode == EmbeddedMapMode.plan && hasPlan) {
       _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
       return;
     }
-    if (_effectiveMode == _EmbeddedMapMode.live && canShowLive) {
+    if (_effectiveMode == EmbeddedMapMode.live && canShowLive) {
       _liveController.move(LatLng(p.lat!, p.lng!), 18);
       return;
     }
 
     if (hasPlan) {
-      setState(() => _preferredMode = _EmbeddedMapMode.plan);
+      setState(() => _preferredMode = EmbeddedMapMode.plan);
       await WidgetsBinding.instance.endOfFrame;
       if (!mounted) return;
       _focusPlanPosition(p.planX!, p.planY!, scale: 2.2);
       return;
     }
     if (canShowLive) {
-      setState(() => _preferredMode = _EmbeddedMapMode.live);
+      setState(() => _preferredMode = EmbeddedMapMode.live);
       await WidgetsBinding.instance.endOfFrame;
       if (!mounted) return;
       _liveController.move(LatLng(p.lat!, p.lng!), 18);
@@ -225,7 +224,7 @@ class _MapScreenState extends State<MapScreen> {
     _showOutsidePlanSnackBar(p, hasGeo: hasGeo);
   }
 
-  Future<void> _setMode(_EmbeddedMapMode mode) async {
+  Future<void> _setMode(EmbeddedMapMode mode) async {
     if (_preferredMode == mode) return;
     setState(() => _preferredMode = mode);
 
@@ -243,9 +242,9 @@ class _MapScreenState extends State<MapScreen> {
     await WidgetsBinding.instance.endOfFrame;
     if (!mounted) return;
 
-    if (mode == _EmbeddedMapMode.plan && selected.hasPlanPosition) {
+    if (mode == EmbeddedMapMode.plan && selected.hasPlanPosition) {
       _focusPlanPosition(selected.planX!, selected.planY!, scale: 2.2);
-    } else if (mode == _EmbeddedMapMode.live &&
+    } else if (mode == EmbeddedMapMode.live &&
         selected.lat != null &&
         selected.lng != null) {
       _liveController.move(LatLng(selected.lat!, selected.lng!), 18);
@@ -327,7 +326,7 @@ class _MapScreenState extends State<MapScreen> {
 
     final cached = _myLocation;
     final centeredFromCache =
-        cached != null && _effectiveMode == _EmbeddedMapMode.live;
+        cached != null && _effectiveMode == EmbeddedMapMode.live;
     if (centeredFromCache) {
       _liveController.move(cached, 17.5);
     }
@@ -384,7 +383,7 @@ class _MapScreenState extends State<MapScreen> {
       }
 
       setState(() => _myLocation = fresh);
-      if (_effectiveMode == _EmbeddedMapMode.live) {
+      if (_effectiveMode == EmbeddedMapMode.live) {
         _liveController.move(fresh, 17.5);
       }
     } catch (_) {
@@ -404,7 +403,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _zoomIn() {
-    if (_effectiveMode == _EmbeddedMapMode.live) {
+    if (_effectiveMode == EmbeddedMapMode.live) {
       final z = _liveController.camera.zoom + 1;
       _liveController.move(_liveController.camera.center, z.clamp(3.0, 19.0));
       return;
@@ -413,7 +412,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _zoomOut() {
-    if (_effectiveMode == _EmbeddedMapMode.live) {
+    if (_effectiveMode == EmbeddedMapMode.live) {
       final z = _liveController.camera.zoom - 1;
       _liveController.move(_liveController.camera.center, z.clamp(3.0, 19.0));
       return;
@@ -462,6 +461,22 @@ class _MapScreenState extends State<MapScreen> {
 
   void _resetLiveRotation() {
     _liveController.rotate(0);
+  }
+
+  void _openFullScreenMap() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => FullScreenMapPage(
+          data: widget.data,
+          initialMode: _effectiveMode,
+          planImage: _planImage,
+          planNaturalSize: _planNaturalSize,
+          supportsLiveMap: _supportsLiveMap,
+          selectedId: _selectedId,
+          initialLocation: _myLocation,
+        ),
+      ),
+    );
   }
 
   /// Mirrors `FittedBox(BoxFit.contain)` so we can convert a pin's
@@ -525,7 +540,7 @@ class _MapScreenState extends State<MapScreen> {
     ColorScheme cs,
     ElementPalette palette,
   ) {
-    final isPlanMode = _effectiveMode == _EmbeddedMapMode.plan;
+    final isPlanMode = _effectiveMode == EmbeddedMapMode.plan;
 
     return Padding(
       key: _mapPanelKey,
@@ -586,15 +601,15 @@ class _MapScreenState extends State<MapScreen> {
                               AnimatedOpacity(
                                 duration: const Duration(milliseconds: 220),
                                 opacity:
-                                    _effectiveMode == _EmbeddedMapMode.live &&
+                                    _effectiveMode == EmbeddedMapMode.live &&
                                         _liveRotationDeg.abs() > 0.5
                                     ? 1
                                     : 0,
                                 child: IgnorePointer(
                                   ignoring:
-                                      _effectiveMode != _EmbeddedMapMode.live ||
+                                      _effectiveMode != EmbeddedMapMode.live ||
                                       _liveRotationDeg.abs() <= 0.5,
-                                  child: _CompassButton(
+                                  child: CompassButton(
                                     rotationDeg: _liveRotationDeg,
                                     onTap: _resetLiveRotation,
                                   ),
@@ -605,12 +620,17 @@ class _MapScreenState extends State<MapScreen> {
                         ],
                       ),
                     ),
-                    if (_effectiveMode == _EmbeddedMapMode.live)
+                    if (_effectiveMode == EmbeddedMapMode.live)
                       Positioned(
-                        bottom: 6,
-                        right: 10,
-                        child: _buildOsmAttribution(context),
+                        bottom: 12,
+                        left: 12,
+                        child: const OsmAttribution(),
                       ),
+                    Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: _ExpandMapButton(onTap: _openFullScreenMap),
+                    ),
                   ],
                 ),
               ),
@@ -665,7 +685,7 @@ class _MapScreenState extends State<MapScreen> {
                 width: 44,
                 height: 44,
                 rotate: true,
-                child: _MapPin(
+                child: MapPinMarker(
                   key: ValueKey('live-pin-inner-${p.id}'),
                   point: p,
                   selected: p.id == _selectedId,
@@ -678,36 +698,11 @@ class _MapScreenState extends State<MapScreen> {
                 width: 26,
                 height: 26,
                 rotate: true,
-                child: const _MyLocationDot(),
+                child: const MyLocationDot(),
               ),
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildOsmAttribution(BuildContext context) {
-    return Material(
-      color: Colors.black.withValues(alpha: 0.42),
-      borderRadius: BorderRadius.circular(6),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(6),
-        onTap: () => launchUrl(
-          Uri.parse('https://www.openstreetmap.org/copyright'),
-          mode: LaunchMode.externalApplication,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          child: Text(
-            '© OpenStreetMap',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 9,
-              color: Colors.white.withValues(alpha: 0.92),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -769,7 +764,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: Center(
                         child: Transform.scale(
                           scale: pinScale,
-                          child: _MapPin(
+                          child: MapPinMarker(
                             key: ValueKey('plan-pin-inner-${point.id}'),
                             point: point,
                             selected: point.id == _selectedId,
@@ -814,19 +809,19 @@ class _MapScreenState extends State<MapScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _ModeChip(
+          ModeChip(
             label: 'Plan',
-            selected: _effectiveMode == _EmbeddedMapMode.plan,
+            selected: _effectiveMode == EmbeddedMapMode.plan,
             color: palette.base,
-            onTap: () => _setMode(_EmbeddedMapMode.plan),
+            onTap: () => _setMode(EmbeddedMapMode.plan),
           ),
           const SizedBox(width: 4),
-          _ModeChip(
+          ModeChip(
             label: 'Na żywo',
-            selected: _effectiveMode == _EmbeddedMapMode.live,
+            selected: _effectiveMode == EmbeddedMapMode.live,
             color: palette.base,
             onTap: _supportsLiveMap
-                ? () => _setMode(_EmbeddedMapMode.live)
+                ? () => _setMode(EmbeddedMapMode.live)
                 : null,
           ),
         ],
@@ -849,20 +844,20 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _MapControlButton(
+          MapControlButton(
             icon: Symbols.add_rounded,
             tooltip: 'Przybliż',
             onTap: _zoomIn,
           ),
           const SizedBox(height: 4),
-          _MapControlButton(
+          MapControlButton(
             icon: Symbols.remove_rounded,
             tooltip: 'Oddal',
             onTap: _zoomOut,
           ),
-          if (_effectiveMode == _EmbeddedMapMode.live) ...[
+          if (_effectiveMode == EmbeddedMapMode.live) ...[
             const SizedBox(height: 4),
-            _MapControlButton(
+            MapControlButton(
               icon: _locating
                   ? Symbols.more_horiz_rounded
                   : Symbols.my_location_rounded,
@@ -871,7 +866,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ] else ...[
             const SizedBox(height: 4),
-            _MapControlButton(
+            MapControlButton(
               icon: Symbols.center_focus_strong_rounded,
               tooltip: 'Resetuj plan',
               onTap: _resetPlanView,
@@ -1367,123 +1362,21 @@ class _PartnerLogo extends StatelessWidget {
   }
 }
 
-class _MapPin extends StatelessWidget {
-  const _MapPin({
-    super.key,
-    required this.point,
-    required this.selected,
-    required this.onTap,
-  });
+class _ExpandMapButton extends StatelessWidget {
+  const _ExpandMapButton({required this.onTap});
 
-  final MapPoint point;
-  final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        parseHexColor(point.color) ?? point.type.mapPointColor(context);
-    final icon = point.icon != null
-        ? iconFromName(point.icon!)
-        : point.type.mapPointIcon;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOutBack,
-        width: selected ? 44 : 34,
-        height: selected ? 44 : 34,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.95),
-            width: selected ? 3 : 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: selected ? 0.5 : 0.35),
-              blurRadius: selected ? 18 : 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Icon(icon, size: selected ? 22 : 16, color: Colors.white),
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerHighOf(context).withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
       ),
-    );
-  }
-}
-
-class _ModeChip extends StatelessWidget {
-  const _ModeChip({
-    required this.label,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color color;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Stack(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-          decoration: BoxDecoration(
-            color: selected
-                ? color.withValues(alpha: 0.18)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Text(
-            label,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 12,
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-              color: selected ? color : cs.onSurfaceVariant,
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(14),
-              splashColor: color.withValues(alpha: 0.22),
-              highlightColor: color.withValues(alpha: 0.08),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MapControlButton extends StatelessWidget {
-  const _MapControlButton({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Tooltip(
-      message: tooltip,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -1496,117 +1389,13 @@ class _MapControlButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               color: cs.surface.withValues(alpha: 0.24),
             ),
-            child: Icon(icon, size: 20, color: cs.onSurface),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CompassButton extends StatelessWidget {
-  const _CompassButton({required this.rotationDeg, required this.onTap});
-
-  final double rotationDeg;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Tooltip(
-      message: 'Skieruj na północ',
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: AppTheme.surfaceContainerHighOf(
-            context,
-          ).withValues(alpha: 0.94),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: onTap,
-            child: SizedBox(
-              width: 42,
-              height: 42,
-              child: Center(
-                child: Transform.rotate(
-                  angle: rotationDeg * math.pi / 180.0,
-                  child: SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CustomPaint(
-                      painter: _CompassNeedlePainter(
-                        northColor: const Color(0xFFE53935),
-                        southColor: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            child: Icon(
+              Symbols.fullscreen_rounded,
+              size: 20,
+              color: cs.onSurface,
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CompassNeedlePainter extends CustomPainter {
-  _CompassNeedlePainter({required this.northColor, required this.southColor});
-
-  final Color northColor;
-  final Color southColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final halfBase = size.width * 0.22;
-    final tip = size.height * 0.5;
-
-    final north = ui.Path()
-      ..moveTo(cx, cy - tip)
-      ..lineTo(cx - halfBase, cy)
-      ..lineTo(cx + halfBase, cy)
-      ..close();
-    canvas.drawPath(north, Paint()..color = northColor);
-
-    final south = ui.Path()
-      ..moveTo(cx, cy + tip)
-      ..lineTo(cx - halfBase, cy)
-      ..lineTo(cx + halfBase, cy)
-      ..close();
-    canvas.drawPath(south, Paint()..color = southColor);
-  }
-
-  @override
-  bool shouldRepaint(covariant _CompassNeedlePainter old) =>
-      old.northColor != northColor || old.southColor != southColor;
-}
-
-class _MyLocationDot extends StatelessWidget {
-  const _MyLocationDot();
-
-  @override
-  Widget build(BuildContext context) {
-    const accent = Color(0xFF2D7DFF);
-    return Container(
-      decoration: BoxDecoration(
-        color: accent,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withValues(alpha: 0.45),
-            blurRadius: 14,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
     );
   }
