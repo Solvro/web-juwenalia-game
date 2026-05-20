@@ -21,26 +21,15 @@
   "checkpoints": [
     {
       "id": 1,
-      "qr_code": "JUWE-CP-01-SAMORZAD",
-      "title": "Samorządowe Centrum Dowodzenia",
-      "description": "<p data-path-to-node=\"4\">Sprawdź swoją wiedzę o Politechnice Wrocławskiej i udowodnij, że kampus nie ma przed Tobą tajemnic. Zadania obejmują rozpoznawanie charakterystycznych miejsc, znajomość władz uczelni oraz integracyjne wyzwania zdjęciowe.</p>\n<h3 data-path-to-node=\"5\">&nbsp;</h3>",
-      "image": "e474891a-d44b-4a1b-b7c2-e04afe00ccd7",
-      "sort": 1,
-      "location": null,
-      "category": {
-        "id": "gaming",
-        "display_name": "Wyzwania",
-        "color": "#6644FF"
-      }
-    },
-    {
-      "id": 2,
-      "qr_code": "JUWE-CP-02-BEAUTY",
+      "qr_code": "JUWE-01-BEAUTY",
       "title": "Festiwalowy Glow",
-      "description": "<p data-path-to-node=\"6\">Czas na prawdziwy juwenaliowy błysk! Na tej stacji zrobisz szybki, festiwalowy makijaż, przykleisz diamenciki i sprawdzisz swoją wiedzę z zakresu podstawowej pielęgnacji sk&oacute;ry. Obalisz też popularne mity kosmetyczne i przygotujesz się wizualnie do dalszej zabawy.</p>",
+      "description": "<p data-path-to-node=\"4\">Czas na prawdziwy juwenaliowy błysk! Szczeg&oacute;ły zadania do wykonania udostępni Ci wolontariusz obecny na strefie.</p>\n<h3 data-path-to-node=\"5\">&nbsp;</h3>",
       "image": null,
-      "sort": 2,
-      "location": null,
+      "sort": 1,
+      "location": {
+        "id": 44,
+        "name": "Strefa Atrakcji | Beauty"
+      },
       "category": {
         "id": "campus",
         "display_name": "Styl życia",
@@ -48,10 +37,27 @@
       }
     },
     {
+      "id": 2,
+      "qr_code": "JUWE-02-UNIPERKS",
+      "title": "Wpadnij do strefy Uniperks x LYKO",
+      "description": "<p>Zapraszamy do strefy Uniperks x LYKO na Juwenaliach #WrocławRazem! Czekają na Ciebie studenckie promki, beauty atrakcje, konkursy i masa dobrej energii. Przyjdź, zgarnij coś fajnego i przekonaj się, co przygotowaliśmy razem z LYKO.<br><br><strong><a href=\"https://uniperks.pl/\" target=\"_blank\" rel=\"noopener\">Link do aplikacji Uniperks</a></strong></p>\n<p>Zadanie:<br>Zr&oacute;b <strong>kreatywne </strong>zdjęcie na naszej strefie, oznacz <strong>@uniperks_pl</strong>, <strong>@lyko_pl</strong> oraz <strong>@juwewroclawrazem</strong>, a następnie wrzuć je na swoje sociale.</p>\n<p dir=\"ltr\">Wystarczy tyle, a my podzielimy się QR-kodem!</p>\n<p>&nbsp;</p>",
+      "image": null,
+      "sort": 2,
+      "location": {
+        "id": 40,
+        "name": "Strefa Partnera | Uniperks"
+      },
+      "category": {
+        "id": "culture",
+        "display_name": "Aktywność",
+        "color": "#FFA439"
+      }
+    },
+    {
       "id": 3,
-      "qr_code": "JUWE-CP-03-UNIPERKS",
-      "title": "Korzyści Uniperks",
-      "description": "<p data-path-to-node=\"10\">Wykaż się refleksem i zdolnościami analitycznymi w szybkim obliczaniu studenckich rabat&oacute;w. Na tej stacji zapoznasz się z aplikacją, wymyślisz najbardziej absurdalną zniżkę, jakiej brakuje studentom, i wskażesz benefity ułatwiające przetrwanie do pierwszego.</p>",
+      "qr_code": "JUWE-03-HYDRANT",
+      "title": "Tajemniczy ratownik",
+      "description": "<p data-path-to-node=\"10\">Wykaż się szerokimi zdolnościami w rozwiązaniu poniższej łamigł&oacute;wki i znalezieniu kodu QR:<br><br><strong>Stoją dwa krasnale, co, jak student, wolą płyny,&nbsp;<br>Ten mniej oczywisty da Tobie przewagę.&nbsp;<br>Zamiast gasić pragnienie - dzisiaj #pijkran&oacute;wkę,&nbsp;<br></strong><strong>Wagę przył&oacute;ż temu, co czeka Cię na trawie.</strong></p>",
       "image": null,
       "sort": 3,
       "location": null,
@@ -62,55 +68,16 @@
       }
     },
     {
-      "id": 4,
-      "qr_code": "JUWE-CP-04-TESLA",
-      "title": "Elektromobilny Garaż Tesli",
-      "description": "<p data-path-to-node=\"14\">Zmierz się z wyzwaniami prosto ze świata innowacji i aut elektrycznych. Wykażesz się tu zręcznością przy pakowaniu nieforemnych przedmiot&oacute;w do przedniego bagażnika na czas oraz sprawdzisz swoją wiedzę o historii i popularnych modelach pojazd&oacute;w marki Tesla.</p>",
+      "id": 8,
+      "qr_code": "JUWE-04-CHILL",
+      "title": "Jak osiągniesz swój zen?",
+      "description": "<p data-path-to-node=\"22\">DO UZUPEŁNIENIA</p>",
       "image": null,
       "sort": 5,
-      "location": null,
-      "category": {
-        "id": "gaming",
-        "display_name": "Wyzwania",
-        "color": "#6644FF"
-      }
-    },
-    {
-      "id": 5,
-      "qr_code": "JUWE-CP-05-CITYFIT",
-      "title": "Moc CityFit",
-      "description": "<p data-path-to-node=\"16\">Rozruszaj kości w samym środku festiwalu i udowodnij, że studencka forma to nie mit! Wykonasz tu proste ćwiczenia fizyczne, wykażesz się siłą chwytu na drążku, ocenisz wagę odważnik&oacute;w i zaprezentujesz swoją najlepszą sportową pozę.</p>",
-      "image": null,
-      "sort": 6,
-      "location": null,
-      "category": {
-        "id": "culture",
-        "display_name": "Aktywność",
-        "color": "#FFA439"
-      }
-    },
-    {
-      "id": 9,
-      "qr_code": "JUWE-CP-09-STUDENCKIE",
-      "title": "Festiwalowe Igrzyska",
-      "description": "<p data-path-to-node=\"24\">Sprawdź swoją precyzję w klasycznych, studenckich grach imprezowych. Czekają na Ciebie trudne wyzwania połączone z zapominaną przez nas koordynacją ruch&oacute;w.</p>",
-      "image": null,
-      "sort": 7,
-      "location": null,
-      "category": {
-        "id": "gaming",
-        "display_name": "Wyzwania",
-        "color": "#6644FF"
-      }
-    },
-    {
-      "id": 8,
-      "qr_code": "JUWE-CP-08-CHILL",
-      "title": "Zen i chill",
-      "description": "<p data-path-to-node=\"22\">Złap oddech w samym centrum juwenaliowego szaleństwa. Twoim zadaniem będzie perfekcyjne odmierzanie czasu w myślach, budowanie wieży r&oacute;wnowagi oraz zapozowanie do najbardziej wychillowanego zdjęcia na całym terenie imprezy.</p>",
-      "image": null,
-      "sort": 8,
-      "location": null,
+      "location": {
+        "id": 28,
+        "name": "Strefa Chill"
+      },
       "category": {
         "id": "campus",
         "display_name": "Styl życia",
@@ -118,12 +85,94 @@
       }
     },
     {
-      "id": 7,
-      "qr_code": "JUWE-CP-07-TICKETMASTER",
-      "title": "Koncertowicze. Do dzieła!",
-      "description": "<p data-path-to-node=\"20\">Prawdziwy test dla fan&oacute;w koncertowych wrażeń i tegorocznego line-upu. Rozpoznawaj utwory w trzy sekundy, zgaduj frekwencję na wydarzeniach, dopasowuj okładki do artyst&oacute;w i udowodnij, że masz muzykę we krwi.</p>",
+      "id": 6,
+      "qr_code": "JUWE-05-EKOLOGIA",
+      "title": "Zielony (i niebieski) zaułek",
+      "description": "<p data-path-to-node=\"18\">Sprawdź, czy naprawdę wiesz, jak dbać o naszą planetę w codziennym życiu. Szczeg&oacute;ły zadania do wykonania udostępni Ci wolontariusz obecny na strefie.</p>",
+      "image": null,
+      "sort": 6,
+      "location": {
+        "id": 39,
+        "name": "Strefa Atrakcji | Eko"
+      },
+      "category": {
+        "id": "eco",
+        "display_name": "Ekologia",
+        "color": "#2ECDA7"
+      }
+    },
+    {
+      "id": 12,
+      "qr_code": "JUWE-05a-DIY",
+      "title": "Papier i bawełna",
+      "description": "<p>Stw&oacute;rz swoją wymarzoną juwenaliową torbę bądź wachlarz. Swoim ostatecznym dziełem obowiązkowo pochwal się wolontariuszowi przy Strefie Eko.</p>",
+      "image": null,
+      "sort": 7,
+      "location": {
+        "id": 39,
+        "name": "Strefa Atrakcji | Eko"
+      },
+      "category": {
+        "id": "eco",
+        "display_name": "Ekologia",
+        "color": "#2ECDA7"
+      }
+    },
+    {
+      "id": 5,
+      "qr_code": "JUWE-06-CITYFIT",
+      "title": "Moc miejskiej formy",
+      "description": "<p data-path-to-node=\"16\">Rozruszaj swoje zdrowie w samym środku festiwalu i udowodnij, że studencka forma to nie mit! Szczeg&oacute;ły zadania do wykonania udostępni Ci obsługa obecna na strefie.</p>\n<h3 data-path-to-node=\"5\">&nbsp;</h3>",
+      "image": null,
+      "sort": 8,
+      "location": {
+        "id": 36,
+        "name": "Strefa Partnera | CityFit"
+      },
+      "category": {
+        "id": "culture",
+        "display_name": "Aktywność",
+        "color": "#FFA439"
+      }
+    },
+    {
+      "id": 13,
+      "qr_code": "JUWE-07-PARTYBUS",
+      "title": "Karawana jedzie dalej",
+      "description": "<div class=\"container\">\n<div id=\"model-response-message-contentr_3ad48e1268f9e431\" class=\"markdown markdown-main-panel stronger enable-updated-hr-color\" dir=\"ltr\" aria-live=\"polite\" aria-busy=\"false\">\n<p data-path-to-node=\"1,2,0\">Poczuj tętniący rytm festiwalu i doładuj swoje baterie w muzycznej strefie party-autobusu! Szczeg&oacute;ły zadania do wykonania udostępni Ci obsługa obecna na strefie.</p>\n</div>\n<!----></div>",
       "image": null,
       "sort": 9,
+      "location": {
+        "id": 45,
+        "name": "Strefa Party Bus"
+      },
+      "category": {
+        "id": "campus",
+        "display_name": "Styl życia",
+        "color": "#FFA439"
+      }
+    },
+    {
+      "id": 9,
+      "qr_code": "JUWE-08-NJORD",
+      "title": "Tajemniczy ratownik v2",
+      "description": "<p class=\"query-text-line ng-star-inserted\">Po raz kolejny stań przed wyzaniem i spr&oacute;buj rozwiązać poniższą łamigł&oacute;wkę w celu znalezienia kodu QR:</p>\n<p data-path-to-node=\"3\"><strong>Gdy baterii na pasku ubywa,<br></strong><strong>Lato, jesień czy zima<br>Istnieje pewien nieziemski ratunek.<br>Kostka mocy &ndash; Twoja siła.</strong></p>",
+      "image": null,
+      "sort": 10,
+      "location": null,
+      "category": {
+        "id": "gaming",
+        "display_name": "Wyzwania",
+        "color": "#6644FF"
+      }
+    },
+    {
+      "id": 7,
+      "qr_code": "JUWE-09-TICKETMASTER",
+      "title": "Koncertowicze - do dzieła!",
+      "description": "<p data-path-to-node=\"20\">Prawdziwy test dla fan&oacute;w koncertowych wrażeń i tegorocznego line-upu. Szczeg&oacute;ły zadania do wykonania udostępni Ci obsługa obecna na strefie.</p>",
+      "image": null,
+      "sort": 11,
       "location": null,
       "category": {
         "id": "culture",
@@ -132,17 +181,51 @@
       }
     },
     {
-      "id": 6,
-      "qr_code": "JUWE-CP-06-EKOLOGIA",
-      "title": "Zielony Zaułek",
-      "description": "<p data-path-to-node=\"18\">Sprawdź, czy naprawdę wiesz, jak dbać o naszą planetę w codziennym, studenckim życiu. Zmierzysz się tu z ekokoszyk&oacute;wką, zadaniami na szybkość z prawidłowej segregacji śmieci oraz trudnymi pytaniami demaskującymi ekościemę i greenwashing.</p>",
+      "id": 14,
+      "qr_code": "JUWE-10-RAMKAXXL",
+      "title": "Poproszę do okienka numer 8",
+      "description": "<p dir=\"ltr\" role=\"presentation\">Znajdź na terenie wydarzenia juwenaliową ramkę zdjęciową. Zr&oacute;b przepiękną fotę, oznacz Juwenalia #WrocławRazem i udostępnij jako storkę.</p>\n<h2>&nbsp;</h2>",
       "image": null,
-      "sort": 10,
+      "sort": 12,
       "location": null,
       "category": {
-        "id": "eco",
-        "display_name": "Ekologia",
+        "id": "event",
+        "display_name": "Kreatywność",
         "color": "#2ECDA7"
+      }
+    },
+    {
+      "id": 4,
+      "qr_code": "JUWE-11-TESLA",
+      "title": "Elektromobilny garaż",
+      "description": "<p data-path-to-node=\"14\">Zmierz się z wyzwaniami prosto ze świata innowacji i aut elektrycznych. Szczeg&oacute;ły zadania do wykonania udostępni Ci obsługa obecna na strefie.</p>",
+      "image": null,
+      "sort": 13,
+      "location": {
+        "id": 37,
+        "name": "Strefa Partnera | Tesla"
+      },
+      "category": {
+        "id": "gaming",
+        "display_name": "Wyzwania",
+        "color": "#6644FF"
+      }
+    },
+    {
+      "id": 15,
+      "qr_code": "JUWE-12-INFO",
+      "title": "W domu najlepiej",
+      "description": "<p>Punkt informacyjny, w kt&oacute;rym dowiesz się o udogodnieniach i znajdziesz zagubioną rzecz. Przy okazji sprawdzisz też swoje siły w wiedzy og&oacute;lnej.&nbsp;Szczeg&oacute;ły zadania do wykonania udostępni Ci wolontariusz obecny na strefie.</p>\n<h3 data-path-to-node=\"5\">&nbsp;</h3>",
+      "image": null,
+      "sort": null,
+      "location": {
+        "id": 33,
+        "name": "Punkt Informacji"
+      },
+      "category": {
+        "id": "gaming",
+        "display_name": "Wyzwania",
+        "color": "#6644FF"
       }
     }
   ],
@@ -183,7 +266,7 @@
       "id": 28,
       "name": "Otwarcie bram",
       "start_time": "16:00:00",
-      "end_time": "16:40:00",
+      "end_time": null,
       "sort": 11,
       "edition": [
         "2026"
@@ -200,7 +283,7 @@
       "id": 29,
       "name": "Otwarcie bram",
       "start_time": "16:00:00",
-      "end_time": "16:40:00",
+      "end_time": null,
       "sort": 17,
       "edition": [
         "2026"
@@ -217,7 +300,7 @@
       "id": 30,
       "name": "Złośnice",
       "start_time": "16:30:00",
-      "end_time": "17:30:00",
+      "end_time": null,
       "sort": 18,
       "edition": [
         "2026"
@@ -234,7 +317,7 @@
       "id": 19,
       "name": null,
       "start_time": "16:40:00",
-      "end_time": "18:00:00",
+      "end_time": null,
       "sort": 12,
       "edition": [
         "2026"
@@ -262,7 +345,7 @@
       "id": 24,
       "name": null,
       "start_time": "17:30:00",
-      "end_time": "19:00:00",
+      "end_time": null,
       "sort": 16,
       "edition": [
         "2026"
@@ -290,7 +373,7 @@
       "id": 20,
       "name": null,
       "start_time": "18:00:00",
-      "end_time": "19:20:00",
+      "end_time": null,
       "sort": 19,
       "edition": [
         "2026"
@@ -318,7 +401,7 @@
       "id": 25,
       "name": null,
       "start_time": "19:00:00",
-      "end_time": "20:30:00",
+      "end_time": null,
       "sort": 20,
       "edition": [
         "2026"
@@ -346,7 +429,7 @@
       "id": 21,
       "name": null,
       "start_time": "19:20:00",
-      "end_time": "20:30:00",
+      "end_time": null,
       "sort": 13,
       "edition": [
         "2026"
@@ -374,7 +457,7 @@
       "id": 22,
       "name": null,
       "start_time": "20:30:00",
-      "end_time": "22:00:00",
+      "end_time": null,
       "sort": 14,
       "edition": [
         "2026"
@@ -402,7 +485,7 @@
       "id": 26,
       "name": null,
       "start_time": "20:30:00",
-      "end_time": "22:00:00",
+      "end_time": null,
       "sort": 21,
       "edition": [
         "2026"
@@ -430,7 +513,7 @@
       "id": 23,
       "name": null,
       "start_time": "22:00:00",
-      "end_time": "23:00:00",
+      "end_time": null,
       "sort": 15,
       "edition": [
         "2026"
@@ -458,7 +541,7 @@
       "id": 27,
       "name": null,
       "start_time": "22:00:00",
-      "end_time": "23:00:00",
+      "end_time": null,
       "sort": 22,
       "edition": [
         "2026"
@@ -564,8 +647,8 @@
       "hidden": false,
       "icon": "mic_external_on",
       "plan_point": {
-        "x": 1424,
-        "y": 1814
+        "x": 1273,
+        "y": 1778
       }
     },
     {
@@ -847,8 +930,8 @@
       "point": {
         "type": "Point",
         "coordinates": [
-          16.945910313065156,
-          51.140981059746395
+          16.94654558285282,
+          51.140636140186814
         ]
       },
       "polyline": null,
@@ -858,8 +941,8 @@
       "hidden": false,
       "icon": "recycling",
       "plan_point": {
-        "x": 1077,
-        "y": 1341
+        "x": 1476,
+        "y": 1401
       }
     },
     {
@@ -965,6 +1048,27 @@
       "plan_point": {
         "x": 1483,
         "y": 1327
+      }
+    },
+    {
+      "id": 45,
+      "name": "Strefa Party Bus",
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          16.945403668848,
+          51.14207630245613
+        ]
+      },
+      "polyline": null,
+      "isPolyline": false,
+      "description": "Daj się porwać najlepszym brzmieniom i nakręć się pozytywną energią w tętniącej życiem, pomarańczowej strefie Party Bus festiwalu ING Silesia Beats!",
+      "color": "#FF8800",
+      "hidden": false,
+      "icon": "celebration",
+      "plan_point": {
+        "x": 484,
+        "y": 612
       }
     }
   ],
