@@ -38,9 +38,9 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   static const _campus = LatLng(51.141441, 16.946014);
-  static const _planAspectRatio = 16 / 11;
+  static const _planAspectRatio = 4 / 3;
 
-  static const _planNaturalFallback = Size(1600, 1100);
+  static const _planNaturalFallback = Size(2500, 1875);
 
   static const double _planMinScale = 1.0;
   static const double _planMaxScale = 8.0;
@@ -592,31 +592,38 @@ class _MapScreenState extends State<MapScreen> {
                           if (_supportsLiveMap)
                             _buildModeToggle(context, palette),
                           const Spacer(),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              _buildMapControls(context),
-                              const SizedBox(height: 8),
-                              AnimatedOpacity(
-                                duration: const Duration(milliseconds: 220),
-                                opacity:
-                                    _effectiveMode == EmbeddedMapMode.live &&
-                                        _liveRotationDeg.abs() > 0.5
-                                    ? 1
-                                    : 0,
-                                child: IgnorePointer(
-                                  ignoring:
-                                      _effectiveMode != EmbeddedMapMode.live ||
-                                      _liveRotationDeg.abs() <= 0.5,
-                                  child: CompassButton(
-                                    rotationDeg: _liveRotationDeg,
-                                    onTap: _resetLiveRotation,
-                                  ),
+                          _buildMapControls(context),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          AnimatedOpacity(
+                            duration: const Duration(milliseconds: 220),
+                            opacity:
+                                _effectiveMode == EmbeddedMapMode.live &&
+                                    _liveRotationDeg.abs() > 0.5
+                                ? 1
+                                : 0,
+                            child: IgnorePointer(
+                              ignoring:
+                                  _effectiveMode != EmbeddedMapMode.live ||
+                                  _liveRotationDeg.abs() <= 0.5,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: CompassButton(
+                                  rotationDeg: _liveRotationDeg,
+                                  onTap: _resetLiveRotation,
                                 ),
                               ),
-                            ],
+                            ),
                           ),
+                          _ExpandMapButton(onTap: _openFullScreenMap),
                         ],
                       ),
                     ),
@@ -626,11 +633,6 @@ class _MapScreenState extends State<MapScreen> {
                         left: 12,
                         child: const OsmAttribution(),
                       ),
-                    Positioned(
-                      bottom: 12,
-                      right: 12,
-                      child: _ExpandMapButton(onTap: _openFullScreenMap),
-                    ),
                   ],
                 ),
               ),
@@ -986,8 +988,6 @@ class _MapScreenState extends State<MapScreen> {
                             fontSize: 12,
                             color: cs.onSurfaceVariant,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ],

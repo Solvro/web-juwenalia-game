@@ -216,7 +216,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
   }
 
   bool _isPast(ScheduleEvent e, DateTime now) {
-    final end = e.endTime ?? e.startTime;
+    final end = e.endTime ?? e.startTime?.add(const Duration(minutes: 45));
     if (end == null) return false;
     return end.isBefore(now);
   }
