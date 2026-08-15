@@ -1,10 +1,10 @@
 default_platform(:android)
 
 platform :android do
-  desc "Deploy a new internal build to Google Play"
-  lane :internal do
+  desc "Deploy a new production build to Google Play"
+  lane :production do
     upload_to_play_store(
-      track: "internal",
+      track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       skip_upload_apk: true,
       skip_upload_changelogs: true,
