@@ -90,4 +90,4 @@ jobs:
           CI: true
         run: |
           cd android
-          bundle exec fastlane production
+          bundle exec fastlane internal
